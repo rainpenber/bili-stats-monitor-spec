@@ -1,0 +1,15 @@
+{
+  "name": "bili-stats-monitor-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter bili-stats-monitor-web dev",
+    "build:web": "pnpm --filter bili-stats-monitor-web build",
+    "preview:web": "pnpm --filter bili-stats-monitor-web preview"
+  }
+}
+
