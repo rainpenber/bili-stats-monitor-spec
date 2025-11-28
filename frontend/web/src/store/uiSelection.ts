@@ -22,6 +22,8 @@ export interface UISelectionState {
   selectPage: (ids: string[]) => void
   selectAll: () => void
   setKeyword: (k: string) => void
+  setPage: (p: number) => void
+  setPageSize: (n: number) => void
 }
 
 export const useUISelection = create<UISelectionState>((set, get) => ({
@@ -31,7 +33,7 @@ export const useUISelection = create<UISelectionState>((set, get) => ({
   selectionMode: 'none',
   keyword: '',
   page: 1,
-  pageSize: 20,
+  pageSize: 8,
   setType: (t) => set({ type: t, activeItem: null, selection: new Set(), selectionMode: 'none', page: 1 }),
   setActiveItem: (a) => set({ activeItem: a }),
   toggleSelect: (id) => {
@@ -43,6 +45,7 @@ export const useUISelection = create<UISelectionState>((set, get) => ({
   clearSelection: () => set({ selection: new Set(), selectionMode: 'none' }),
   selectPage: (ids) => set({ selection: new Set(ids), selectionMode: 'page' }),
   selectAll: () => set({ selectionMode: 'all' }),
-  setKeyword: (k) => set({ keyword: k, page: 1 })
+  setKeyword: (k) => set({ keyword: k, page: 1 }),
+  setPage: (p) => set({ page: Math.max(1, p) }),
+  setPageSize: (n) => set({ pageSize: Math.max(1, n), page: 1 }),
 }))
-

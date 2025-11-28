@@ -4,13 +4,19 @@ import FilterBar from '@/components/toolbar/FilterBar'
 import BulkActionsBar from '@/components/toolbar/BulkActionsBar'
 import CardGrid from '@/components/cards/CardGrid'
 import InlineDetailPanel from '@/components/detail/InlineDetailPanel'
+import PaginationBar from '@/components/toolbar/PaginationBar'
 import { fakeAuthors, fakeVideos, filterByKeyword } from '@/lib/fake'
 
 export default function DashboardPage() {
-  const { type, keyword } = useUISelection()
+  const { type, keyword, page, pageSize } = useUISelection()
 
-  const videos = useMemo(() => filterByKeyword(fakeVideos, keyword), [keyword])
-  const authors = useMemo(() => filterByKeyword(fakeAuthors, keyword), [keyword])
+  const listAll = useMemo(() => (
+    type === 'video' ? filterByKeyword(fakeVideos, keyword) : filterByKeyword(fakeAuthors, keyword)
+  ), [type, keyword])
+
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const pageItems = listAll.slice(start, end)
 
   return (
     <div className="container-page py-6 space-y-4">
@@ -18,13 +24,10 @@ export default function DashboardPage() {
         <h1 className="text-xl font-semibold">仪表板</h1>
       </div>
       <FilterBar />
-      <BulkActionsBar currentPageIds={(type === 'video' ? videos : authors).map(i => i.id)} />
-      <CardGrid 
-        items={type === 'video' ? videos : authors}
-        type={type}
-      />
+      <BulkActionsBar currentPageIds={pageItems.map(i => i.id)} />
+      <CardGrid items={pageItems as any} type={type} />
+      <PaginationBar total={listAll.length} />
       <InlineDetailPanel />
     </div>
   )
 }
-
