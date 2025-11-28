@@ -7,9 +7,9 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "dev:web": "pnpm --filter bili-stats-monitor-web dev",
-    "build:web": "pnpm --filter bili-stats-monitor-web build",
-    "preview:web": "pnpm --filter bili-stats-monitor-web preview"
+    "dev:web": "pnpm --filter bili-stats-monitor-spec dev",
+    "build:web": "pnpm --filter bili-stats-monitor-spec build",
+    "preview:web": "pnpm --filter bili-stats-monitor-spec preview"
   }
 }
 
