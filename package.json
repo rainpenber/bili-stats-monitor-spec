@@ -9,7 +9,14 @@
   "scripts": {
     "dev:web": "pnpm --filter bili-stats-monitor-spec dev",
     "build:web": "pnpm --filter bili-stats-monitor-spec build",
-    "preview:web": "pnpm --filter bili-stats-monitor-spec preview"
+    "preview:web": "pnpm --filter bili-stats-monitor-spec preview",
+    "dev:mock": "node specs/001-bilibili-monitor/mocks/mock-server.js",
+    "dev:all": "concurrently -k \"pnpm dev:mock\" \"pnpm dev:web\""
+  },
+  "devDependencies": {
+    "body-parser": "^1.20.3",
+    "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
   }
 }
-

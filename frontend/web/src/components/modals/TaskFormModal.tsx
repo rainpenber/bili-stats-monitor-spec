@@ -10,7 +10,7 @@ export default function TaskFormModal() {
 
   // low-fi local state (no data binding)
   const isVideo = editingTask?.type === 'video'
-  const [strategyMode, setStrategyMode] = useState<'fixed' | 'smart'>('fixed')
+  const [strategyMode, setStrategyMode] = useState<'fixed' | 'smart'>('smart')
   const [fixedValue, setFixedValue] = useState(60)
   const [fixedUnit, setFixedUnit] = useState<'minute' | 'hour' | 'day'>('minute')
   const [deadline, setDeadline] = useState('')
@@ -25,7 +25,7 @@ export default function TaskFormModal() {
   useEffect(() => {
     // reset on open change (low-fi)
     if (open) {
-      setStrategyMode('fixed')
+      setStrategyMode('smart')
       setFixedValue(60)
       setFixedUnit('minute')
       setDeadline('')
@@ -51,36 +51,42 @@ export default function TaskFormModal() {
       <ModalHeader title={editingTask ? `编辑任务（${isVideo ? '视频' : '博主'}）` : '编辑任务'} />
       <ModalBody>
         <div className="space-y-6 text-sm">
-          {/* 基本信息可编辑 */}
-          <div className="space-y-2">
-            <div className="grid grid-cols-3 gap-3 items-center">
-              <div className="text-gray-600">任务类型</div>
-              <div className="col-span-2">{isVideo ? '视频' : '博主'}</div>
-              {isVideo ? (
-                <>
+          {/* 基本信息可编辑（紧凑：标签在上，输入在下） */}
+          <div className="space-y-3">
+            <div className="text-gray-600">任务类型</div>
+            <div>{isVideo ? '视频' : '博主'}</div>
+            {isVideo ? (
+              <>
+                <div className="space-y-1">
                   <div className="text-gray-600">标题</div>
-                  <div className="col-span-2"><input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={title} onChange={(e)=>setTitle(e.target.value)} /></div>
+                  <input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={title} onChange={(e)=>setTitle(e.target.value)} />
+                </div>
+                <div className="space-y-1">
                   <div className="text-gray-600">BV号</div>
-                  <div className="col-span-2"><input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={bv} onChange={(e)=>setBv(e.target.value)} /></div>
-                </>
-              ) : (
-                <>
+                  <input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={bv} onChange={(e)=>setBv(e.target.value)} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-1">
                   <div className="text-gray-600">昵称</div>
-                  <div className="col-span-2"><input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={nickname} onChange={(e)=>setNickname(e.target.value)} /></div>
+                  <input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={nickname} onChange={(e)=>setNickname(e.target.value)} />
+                </div>
+                <div className="space-y-1">
                   <div className="text-gray-600">UID</div>
-                  <div className="col-span-2"><input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={uid} onChange={(e)=>setUid(e.target.value)} /></div>
-                </>
-              )}
-            </div>
+                  <input className="h-9 w-full px-3 border border-gray-300 rounded-md" value={uid} onChange={(e)=>setUid(e.target.value)} />
+                </div>
+              </>
+            )}
           </div>
 
-          {/* 标签：可交互式输入（模糊搜索+回车添加+悬停删除） */}
+          {/* 标签 */}
           <div className="space-y-2">
             <div className="text-gray-600">标签</div>
-            <TagInput value={tags} onChange={setTags} placeholder="输入以搜索已有标签，回车添加；悬停标签可删除" />
+            <TagInput value={tags} onChange={setTags} placeholder="输入以搜索已有标签，回车添加；上下键选择候选；悬停标签可删除" />
           </div>
 
-          {/* 定时策略 */}
+          {/* 定时策略（默认智能） */}
           <div className="space-y-2">
             <div className="text-gray-600">定时策略</div>
             <div className="flex items-center gap-4">
@@ -93,15 +99,14 @@ export default function TaskFormModal() {
                 />
                 固定频率
               </label>
-              <label className={`inline-flex items-center gap-2 ${isVideo ? 'text-gray-800' : 'text-gray-400'}`}>
+              <label className="inline-flex items-center gap-2 text-gray-800">
                 <input
                   type="radio"
                   name="strategy"
-                  disabled={!isVideo}
                   checked={strategyMode === 'smart'}
-                  onChange={() => isVideo && setStrategyMode('smart')}
+                  onChange={() => setStrategyMode('smart')}
                 />
-                智能频率（仅视频）
+                智能频率
               </label>
             </div>
             {strategyMode === 'fixed' && (
@@ -135,7 +140,7 @@ export default function TaskFormModal() {
             <div className="text-gray-600">截止时间</div>
             <input
               type="datetime-local"
-              className="h-9 px-3 border border-gray-300 rounded-md"
+              className="h-9 px-3 border border-gray-300 rounded-md w-full"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
             />

@@ -36,7 +36,7 @@ let accounts = [
 // QR login sessions
 const qrSessions = new Map(); // session_id -> { status, createdAt }
 
-// Tasks dataset
+// Tasks dataset（仅展示）
 let tasks = [
   {
     id: 't_video_1', type: 'video', target_id: 'BV1abc123XYZ', account_id: 'a1',
@@ -73,7 +73,7 @@ let tasks = [
   }
 ];
 
-// Simple metrics generators
+// ------- Simple metrics generators -------
 function genVideoSeries() {
   const base = Date.now() - 7 * 24 * 3600 * 1000;
   const series = [];
@@ -97,7 +97,7 @@ function genFansSeries() {
   return series;
 }
 
-// AUTH
+// ------- AUTH -------
 app.post('/api/v1/auth/login', (req, res) => {
   const { username } = req.body || {};
   const user = users.find(u => u.username === username) || users[0];
@@ -107,10 +107,10 @@ app.post('/api/v1/auth/login', (req, res) => {
 app.post('/api/v1/auth/logout', (req, res) => res.json(ok()));
 app.get('/api/v1/auth/profile', (req, res) => res.json(ok(currentUser)));
 
-// USERS
+// ------- USERS -------
 app.post('/api/v1/users/:id/password', (req, res) => res.json(ok()));
 
-// ACCOUNTS
+// ------- ACCOUNTS -------
 app.get('/api/v1/accounts', (req, res) => {
   const page = parseInt(req.query.page || '1', 10);
   const pageSize = parseInt(req.query.page_size || '20', 10);
@@ -135,7 +135,6 @@ app.get('/api/v1/accounts/qrcode/status', (req, res) => {
   const { session_id, stage } = req.query;
   const sess = qrSessions.get(session_id);
   if (!sess) return res.json(ok({ status: 'expired' }));
-  // allow manual stage override for demo: pending -> scanned -> confirmed
   if (stage === 'scanned') sess.status = 'scanned';
   if (stage === 'confirmed') sess.status = 'confirmed';
   if (Date.now() - sess.createdAt > 2 * 60 * 1000) return res.json(ok({ status: 'expired' }));
@@ -156,7 +155,52 @@ app.post('/api/v1/accounts/:id/action', (req, res) => {
   res.json(err('unsupported action'));
 });
 
-// TASKS
+// ------- LOOKUP (新增) -------
+app.post('/api/v1/lookup', (req, res) => {
+  const { type, bv, url, uid, profile_url } = req.body || {}
+  if (type === 'video') {
+    const bvid = bv || ((url || '').match(/BV[0-9A-Za-z]+/) || [])[0] || `BV${Math.random().toString(36).slice(2,10)}`
+    return res.json(ok({
+      type: 'video',
+      bv: bvid,
+      title: `示例视频标题 ${bvid.slice(-4)}`,
+      cover_url: 'https://via.placeholder.com/320x180?text=Cover',
+      author_uid: String(Math.floor(Math.random()*900000+100000)),
+      author_nickname: '示例UP主'
+    }))
+  }
+  if (type === 'author') {
+    const uidVal = uid || ((profile_url || '').match(/space\.bilibili\.com\/(\d+)/) || [])[1] || String(Math.floor(Math.random()*900000+100000))
+    return res.json(ok({
+      type: 'author',
+      uid: uidVal,
+      nickname: `示例博主${uidVal.slice(-2)}`,
+      avatar_url: 'https://via.placeholder.com/120x120?text=Avatar',
+      fans: Math.floor(Math.random()*300000+1000)
+    }))
+  }
+  return res.json(err('unsupported type'))
+})
+
+// ------- Author videos list (新增) -------
+app.get('/api/v1/authors/:uid/videos', (req, res) => {
+  const { uid } = req.params
+  const page = parseInt(req.query.page || '1', 10)
+  const pageSize = parseInt(req.query.page_size || '10', 10)
+  // mock list
+  const total = 36
+  const start = (page - 1) * pageSize
+  const end = Math.min(total, start + pageSize)
+  const items = []
+  for (let i = start; i < end; i++) {
+    const bv = `BV${Math.random().toString(36).slice(2,10)}${i}`
+    items.push({ id: bv, bv, title: `视频 ${i+1}`, coverUrl: 'https://via.placeholder.com/320x180?text=Cover', published_at: new Date(Date.now()-i*86400000).toISOString() })
+  }
+  const has_more = end < total
+  res.json(ok({ items, page, page_size: pageSize, total, has_more }))
+})
+
+// ------- TASKS -------
 app.get('/api/v1/tasks', (req, res) => {
   const { page = '1', page_size = '20', keyword = '', type, author_uid, tags } = req.query;
   let items = tasks.slice();
@@ -178,20 +222,19 @@ app.get('/api/v1/tasks', (req, res) => {
   res.json(ok({ items: pageItems, page: p, page_size: ps, total: items.length }));
 });
 app.post('/api/v1/tasks', (req, res) => {
-  const { type, target_id, account_id, strategy, deadline, tags } = req.body || {};
+  const { type, target_id, strategy, deadline, tags, title, nickname } = req.body || {};
   if (!type || !target_id) return res.json(err('missing fields'));
-  if (type === 'video' && !/^BV[0-9A-Za-z]+$/.test(target_id)) return res.json(err('invalid bv'));
   const id = `t_${type}_${Math.random().toString(36).slice(2, 8)}`;
   const record = {
-    id, type, target_id, account_id: account_id || null, status: 'running', reason: null,
-    strategy: strategy || { mode: 'smart' }, deadline: deadline || new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString(),
+    id, type, target_id, account_id: null, status: 'running', reason: null,
+    strategy: strategy || { mode: type==='video' ? 'smart' : 'fixed', value: 1, unit: 'day' }, deadline: deadline || new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString(),
     created_at: now(), updated_at: now(), tags: tags || [], latest_sample: {}, media: {}
   };
   if (type === 'video') {
-    record.title = `新视频 ${target_id}`;
+    record.title = title || `新视频 ${target_id}`;
     record.media.cover_url = 'https://via.placeholder.com/320x180?text=Cover';
   } else {
-    record.nickname = `博主 ${target_id}`;
+    record.nickname = nickname || `博主 ${target_id}`;
     record.media.avatar_url = 'https://via.placeholder.com/120x120?text=Avatar';
   }
   tasks.unshift(record);
@@ -222,7 +265,6 @@ app.post('/api/v1/tasks/batch', (req, res) => {
   let targetIds = [];
   if (selection?.type === 'ids') targetIds = selection.ids || [];
   if (selection?.type === 'all') {
-    // apply filters similar to GET /tasks
     const { keyword = '', type, author_uid, tags } = selection.filters || {};
     let items = tasks.slice();
     if (type) items = items.filter(t => t.type === type);
@@ -251,7 +293,7 @@ app.post('/api/v1/tasks/batch', (req, res) => {
   res.json(ok({ success_count: success, failure_count: failures.length, failures }));
 });
 
-// METRICS
+// ------- METRICS -------
 app.get('/api/v1/videos/:bv/metrics', (req, res) => {
   if (!/^BV[0-9A-Za-z]+$/.test(req.params.bv)) return res.json(err('invalid bv'));
   res.json(ok({ series: genVideoSeries() }));
@@ -270,7 +312,7 @@ app.get('/api/v1/authors/:uid/metrics', (req, res) => {
   res.json(ok({ series: genFansSeries() }));
 });
 
-// MEDIA
+// ------- MEDIA -------
 app.get('/api/v1/media/videos/:bv/cover', (req, res) => {
   res.json(ok({ url: 'https://via.placeholder.com/640x360?text=Cover' }));
 });
@@ -279,7 +321,7 @@ app.get('/api/v1/media/authors/:uid/avatar', (req, res) => {
 });
 app.post('/api/v1/media/refresh', (req, res) => res.json(ok()));
 
-// NOTIFICATIONS & ALERTS
+// ------- NOTIFICATIONS & ALERTS -------
 let channels = { email: {}, dingtalk: {}, wecom: {}, webhook: {}, bark: {}, pushdeer: {}, onebot: {}, telegram: {} };
 let alertRules = new Map(); // uid -> rule
 app.get('/api/v1/notifications/channels', (req, res) => res.json(ok(channels)));
@@ -299,7 +341,7 @@ app.post('/api/v1/alerts/authors/:uid', (req, res) => {
   res.json(err('unsupported action'));
 });
 
-// LOGS
+// ------- LOGS -------
 app.get('/api/v1/logs', (req, res) => {
   const nowTs = new Date();
   res.json(ok([
@@ -312,7 +354,7 @@ app.get('/api/v1/logs/download', (req, res) => {
   res.json(ok({ url: 'https://example.com/logs/2025-11-28.txt' }));
 });
 
-// SETTINGS
+// ------- SETTINGS -------
 let settings = { min_interval_min: 10, max_fixed_interval_day: 1, max_retries: 3, page_size_default: 20, timezone: 'Asia/Shanghai', users };
 app.get('/api/v1/settings', (req, res) => res.json(ok(settings)));
 app.post('/api/v1/settings', (req, res) => {
@@ -325,4 +367,3 @@ app.post('/api/v1/settings', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Mock API listening on http://localhost:${PORT}`);
 });
-
