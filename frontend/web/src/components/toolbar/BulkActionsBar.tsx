@@ -3,7 +3,10 @@ import { Button } from '@/components/ui/Button'
 import { updateStatus } from '@/lib/fake'
 
 export default function BulkActionsBar({ currentPageIds }: { currentPageIds: string[] }) {
-  const { selection, selectionMode, clearSelection, selectPage, selectAll, type } = useUISelection()
+  const { selection, selectionMode, clearSelection, selectPage, selectAll, type, selecting } = useUISelection()
+
+  // 仅在选择模式下显示
+  if (!selecting) return null
 
   const count = selectionMode === 'all' ? '已选择：全量（跨页）' : `已选择：${selection.size} 项`
 
@@ -13,7 +16,6 @@ export default function BulkActionsBar({ currentPageIds }: { currentPageIds: str
 
   const doAction = (action: 'enable' | 'disable') => {
     if (selectionMode === 'all') {
-      // 低保真阶段：仅提示效果，真实环境将传 filters 给后端
       alert(`已对全量集合执行：${action === 'enable' ? '启用' : '禁用'}（演示）`)
       clearSelection()
       return
@@ -38,4 +40,3 @@ export default function BulkActionsBar({ currentPageIds }: { currentPageIds: str
     </div>
   )
 }
-

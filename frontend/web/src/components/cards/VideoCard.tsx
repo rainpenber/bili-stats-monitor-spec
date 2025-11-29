@@ -1,17 +1,29 @@
 import { toWan } from '@/lib/format'
 import type { VideoItem } from '@/lib/fake'
+import { cn } from '@/lib/cn'
+import { Menu } from 'lucide-react'
+import { useUISelection } from '@/store/uiSelection'
 
-export default function VideoCard({ item, onClick }: { item: VideoItem; onClick?: () => void }) {
+export default function VideoCard({ item, onClick, isActive }: { item: VideoItem; onClick?: () => void; isActive?: boolean }) {
+  const { setEditingTask } = useUISelection()
+
   return (
-    <div className="card card-hover overflow-hidden cursor-pointer" onClick={onClick}>
+    <div className={cn('card card-hover overflow-hidden cursor-pointer relative', isActive && 'outline-primary')} onClick={onClick}>
       <div className="aspect-video bg-gray-100">
         <img src={item.coverUrl} alt={item.title} className="w-full h-full object-cover" />
       </div>
       <div className="p-3 space-y-2">
         <div className="text-sm font-medium line-clamp-2" title={item.title}>{item.title}</div>
-        <div className="text-xs text-gray-600">播放量：{toWan(item.playCount)}</div>
+        <div className="text-xs text-gray-800">{toWan(item.playCount)}</div>
       </div>
+      {/* 右下角菜单图标 */}
+      <button
+        className="absolute bottom-2 right-2 p-1.5 rounded-md hover:bg-gray-100 text-gray-600"
+        aria-label="编辑"
+        onClick={(e) => { e.stopPropagation(); setEditingTask({ type: 'video', id: item.id }) }}
+      >
+        <Menu size={16} />
+      </button>
     </div>
   )
 }
-

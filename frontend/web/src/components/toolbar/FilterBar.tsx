@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 
 export default function FilterBar() {
-  const { type, setType, setKeyword, keyword, clearSelection } = useUISelection()
+  const { type, setType, setKeyword, keyword, clearSelection, selecting, setSelecting } = useUISelection()
   const [value, setValue] = useState(keyword)
 
   const onSubmit = (e: React.FormEvent) => {
@@ -17,6 +17,11 @@ export default function FilterBar() {
       <div className="flex items-center gap-2">
         <Button variant={type === 'video' ? 'default' : 'outline'} onClick={() => { setType('video'); clearSelection() }}>视频</Button>
         <Button variant={type === 'author' ? 'default' : 'outline'} onClick={() => { setType('author'); clearSelection() }}>博主</Button>
+        {!selecting ? (
+          <Button variant="outline" onClick={() => setSelecting(true)}>多选</Button>
+        ) : (
+          <Button variant="destructive" onClick={() => setSelecting(false)}>退出多选</Button>
+        )}
       </div>
       <form onSubmit={onSubmit} className="flex items-center gap-2">
         <input
@@ -31,4 +36,3 @@ export default function FilterBar() {
     </div>
   )
 }
-

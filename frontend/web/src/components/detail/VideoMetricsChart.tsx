@@ -1,9 +1,12 @@
 import ReactECharts from 'echarts-for-react'
 import { genVideoSeries } from '@/lib/fake'
 import dayjs from 'dayjs'
+import { useUISelection } from '@/store/uiSelection'
 
 export default function VideoMetricsChart() {
   const data = genVideoSeries(14)
+  const { scheme } = useUISelection()
+  const isDark = scheme === 'dark' || (scheme === 'system' && typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
   const option = {
     tooltip: { trigger: 'axis' },
     grid: { left: 40, right: 20, top: 20, bottom: 40 },
@@ -36,6 +39,5 @@ export default function VideoMetricsChart() {
       },
     ],
   }
-  return <ReactECharts option={option as any} style={{ height: 320 }} notMerge={true} lazyUpdate={true} />
+  return <ReactECharts theme={isDark ? 'dark' : undefined} option={option as any} style={{ height: 320 }} notMerge={true} lazyUpdate={true} />
 }
-
