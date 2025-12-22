@@ -1,0 +1,75 @@
+【这是正常网页使用中第一次查询】
+:authority:
+api.bilibili.com
+:method:
+GET
+:path:
+/x/v2/reply/wbi/main?oid=346110937&type=11&mode=3&pagination_str=%7B%22offset%22:%22%22%7D&plat=1&seek_rpid=&web_location=1315875&w_rid=c49a08947ad472b03b0223eb032570fc&wts=1745583854
+:scheme:
+https
+accept:
+*/*
+accept-encoding:
+gzip, deflate, br, zstd
+accept-language:
+zh-CN,zh;q=0.9
+cookie:
+enable_web_push=DISABLE; buvid4=18FF78FE-3A00-CEED-EF31-328765C3BEE364900-024032607-gLMvkSpQH%2F%2BHtItHqhv55A%3D%3D; header_theme_version=CLOSE; PVID=1; buvid_fp_plain=undefined; DedeUserID=3493141386627335; DedeUserID__ckMd5=4b89eb3b8e6725cc; hit-dyn-v2=1; LIVE_BUVID=AUTO6817309892687668; enable_feed_channel=ENABLE; buvid3=D9287D0B-6758-94BF-7280-65CF05D58A0E65636infoc; b_nut=1742975665; _uuid=47CF86CE-68D4-D361-3CDD-710D4EA8CE8E866112infoc; home_feed_column=5; browser_resolution=2560-1305; SESSDATA=3323c8c0%2C1760953844%2Cb022c%2A41CjDcgUsO2XTp_HdHyuRYq-xBpFE2dT5cKZHGeffEt5k-9XQ1xw6l1ajZ7oidA2HCj78SVkI3Mm80NHFyWksxdUJQVkJrbGdtelJ5d19pMU1KNF91S1N5SFpmNEowaS04c2kxdU9NSTFuT0t3aHhVMWJtaXdhSGwwcWxScC05bjdHbDVROGc3SzZRIIEC; bili_jct=9e513464a1353cdc6804b1e900510db5; fingerprint=854734e8a9420b440fb73cc989a042ee; buvid_fp=06ba35be58d43bd27c4c683c00c23400; b_lsid=64163144_1966CDE3328; CURRENT_FNVAL=2000; sid=8bzj5dkr; bp_t_offset_3493141386627335=1059763079841054720; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU4MzM4MzgsImlhdCI6MTc0NTU3NDU3OCwicGx0IjotMX0.A3mlheBA7a8UqgxXniZgSna2Z4DS2v5awqaf5Hg9ZUU; bili_ticket_expires=1745833778
+origin:
+https://www.bilibili.com
+priority:
+u=1, i
+referer:
+https://www.bilibili.com/opus/1049320642121302020?spm_id_from=333.1387.0.0
+sec-ch-ua:
+"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"
+sec-ch-ua-mobile:
+?0
+sec-ch-ua-platform:
+"Windows"
+sec-fetch-dest:
+empty
+sec-fetch-mode:
+cors
+sec-fetch-site:
+same-site
+user-agent:
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+
+【这是正常网页使用中第二次查询】
+:authority:
+api.bilibili.com
+:method:
+GET
+:path:
+/x/v2/reply/wbi/main?oid=346110937&type=11&mode=3&pagination_str=%7B%22offset%22:%22%7B%5C%22type%5C%22:1,%5C%22direction%5C%22:1,%5C%22session_id%5C%22:%5C%221787477866429451%5C%22,%5C%22data%5C%22:%7B%7D%7D%22%7D&plat=1&web_location=1315875&w_rid=64b8cd6e7eae7e8ec7ca30f9b68b52cd&wts=1745584121
+:scheme:
+https
+accept:
+*/*
+accept-encoding:
+gzip, deflate, br, zstd
+accept-language:
+zh-CN,zh;q=0.9
+cookie:
+enable_web_push=DISABLE; buvid4=18FF78FE-3A00-CEED-EF31-328765C3BEE364900-024032607-gLMvkSpQH%2F%2BHtItHqhv55A%3D%3D; header_theme_version=CLOSE; PVID=1; buvid_fp_plain=undefined; DedeUserID=3493141386627335; DedeUserID__ckMd5=4b89eb3b8e6725cc; hit-dyn-v2=1; LIVE_BUVID=AUTO6817309892687668; enable_feed_channel=ENABLE; buvid3=D9287D0B-6758-94BF-7280-65CF05D58A0E65636infoc; b_nut=1742975665; _uuid=47CF86CE-68D4-D361-3CDD-710D4EA8CE8E866112infoc; home_feed_column=5; browser_resolution=2560-1305; SESSDATA=3323c8c0%2C1760953844%2Cb022c%2A41CjDcgUsO2XTp_HdHyuRYq-xBpFE2dT5cKZHGeffEt5k-9XQ1xw6l1ajZ7oidA2HCj78SVkI3Mm80NHFyWksxdUJQVkJrbGdtelJ5d19pMU1KNF91S1N5SFpmNEowaS04c2kxdU9NSTFuT0t3aHhVMWJtaXdhSGwwcWxScC05bjdHbDVROGc3SzZRIIEC; bili_jct=9e513464a1353cdc6804b1e900510db5; fingerprint=854734e8a9420b440fb73cc989a042ee; buvid_fp=06ba35be58d43bd27c4c683c00c23400; b_lsid=64163144_1966CDE3328; CURRENT_FNVAL=2000; sid=8bzj5dkr; bp_t_offset_3493141386627335=1059763079841054720; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU4MzM4MzgsImlhdCI6MTc0NTU3NDU3OCwicGx0IjotMX0.A3mlheBA7a8UqgxXniZgSna2Z4DS2v5awqaf5Hg9ZUU; bili_ticket_expires=1745833778
+origin:
+https://www.bilibili.com
+priority:
+u=1, i
+referer:
+https://www.bilibili.com/opus/1049320642121302020?spm_id_from=333.1387.0.0
+sec-ch-ua:
+"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"
+sec-ch-ua-mobile:
+?0
+sec-ch-ua-platform:
+"Windows"
+sec-fetch-dest:
+empty
+sec-fetch-mode:
+cors
+sec-fetch-site:
+same-site
+user-agent:
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36

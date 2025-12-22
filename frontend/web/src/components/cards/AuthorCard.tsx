@@ -19,17 +19,17 @@ export default function AuthorCard({ item, onClick, isActive }: { item: AuthorIt
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <div className="text-sm font-medium truncate" title={item.nickname}>{item.nickname}</div>
-            <div className="text-xs text-gray-800 whitespace-nowrap">{toWan(item.fansCount)}</div>
+            <div className="text-xs text-muted-foreground whitespace-nowrap">{toWan(item.fansCount)}</div>
           </div>
-          <div className="mt-1 text-xs text-gray-600 truncate">
+          <div className="mt-1 text-xs text-muted-foreground truncate">
             标签：{item.tags?.join(' / ') || '—'}
           </div>
-          <div className="mt-1 text-[11px] text-gray-400">更新于：{dayjs(item.lastCollectedAt).format('YYYY-MM-DD HH:mm')}</div>
+          <div className="mt-1 text-[11px] text-muted-foreground/70">更新于：{dayjs(item.lastCollectedAt).format('YYYY-MM-DD HH:mm')}</div>
         </div>
       </div>
       {/* 右下角菜单图标 */}
       <button
-        className="absolute bottom-2 right-2 p-1.5 rounded-md hover:bg-gray-100 text-gray-600"
+        className="absolute bottom-2 right-2 p-1.5 rounded-md hover:bg-accent text-muted-foreground"
         aria-label="编辑"
         onClick={(e) => { e.stopPropagation(); setEditingTask({ type: 'author', id: item.id }) }}
       >

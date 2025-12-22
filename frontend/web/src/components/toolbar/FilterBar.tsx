@@ -1,5 +1,6 @@
 import { useUISelection } from '@/store/uiSelection'
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { useState } from 'react'
 
 export default function FilterBar() {
@@ -23,15 +24,15 @@ export default function FilterBar() {
           <Button variant="destructive" onClick={() => setSelecting(false)}>退出多选</Button>
         )}
       </div>
-      <form onSubmit={onSubmit} className="flex items-center gap-2">
-        <input
-          className="h-9 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+      <form onSubmit={onSubmit} className="flex items-center gap-2 flex-1 md:flex-initial">
+        <Input
           placeholder="按 BV/UID/标题/博主名 搜索"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          className="flex-1 md:flex-initial md:w-auto"
         />
         <Button type="submit">搜索</Button>
-        <Button type="button" variant="ghost" onClick={() => { setValue(''); setKeyword(''); clearSelection() }}>清除筛选</Button>
+        <Button type="button" variant="ghost" onClick={() => { setValue(''); setKeyword(''); clearSelection() }} className="whitespace-nowrap">清除筛选</Button>
       </form>
     </div>
   )

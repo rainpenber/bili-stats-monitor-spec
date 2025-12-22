@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/cn'
 import { useTags } from '@/store/tags'
+import { Badge } from '@/components/ui/Badge'
 
 interface Props {
   value: string[]
@@ -74,12 +75,18 @@ export default function TagInput({ value, onChange, placeholder }: Props) {
 
   return (
     <div className="relative">
-      <div className="min-h-10 w-full border border-gray-300 rounded-md px-2 py-1.5 flex items-center gap-1 flex-wrap bg-white dark:bg-transparent">
+      <div className="min-h-10 w-full border border-input rounded-md px-2 py-1.5 flex items-center gap-1 flex-wrap bg-background">
         {value.map(tag => (
-          <span key={tag} className="tag-item">
-            <span>{tag}</span>
-            <button className="tag-remove" onClick={() => remove(tag)} aria-label="删除标签">×</button>
-          </span>
+          <Badge key={tag} variant="secondary" className="pr-1">
+            <span className="mr-1">{tag}</span>
+            <button
+              className="ml-1 rounded-full hover:bg-destructive/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 h-4 w-4 flex items-center justify-center text-xs leading-none"
+              onClick={() => remove(tag)}
+              aria-label="删除标签"
+            >
+              ×
+            </button>
+          </Badge>
         ))}
         <input
           ref={inputRef}
@@ -91,13 +98,13 @@ export default function TagInput({ value, onChange, placeholder }: Props) {
         />
       </div>
       {open && (
-        <div ref={listRef} className="absolute z-20 mt-1 w-full max-h-40 overflow-auto bg-white dark:bg-[rgb(var(--background))] border border-gray-200 rounded-md shadow-sm p-1">
+        <div ref={listRef} className="absolute z-20 mt-1 w-full max-h-40 overflow-auto bg-popover border border-border rounded-md shadow-md p-1">
           {suggestions.map((s, i) => (
             <div key={s}
               data-index={i}
               className={cn(
                 'px-2 py-1.5 text-sm rounded cursor-pointer',
-                i === active ? 'bg-gray-100 dark:bg-white/10' : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                i === active ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
               )}
               onMouseEnter={() => setActive(i)}
               onMouseDown={(e) => { e.preventDefault(); add(s) }}

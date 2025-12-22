@@ -1,2 +1,17 @@
 node_modules
 
+/.claude
+/.clinerules
+/.kilocode
+/.specstory
+/openspec
+/.cursorindexingignore
+
+# Backend
+backend/data/
+backend/media/
+backend/.env
+backend/dist/
+backend/build/
+backend/*.log
+backend/.drizzle/

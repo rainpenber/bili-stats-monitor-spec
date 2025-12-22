@@ -20,10 +20,13 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
+- **Monorepo (default for this project)**:  
+  - 前端 Web 应用：`frontend/`（例如 `frontend/web/src/`）  
+  - 后端服务（Bun 运行时）：`backend/`（例如 `backend/api/src/`）  
+  - 共享包/工具：`packages/` 或等价目录  
+- **Single project（如明确说明使用单体结构时）**: `src/`, `tests/` at repository root
 - **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- 具体路径必须与 plan.md 中选定的实际结构一致，任务描述中应写明完整相对路径
 
 <!-- 
   ============================================================================

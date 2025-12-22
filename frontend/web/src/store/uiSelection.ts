@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export type ItemType = 'video' | 'author'
 export type ActiveItem = { type: ItemType; id: string } | null
 export type SelectionMode = 'none' | 'page' | 'all'
-export type ThemePreset = 'green' | 'blue' | 'purple' | 'orange'
+export type ThemePreset = 'default' | 'green' | 'blue' | 'purple' | 'orange'
 export type Scheme = 'system' | 'light' | 'dark'
 
 export interface UISelectionState {
@@ -16,6 +16,7 @@ export interface UISelectionState {
   // listing & selection
   type: ItemType
   activeItem: ActiveItem
+  activeMeta?: any
   selection: Set<string>
   selectionMode: SelectionMode
   selecting: boolean
@@ -34,7 +35,7 @@ export interface UISelectionState {
 
   // actions
   setType: (t: ItemType) => void
-  setActiveItem: (a: ActiveItem) => void
+  setActiveItem: (a: ActiveItem, meta?: any) => void
   toggleSelect: (id: string) => void
   clearSelection: () => void
   selectPage: (ids: string[]) => void
@@ -46,13 +47,14 @@ export interface UISelectionState {
 }
 
 export const useUISelection = create<UISelectionState>((set, get) => ({
-  theme: 'green',
+  theme: 'default',
   setTheme: (t) => set({ theme: t }),
   scheme: 'system',
   setScheme: (s) => set({ scheme: s }),
 
   type: 'video',
   activeItem: null,
+  activeMeta: undefined,
   selection: new Set<string>(),
   selectionMode: 'none',
   selecting: false,
@@ -69,7 +71,7 @@ export const useUISelection = create<UISelectionState>((set, get) => ({
   setAddTaskType: (t) => set({ type: t, addTaskOpen: true }),
 
   setType: (t) => set({ type: t, activeItem: null, selection: new Set(), selectionMode: 'none', selecting: false, page: 1 }),
-  setActiveItem: (a) => set({ activeItem: a }),
+  setActiveItem: (a, meta) => set({ activeItem: a, activeMeta: meta }),
   toggleSelect: (id) => {
     const s = new Set(get().selection)
     if (s.has(id)) s.delete(id)

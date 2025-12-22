@@ -114,6 +114,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponseAccountList'
+  /api/v1/accounts/default:
+    get:
+      tags: [Accounts]
+      summary: 获取全局默认账号
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data: { type: object, properties: { id: { type: string, nullable: true } } }
+    post:
+      tags: [Accounts]
+      summary: 设置全局默认账号
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
   /api/v1/accounts/cookie:
     post:
       tags: [Accounts]

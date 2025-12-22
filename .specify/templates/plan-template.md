@@ -31,7 +31,25 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- **Front-End First**:  
+  - Have the core pages/visualizations (e.g., dashboards, charts, trends) and main user journeys been described?  
+  - Is there a clear mapping from user value →前端界面，而不是直接从数据模型或后端结构出发？  
+- **API Contract Before Backend**:  
+  - For每个需要后端支持的前端交互，是否已经在 `specs/`（或对应 OpenAPI 文件）中定义或更新 API 合约？  
+  - 是否明确了请求/响应结构、错误码以及分页/过滤等约束？  
+- **Bun Runtime Alignment**:  
+  - 计划中的后端实现是否在 Bun 运行时下可行（依赖、工具链、脚本等）？  
+  - 是否避免依赖与 Bun 兼容性存疑的特性/库，或在计划中给出验证与降级方案？  
+- **Monorepo + pnpm + Vite**:  
+  - 是否在 plan 中明确对应的 `frontend/`、`backend/`、`packages/` 目录与包结构？  
+  - 前端是否以 Vite 应用为基础，依赖管理是否统一通过 pnpm workspace？  
+- **Incremental Delivery & Simplicity**:  
+  - 是否将功能拆分为可独立交付的用户故事，并能在前端形成可演示界面？  
+  - 是否避免过早抽象或复杂设计，必要复杂度是否在本计划中给出理由与替代方案比较？
+- **Layered Architecture & Separation of Concerns**:  
+  - 后端实现是否遵循路由层→服务层→数据层的分层架构？  
+  - 路由层是否仅负责 HTTP 处理，所有数据库操作是否通过服务层进行？  
+  - 是否避免了在路由层直接使用 ORM 进行数据库查询或更新？
 
 ## Project Structure
 

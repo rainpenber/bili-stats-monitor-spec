@@ -1,0 +1,950 @@
+{
+  "totalFiles": 72,
+  "successFiles": 0,
+  "failedFiles": 72,
+  "totalRecords": 0,
+  "insertedRecords": 0,
+  "skippedRecords": 0,
+  "updatedRecords": 0,
+  "duration": 55,
+  "errors": [
+    {
+      "file": "109655062_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "11336264_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "11836186_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1232707257_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1259298075_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1304893235_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "13418682_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "13475328_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "148246537_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "151242495_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1604499246_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1611018763_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1725303984_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "174922880_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "1759259349_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "19226160_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "21401670_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "21926058_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "22130861_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "267484788_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "276928941_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "27899754_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "28457_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "285108459_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "28611695_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "30578002_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "30935221_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "34743353_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "3493141386627335_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "3493285561633608_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "357121507_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "37029661_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "372311426_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "424964_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "431956189_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "438016906_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "471303350_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "515590965_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "516185777_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "559935_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "57699407_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "578970477_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "59910583_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "652137183_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "65352291_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "693447092_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "81437098_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "8998811_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "96434081_follower.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV11A7fzTEti_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV11MnizLE3o_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV135yhBnEpB_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV13pAJe6EyN_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV16JTJzdEvQ_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV18715BTEci_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV19jr4Y3ESZ_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1aHrLYuECp_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1ApZGYfEaH_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1CwKrz9Eas_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1d6L3zUE2U_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1FeNZeeECi_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1nrQwY5EcE_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1owfeY1E1k_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1sGu3zjEiU_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1TRUQB7EpW_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1UJuJzCE8Z_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1UvMyz1E2f_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1xDooYsEYk_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1yjCEBiErm_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1YKjbzfEKP_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1YPhJzgEo7_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    },
+    {
+      "file": "BV1ZY4izDEHp_views.csv",
+      "row": 0,
+      "type": "validate",
+      "message": "no such table: tasks"
+    }
+  ],
+  "files": [
+    {
+      "file": "109655062_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "11336264_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "11836186_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1232707257_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1259298075_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1304893235_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "13418682_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "13475328_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "148246537_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "151242495_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1604499246_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1611018763_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1725303984_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "174922880_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "1759259349_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "19226160_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "21401670_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "21926058_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "22130861_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "267484788_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "276928941_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "27899754_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "28457_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "285108459_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "28611695_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "30578002_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "30935221_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "34743353_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "3493141386627335_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "3493285561633608_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "357121507_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "37029661_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "372311426_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "424964_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "431956189_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "438016906_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "471303350_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "515590965_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "516185777_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "559935_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "57699407_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "578970477_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "59910583_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "652137183_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "65352291_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "693447092_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "81437098_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "8998811_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "96434081_follower.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV11A7fzTEti_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV11MnizLE3o_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV135yhBnEpB_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV13pAJe6EyN_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV16JTJzdEvQ_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV18715BTEci_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV19jr4Y3ESZ_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1aHrLYuECp_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1ApZGYfEaH_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1CwKrz9Eas_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1d6L3zUE2U_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1FeNZeeECi_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1nrQwY5EcE_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1owfeY1E1k_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1sGu3zjEiU_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1TRUQB7EpW_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1UJuJzCE8Z_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1UvMyz1E2f_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1xDooYsEYk_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1yjCEBiErm_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1YKjbzfEKP_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1YPhJzgEo7_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    },
+    {
+      "file": "BV1ZY4izDEHp_views.csv",
+      "status": "failed",
+      "records": 0,
+      "taskId": "",
+      "errors": 1
+    }
+  ]
+}

@@ -16,7 +16,7 @@ export default function CardGrid({ items, type }: { items: Array<VideoItem | Aut
             <input
               type="checkbox"
               className={cn(
-                'absolute top-2 left-2 h-4 w-4 z-10 transition-opacity',
+                'form-checkbox absolute top-2 left-2 h-4 w-4 z-10 transition-opacity',
                 selecting ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
               )}
               checked={selection.has(it.id)}
@@ -27,13 +27,13 @@ export default function CardGrid({ items, type }: { items: Array<VideoItem | Aut
               <VideoCard
                 item={it as VideoItem}
                 isActive={isActive}
-                onClick={() => setActiveItem({ type: 'video', id: it.id })}
+                onClick={() => setActiveItem({ type: 'video', id: it.id }, it)}
               />
             ) : (
               <AuthorCard
                 item={it as AuthorItem}
                 isActive={isActive}
-                onClick={() => setActiveItem({ type: 'author', id: it.id })}
+                onClick={() => setActiveItem({ type: 'author', id: it.id }, it)}
               />
             )}
           </div>

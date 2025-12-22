@@ -32,6 +32,7 @@ let accounts = [
   { id: 'a1', uid: '123456', nickname: 'Admin主号', bind_method: 'cookie', status: 'valid', last_failures: 0, bound_at: now() },
   { id: 'a2', uid: '654321', nickname: '副号', bind_method: 'qrcode', status: 'valid', last_failures: 1, bound_at: now() },
 ];
+let defaultAccountId = 'a1';
 
 // QR login sessions
 const qrSessions = new Map(); // session_id -> { status, createdAt }
@@ -126,6 +127,15 @@ app.post('/api/v1/accounts/cookie', (req, res) => {
   accounts.unshift(acc);
   res.json(ok(acc));
 });
+app.get('/api/v1/accounts/default', (req, res) => {
+  res.json(ok({ id: defaultAccountId }))
+});
+app.post('/api/v1/accounts/default', (req, res) => {
+  const { id } = req.body || {}
+  if (!accounts.find(a => a.id === id)) return res.json(err('account not found'))
+  defaultAccountId = id
+  res.json(ok())
+});
 app.post('/api/v1/accounts/qrcode', (req, res) => {
   const session_id = `sess_${Math.random().toString(36).slice(2, 8)}`;
   qrSessions.set(session_id, { status: 'pending', createdAt: Date.now() });
@@ -155,7 +165,7 @@ app.post('/api/v1/accounts/:id/action', (req, res) => {
   res.json(err('unsupported action'));
 });
 
-// ------- LOOKUP (新增) -------
+// ------- LOOKUP -------
 app.post('/api/v1/lookup', (req, res) => {
   const { type, bv, url, uid, profile_url } = req.body || {}
   if (type === 'video') {
@@ -166,7 +176,8 @@ app.post('/api/v1/lookup', (req, res) => {
       title: `示例视频标题 ${bvid.slice(-4)}`,
       cover_url: 'https://via.placeholder.com/320x180?text=Cover',
       author_uid: String(Math.floor(Math.random()*900000+100000)),
-      author_nickname: '示例UP主'
+      author_nickname: '示例UP主',
+      desc: '这是一个示例视频简介，供筛选演示使用。'
     }))
   }
   if (type === 'author') {
@@ -182,19 +193,22 @@ app.post('/api/v1/lookup', (req, res) => {
   return res.json(err('unsupported type'))
 })
 
-// ------- Author videos list (新增) -------
+// ------- Author videos list -------
 app.get('/api/v1/authors/:uid/videos', (req, res) => {
   const { uid } = req.params
   const page = parseInt(req.query.page || '1', 10)
   const pageSize = parseInt(req.query.page_size || '10', 10)
-  // mock list
+  const q = String(req.query.q || '').toLowerCase()
   const total = 36
   const start = (page - 1) * pageSize
   const end = Math.min(total, start + pageSize)
-  const items = []
+  let items = []
   for (let i = start; i < end; i++) {
     const bv = `BV${Math.random().toString(36).slice(2,10)}${i}`
-    items.push({ id: bv, bv, title: `视频 ${i+1}`, coverUrl: 'https://via.placeholder.com/320x180?text=Cover', published_at: new Date(Date.now()-i*86400000).toISOString() })
+    items.push({ id: bv, bv, title: `视频 ${i+1}`, coverUrl: 'https://via.placeholder.com/320x180?text=Cover', published_at: new Date(Date.now()-i*86400000).toISOString(), desc: `示例视频 ${i+1} 简介文本` })
+  }
+  if (q) {
+    items = items.filter(v => (v.title||'').toLowerCase().includes(q) || (v.bv||'').toLowerCase().includes(q) || (v.desc||'').toLowerCase().includes(q))
   }
   const has_more = end < total
   res.json(ok({ items, page, page_size: pageSize, total, has_more }))
@@ -226,7 +240,7 @@ app.post('/api/v1/tasks', (req, res) => {
   if (!type || !target_id) return res.json(err('missing fields'));
   const id = `t_${type}_${Math.random().toString(36).slice(2, 8)}`;
   const record = {
-    id, type, target_id, account_id: null, status: 'running', reason: null,
+    id, type, target_id, account_id: defaultAccountId, status: 'running', reason: null,
     strategy: strategy || { mode: type==='video' ? 'smart' : 'fixed', value: 1, unit: 'day' }, deadline: deadline || new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString(),
     created_at: now(), updated_at: now(), tags: tags || [], latest_sample: {}, media: {}
   };
@@ -293,37 +307,8 @@ app.post('/api/v1/tasks/batch', (req, res) => {
   res.json(ok({ success_count: success, failure_count: failures.length, failures }));
 });
 
-// ------- METRICS -------
-app.get('/api/v1/videos/:bv/metrics', (req, res) => {
-  if (!/^BV[0-9A-Za-z]+$/.test(req.params.bv)) return res.json(err('invalid bv'));
-  res.json(ok({ series: genVideoSeries() }));
-});
-app.get('/api/v1/videos/:bv/insights/daily', (req, res) => {
-  if (!/^BV[0-9A-Za-z]+$/.test(req.params.bv)) return res.json(err('invalid bv'));
-  const base = Date.now() - 14 * 24 * 3600 * 1000;
-  const data = Array.from({ length: 14 }).map((_, i) => ({
-    date: new Date(base + i * 24 * 3600 * 1000).toISOString().slice(0, 10),
-    completion_rate: Math.round((0.4 + Math.random() * 0.3) * 100) / 100,
-    avg_watch_duration_sec: Math.round(60 + Math.random() * 200),
-  }));
-  res.json(ok(data));
-});
-app.get('/api/v1/authors/:uid/metrics', (req, res) => {
-  res.json(ok({ series: genFansSeries() }));
-});
-
-// ------- MEDIA -------
-app.get('/api/v1/media/videos/:bv/cover', (req, res) => {
-  res.json(ok({ url: 'https://via.placeholder.com/640x360?text=Cover' }));
-});
-app.get('/api/v1/media/authors/:uid/avatar', (req, res) => {
-  res.json(ok({ url: 'https://via.placeholder.com/240x240?text=Avatar' }));
-});
-app.post('/api/v1/media/refresh', (req, res) => res.json(ok()));
-
-// ------- NOTIFICATIONS & ALERTS -------
+// ------- NOTIFICATIONS -------
 let channels = { email: {}, dingtalk: {}, wecom: {}, webhook: {}, bark: {}, pushdeer: {}, onebot: {}, telegram: {} };
-let alertRules = new Map(); // uid -> rule
 app.get('/api/v1/notifications/channels', (req, res) => res.json(ok(channels)));
 app.post('/api/v1/notifications/channels', (req, res) => {
   const { action, channels: c } = req.body || {};
@@ -331,27 +316,92 @@ app.post('/api/v1/notifications/channels', (req, res) => {
   channels = c || channels;
   res.json(ok());
 });
-app.get('/api/v1/alerts/authors/:uid', (req, res) => {
-  res.json(ok(alertRules.get(req.params.uid) || { enabled: false, mode: 'absolute', threshold: 1000, window_hours: 24 }));
-});
-app.post('/api/v1/alerts/authors/:uid', (req, res) => {
-  const { action } = req.body || {};
-  if (action === 'save') { alertRules.set(req.params.uid, req.body.rule || {}); return res.json(ok()); }
-  if (action === 'disable') { alertRules.set(req.params.uid, { enabled: false }); return res.json(ok()); }
-  res.json(err('unsupported action'));
+app.post('/api/v1/notifications/test', (req, res) => {
+  res.json(ok())
 });
 
+// Notification Rules (low-fi)
+let notifyRules = [
+  { id: 'r1', name: '任务停用/鉴权失败', enabled: true, triggers: ['task_stopped','auth_failed'], channels: ['email'] },
+]
+const RULE_TRIGGERS = ['task_stopped','auth_failed','low_growth']
+app.get('/api/v1/notifications/rules', (req, res) => {
+  res.json(ok({ items: notifyRules, triggers: RULE_TRIGGERS, channels: Object.keys(channels) }))
+})
+app.post('/api/v1/notifications/rules', (req, res) => {
+  const { action, rule, id } = req.body || {}
+  if (action === 'save') {
+    if (!rule) return res.json(err('missing rule'))
+    if (rule.id) {
+      const idx = notifyRules.findIndex(r => r.id === rule.id)
+      if (idx >= 0) notifyRules[idx] = { ...notifyRules[idx], ...rule }
+      else notifyRules.push({ ...rule })
+    } else {
+      const newId = `r${Math.random().toString(36).slice(2,8)}`
+      notifyRules.push({ ...rule, id: newId })
+    }
+    return res.json(ok())
+  }
+  if (action === 'delete') {
+    const idx = notifyRules.findIndex(r => r.id === id)
+    if (idx < 0) return res.json(err('not found'))
+    notifyRules.splice(idx,1)
+    return res.json(ok())
+  }
+  res.json(err('unsupported action'))
+})
+
 // ------- LOGS -------
+// Synthetic logs dataset (rolling last 15 days)
+const LOG_SOURCES = ['tasks', 'accounts', 'collector', 'scheduler', 'api', 'web'];
+function buildLogsDataset() {
+  const out = [];
+  const start = Date.now() - 15 * 24 * 3600 * 1000;
+  const levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR'];
+  for (let i = 0; i < 15 * 48; i++) { // per 30 mins
+    const ts = new Date(start + i * 30 * 60 * 1000).toISOString();
+    const level = levels[Math.floor(Math.random() * levels.length)];
+    const source = LOG_SOURCES[Math.floor(Math.random() * LOG_SOURCES.length)];
+    const message = `${source} ${level} message #${i}`;
+    out.push({ ts, level, source, message });
+  }
+  return out;
+}
+let logsDataset = buildLogsDataset();
+
 app.get('/api/v1/logs', (req, res) => {
-  const nowTs = new Date();
-  res.json(ok([
-    { ts: nowTs.toISOString(), level: 'INFO', source: 'tasks', message: 'scheduled 10 tasks' },
-    { ts: new Date(nowTs - 60000).toISOString(), level: 'WARNING', source: 'accounts', message: 'auth failed (count=3)' },
-    { ts: new Date(nowTs - 120000).toISOString(), level: 'DEBUG', source: 'collector', message: 'GET /video stats ok' },
-  ]));
+  let { date_from, date_to, levels, sources, keyword, page = '1', page_size = '50', sort = 'ts_desc' } = req.query;
+  let items = logsDataset.slice();
+  if (date_from) {
+    const t = new Date(date_from).getTime();
+    items = items.filter(x => new Date(x.ts).getTime() >= t);
+  }
+  if (date_to) {
+    const t = new Date(date_to).getTime();
+    items = items.filter(x => new Date(x.ts).getTime() <= t + 24 * 3600 * 1000 - 1);
+  }
+  if (levels) {
+    const lv = String(levels).split(',').map(s => s.trim().toUpperCase());
+    items = items.filter(x => lv.includes(x.level));
+  }
+  if (sources) {
+    const ss = String(sources).split(',').map(s => s.trim());
+    items = items.filter(x => ss.includes(x.source));
+  }
+  if (keyword) {
+    const kw = String(keyword).toLowerCase();
+    items = items.filter(x => x.message.toLowerCase().includes(kw));
+  }
+  items.sort((a, b) => (sort === 'ts_asc' ? new Date(a.ts) - new Date(b.ts) : new Date(b.ts) - new Date(a.ts)));
+  const p = parseInt(page, 10); const ps = parseInt(page_size, 10);
+  const start = (p - 1) * ps;
+  const pageItems = items.slice(start, start + ps);
+  res.json(ok({ items: pageItems, page: p, page_size: ps, total: items.length, sources: LOG_SOURCES }));
 });
 app.get('/api/v1/logs/download', (req, res) => {
-  res.json(ok({ url: 'https://example.com/logs/2025-11-28.txt' }));
+  // Simply echo back a composed URL for demo
+  const qs = new URLSearchParams(req.query).toString();
+  res.json(ok({ url: `https://example.com/mock-logs.txt?${qs}` }));
 });
 
 // ------- SETTINGS -------

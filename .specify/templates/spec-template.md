@@ -100,6 +100,12 @@
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
+> **Constitution Alignment Hint**  
+> 在撰写需求时，建议按以下顺序组织内容，以符合项目宪章：  
+> 1. 先描述用户在**前端界面**上的目标、视图与交互（页面/图表/筛选条件等）；  
+> 2. 然后将这些交互映射为**API 合约**（请求/响应结构、错误码、分页等），在 `specs/` 或 OpenAPI 中体现；  
+> 3. 最后再规划支撑这些合约的**后端实现**（以 Bun 运行时为基础的数据流、存储与任务）。
+
 ## Success Criteria *(mandatory)*
 
 <!--

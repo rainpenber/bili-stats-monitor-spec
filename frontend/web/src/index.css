@@ -1,49 +1,144 @@
+@import "react-day-picker/dist/style.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: 255 255 255; /* white */
-  --foreground: 17 24 39;    /* gray-900 */
-  --muted: 249 250 251;      /* gray-50 */
-  --primary: 16 185 129;     /* emerald-500 */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+  
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"],
+  input[type="month"],
+  input[type="week"],
+  textarea,
+  select {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
 }
 
 /* Theme presets */
-:root[data-theme='green'] { --primary: 16 185 129; }   /* emerald-500 */
-:root[data-theme='blue']  { --primary: 59 130 246; }   /* blue-500 */
-:root[data-theme='purple']{ --primary: 139 92 246; }   /* violet-500 */
-:root[data-theme='orange']{ --primary: 249 115 22; }   /* orange-500 */
-
-/* Color scheme */
-:root[data-scheme='light'] {
-  --background: 255 255 255;   /* white */
-  --foreground: 17 24 39;      /* gray-900 */
+:root[data-theme='default'] { 
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
 }
-:root[data-scheme='dark'] {
-  --background: 9 9 11;        /* near black (shadcn) */
-  --foreground: 250 250 250;   /* white-ish (shadcn) */
+:root[data-theme='green'] { --primary: 142.1 76.2% 36.3%; }
+:root[data-theme='blue'] { --primary: 221.2 83.2% 53.3%; }
+:root[data-theme='purple'] { --primary: 262.1 83.3% 57.8%; }
+:root[data-theme='orange'] { --primary: 24.6 95% 53.1%; }
+
+/* Dark mode theme presets */
+.dark[data-theme='default'] {
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 9%;
 }
 
 html, body, #root { height: 100%; }
-body { color: rgb(var(--foreground)); background: rgb(var(--background)); }
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
 
 /**************** Utilities ****************/
 .container-page { @apply max-w-7xl mx-auto px-4 lg:px-6; }
-.card { @apply border rounded-lg shadow-sm; background: rgb(var(--background)); border-color: rgba(107,114,128,0.2); }
+.card {
+  @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+  border-color: hsl(var(--border));
+}
 .card-hover { @apply hover:shadow-md transition-shadow; }
 
 /* Primary helpers */
-.outline-primary { outline: 2px solid rgb(var(--primary)); outline-offset: 0; }
-.bg-primary { background-color: rgb(var(--primary)); }
-.text-primary { color: rgb(var(--primary)); }
-.border-primary { border-color: rgb(var(--primary)); }
+.outline-primary { outline: 2px solid hsl(var(--primary)); outline-offset: 0; }
+.bg-primary { background-color: hsl(var(--primary)); }
+.text-primary { color: hsl(var(--primary)); }
+.border-primary { border-color: hsl(var(--primary)); }
 
-/* Tag styles */
-.tag-item { @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs border; border-color: rgba(107,114,128,0.3); }
-.tag-remove { @apply hidden cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white; }
-.tag-item:hover .tag-remove { @apply inline; }
+/* Tag styles - now using Badge component from shadcn/ui */
 
-/* Dark-mode tweaks for borders */
-:root[data-scheme='dark'] .card { border-color: rgba(250,250,250,0.15); }
-:root[data-scheme='dark'] .tag-item { border-color: rgba(250,250,250,0.25); }
+/* Checkbox and Radio styles (custom, consistent in light/dark) */
+/* Use utility classes to avoid browser defaults interfering */
+.form-radio {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--input));
+  background-color: hsl(var(--background));
+  display: grid; place-content: center;
+}
+.form-radio::after {
+  content: "";
+  width: 8px; height: 8px; border-radius: 9999px;
+  background-color: hsl(var(--primary));
+  transform: scale(0);
+  transition: transform 120ms ease-in-out;
+}
+.form-radio:checked::after { transform: scale(1); }
+
+.form-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1px solid hsl(var(--input));
+  background-color: hsl(var(--background));
+  display: grid; place-content: center;
+}
+.form-checkbox::after {
+  content: ""; width: 10px; height: 10px;
+  background-color: hsl(var(--primary));
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 12%, 80% 0, 43% 62%);
+  transform: scale(0);
+  transition: transform 120ms ease-in-out;
+}
+.form-checkbox:checked::after { transform: scale(1); }

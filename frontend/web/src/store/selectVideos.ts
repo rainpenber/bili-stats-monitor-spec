@@ -6,6 +6,7 @@ export interface AuthorVideoItem {
   title: string
   coverUrl: string
   published_at: string
+  desc?: string
 }
 
 export interface SelectVideosState {
@@ -20,6 +21,7 @@ export interface SelectVideosState {
   close: () => void
   toggle: (bv: string) => void
   selectTopN: (n: number) => void
+  setSelected: (ids: string[]) => void
   append: (items: AuthorVideoItem[], hasMore: boolean) => void
   reset: () => void
 }
@@ -45,7 +47,10 @@ export const useSelectVideos = create<SelectVideosState>((set, get) => ({
     arr.forEach(v => s.add(v.bv))
     set({ selected: s })
   },
+  setSelected: (ids) => {
+    const s = new Set<string>(ids)
+    set({ selected: s })
+  },
   append: (items, hasMore) => set(({ list, page }) => ({ list: [...list, ...items], page: page + 1, hasMore })),
   reset: () => set({ list: [], page: 1, hasMore: true, selected: new Set() }),
 }))
-
