@@ -11,6 +11,9 @@ node_modules
 backend/data/
 backend/media/
 backend/.env
+backend/.env.development
+backend/.env.production
+backend/.env.local
 backend/dist/
 backend/build/
 backend/*.log
