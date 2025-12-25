@@ -8,6 +8,7 @@
     "start:dev": "bun run scripts/start-dev.ts",
     "start:prod": "bun run scripts/start-prod.ts",
     "generate-secret": "bun run scripts/generate-jwt-secret.ts",
+    "generate-encrypt-key": "bun run scripts/generate-encrypt-key.ts",
     "db:generate": "drizzle-kit generate:sqlite",
     "db:generate:pg": "drizzle-kit generate:pg",
     "db:push": "drizzle-kit push:sqlite --schema ./src/db/schema.ts --url ./data/app.db --driver better-sqlite",

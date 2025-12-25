@@ -23,6 +23,15 @@ export const productionConfig = {
     expiresIn: '7d',
   },
 
+  // ===== 数据加密配置 =====
+  encryption: {
+    // 用于加密敏感数据（账号cookie、通知密码等）
+    // 生产环境必须设置，用于保护敏感信息
+    key: process.env.ENCRYPT_KEY || (() => {
+      throw new Error('ENCRYPT_KEY must be set in production environment')
+    })(),
+  },
+
   // ===== Bilibili API配置 =====
   bili: {
     userAgent: process.env.BILI_USER_AGENT || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

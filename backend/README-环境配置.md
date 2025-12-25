@@ -49,21 +49,28 @@ npm run dev
 
 ```bash
 cd backend
+
+# 生成JWT密钥
 npm run generate-secret
+
+# 生成数据加密密钥
+npm run generate-encrypt-key
 ```
 
-这会生成类似这样的密钥：
-```
-vK8JxN2Qp9RmTwLd5Zf3Yb7Hc4Ga1Ue6Ps0Mn8Xj2Kl9Rf5Tc3Vb7Na4Me1Wq6
-```
+这会生成两个密钥：
+- **JWT_SECRET**: 用于用户认证
+- **ENCRYPT_KEY**: 用于加密敏感数据（64个hex字符）
 
 #### 步骤2: 更新生产配置
 
 编辑 `backend/.env.production` 文件：
 
 ```bash
-# 修改这行（将密钥替换为刚才生成的）
-JWT_SECRET=vK8JxN2Qp9RmTwLd5Zf3Yb7Hc4Ga1Ue6Ps0Mn8Xj2Kl9Rf5Tc3Vb7Na4Me1Wq6
+# 修改JWT密钥
+JWT_SECRET=你生成的JWT密钥
+
+# ⚠️ 重要：修改数据加密密钥（64个hex字符）
+ENCRYPT_KEY=你生成的加密密钥
 
 # 同时修改CORS域名为您的实际域名
 CORS_ORIGIN=https://yourdomain.com,https://www.yourdomain.com
@@ -117,7 +124,8 @@ npm run start            # 启动生产服务器
 npm run start:prod       # 同上（别名）
 
 # 工具
-npm run generate-secret  # 生成JWT密钥
+npm run generate-secret     # 生成JWT密钥
+npm run generate-encrypt-key # 生成数据加密密钥
 
 # 数据库
 npm run db:studio        # 打开数据库管理界面
@@ -138,6 +146,8 @@ npm run test:watch       # 监听模式测试
 
 ### 生产环境（部署前必查）
 - [ ] 已生成并设置强JWT密钥（至少32字符）
+- [ ] **已生成并设置数据加密密钥（ENCRYPT_KEY，64个hex字符）** ⚠️
+- [ ] **已备份ENCRYPT_KEY（丢失将无法解密数据）** ⚠️
 - [ ] 已修改CORS为实际域名（移除localhost）
 - [ ] 已关闭详细错误信息（`ENABLE_DETAILED_ERRORS=false`）
 - [ ] 已关闭API日志（`ENABLE_API_LOGGING=false`）
@@ -206,23 +216,46 @@ Server running on http://localhost:3000
 
 ## ❓ 常见问题
 
-### Q: 忘记生成JWT密钥，启动失败？
+### Q: 忘记生成密钥，启动失败？
 
 **症状**：
 ```
 ❌ Missing required environment variables:
    - JWT_SECRET
+   - ENCRYPT_KEY
 ```
 
 **解决**：
 ```bash
-# 1. 生成密钥
+# 1. 生成JWT密钥
 npm run generate-secret
 
-# 2. 复制密钥到 .env.production
-# 3. 重新启动
+# 2. 生成数据加密密钥
+npm run generate-encrypt-key
+
+# 3. 复制密钥到 .env.production
+# 4. 重新启动
 npm run start
 ```
+
+### Q: ENCRYPT_KEY是什么？为什么需要它？
+
+**答**：
+- **用途**: 用于加密敏感数据（如账号cookie、通知密码等）
+- **格式**: 必须是64个十六进制字符（32字节）
+- **重要性**: ⚠️ 如果丢失此密钥，已加密的数据将无法解密！
+- **生成**: `npm run generate-encrypt-key`
+- **备份**: 强烈建议将此密钥备份到安全的地方（密码管理器、保险库等）
+
+### Q: 如果丢失了ENCRYPT_KEY怎么办？
+
+**答**：
+- ❌ 已加密的数据将**永久无法解密**
+- ⚠️ 需要重新配置所有账号和通知渠道
+- ✅ 预防措施：
+  1. 将ENCRYPT_KEY备份到密码管理器
+  2. 将ENCRYPT_KEY与数据库分开存储
+  3. 定期验证备份的密钥是否正确
 
 ### Q: 如何在同一台机器上同时运行开发和生产？
 

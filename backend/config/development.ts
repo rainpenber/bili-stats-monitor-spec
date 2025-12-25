@@ -21,6 +21,13 @@ export const developmentConfig = {
     expiresIn: '7d',
   },
 
+  // ===== 数据加密配置 =====
+  encryption: {
+    // 用于加密敏感数据（账号cookie、通知密码等）
+    // 开发环境使用固定值，方便调试
+    key: process.env.ENCRYPT_KEY || '9871a122c24abeae9cb1171f75120edd3acf46b655f4711a73edcb82eadcc674',
+  },
+
   // ===== Bilibili API配置 =====
   bili: {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

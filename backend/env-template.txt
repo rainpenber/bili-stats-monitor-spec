@@ -30,6 +30,17 @@ DATABASE_URL=./data/dev/bili-stats-dev.db
 # openssl rand -base64 48
 JWT_SECRET=your-secret-key-here-change-in-production
 
+# ===== 数据加密配置 =====
+# 用于加密敏感数据（账号cookie、通知密码等）
+# 必须是64个十六进制字符（32字节）
+# 生成方法:
+# - npm run generate-encrypt-key
+# - openssl rand -hex 32
+# ⚠️ 重要：此密钥丢失将导致已加密数据无法解密！
+# 开发环境示例: 0000000000000000000000000000000000000000000000000000000000000000
+# 生产环境: 必须使用随机生成的密钥
+ENCRYPT_KEY=your-encrypt-key-here-64-hex-characters
+
 # ===== Bilibili API配置 =====
 # User-Agent（模拟浏览器请求）
 BILI_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36

@@ -14,7 +14,7 @@ console.log('⚡ Performance: Optimized')
 console.log('')
 
 // 验证生产环境必需的环境变量
-const requiredEnvVars = ['JWT_SECRET']
+const requiredEnvVars = ['JWT_SECRET', 'ENCRYPT_KEY']
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName])
 
 if (missingVars.length > 0) {
@@ -24,6 +24,23 @@ if (missingVars.length > 0) {
   })
   console.error('')
   console.error('Please set these variables in your .env.production file or environment.')
+  console.error('')
+  console.error('💡 Tips:')
+  console.error('   - Generate JWT_SECRET: npm run generate-secret')
+  console.error('   - Generate ENCRYPT_KEY: npm run generate-encrypt-key')
+  process.exit(1)
+}
+
+// 验证ENCRYPT_KEY格式（必须是64个hex字符）
+const encryptKey = process.env.ENCRYPT_KEY
+if (encryptKey && !/^[0-9a-fA-F]{64}$/.test(encryptKey)) {
+  console.error('❌ Invalid ENCRYPT_KEY format!')
+  console.error('')
+  console.error('ENCRYPT_KEY must be exactly 64 hexadecimal characters (32 bytes).')
+  console.error('')
+  console.error('💡 Generate a valid key:')
+  console.error('   npm run generate-encrypt-key')
+  console.error('')
   process.exit(1)
 }
 
