@@ -15,3 +15,6 @@ backend/dist/
 backend/build/
 backend/*.log
 backend/.drizzle/
+# Frontend build artifacts
+frontend/web/dist/
+frontend/web/tsconfig.tsbuildinfo

@@ -516,6 +516,51 @@ paths:
                 channels: { $ref: '#/components/schemas/Channels' }
       responses:
         '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/notifications/rules:
+    get:
+      tags: [Notifications]
+      summary: 获取通知规则列表
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseNotificationRules'
+    post:
+      tags: [Notifications]
+      summary: 保存或删除通知规则
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/NotificationRuleSave'
+                - $ref: '#/components/schemas/NotificationRuleDelete'
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/notifications/test:
+    post:
+      tags: [Notifications]
+      summary: 测试通知渠道
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [channel, payload]
+              properties:
+                channel:
+                  type: string
+                  description: 通知渠道名称
+                payload:
+                  type: object
+                  additionalProperties: true
+                  description: 测试消息内容
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
   /api/v1/alerts/authors/{uid}:
     get:
       tags: [Alerts]
@@ -744,6 +789,25 @@ components:
         - type: object
           properties:
             data: { $ref: '#/components/schemas/Channels' }
+    ApiResponseNotificationRules:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items: { $ref: '#/components/schemas/NotificationRule' }
+                triggers:
+                  type: array
+                  items: { type: string }
+                  description: 可用的触发器列表
+                channels:
+                  type: array
+                  items: { type: string }
+                  description: 可用的通知渠道列表
     ApiResponseAlertRule:
       allOf:
         - $ref: '#/components/schemas/ApiResponse'
@@ -902,6 +966,41 @@ components:
       required: [action]
       properties:
         action: { type: string, enum: [disable], default: disable }
+    NotificationRule:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 规则ID（新建时可选）
+        name:
+          type: string
+          description: 规则名称
+        enabled:
+          type: boolean
+          description: 是否启用
+        triggers:
+          type: array
+          items: { type: string }
+          description: 触发器列表，如 task_stopped, auth_failed
+        channels:
+          type: array
+          items: { type: string }
+          description: 通知渠道列表，如 email, webhook
+      required: [name, enabled, triggers, channels]
+    NotificationRuleSave:
+      type: object
+      required: [action, rule]
+      properties:
+        action: { type: string, enum: [save], default: save }
+        rule: { $ref: '#/components/schemas/NotificationRule' }
+    NotificationRuleDelete:
+      type: object
+      required: [action, id]
+      properties:
+        action: { type: string, enum: [delete], default: delete }
+        id:
+          type: string
+          description: 要删除的规则ID
     Settings:
       type: object
       properties:

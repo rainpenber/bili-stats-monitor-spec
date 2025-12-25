@@ -91,16 +91,8 @@ export function parseTime(timeStr: string): Date | null {
     }
   }
 
-  // 如果所有格式都失败，尝试使用 Date 构造函数（最后手段）
-  try {
-    const date = new Date(trimmed)
-    if (!isNaN(date.getTime())) {
-      return date
-    }
-  } catch (error) {
-    // 忽略错误
-  }
-
+  // 所有格式都失败，返回 null
+  // 不使用 Date 构造函数作为 fallback，因为它会自动调整无效日期
   return null
 }
 
