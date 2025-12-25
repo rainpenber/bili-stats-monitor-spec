@@ -10,11 +10,34 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '@/components/ui/Modal'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/AlertDialog'
 import { toast } from "sonner"
-import { notificationRuleSchema, emailChannelSchema, webhookChannelSchema, type NotificationRuleFormData } from '@/lib/validations/notificationSchema'
+import { notificationRuleSchema, type NotificationRuleFormData } from '@/lib/validations/notificationSchema'
+import { 
+  CHANNEL_TYPES, 
+  CHANNEL_NAMES,
+  emailChannelConfigSchema,
+  wecomChannelConfigSchema,
+  onebotChannelConfigSchema,
+  webhookChannelConfigSchema,
+  telegramChannelConfigSchema,
+  dingtalkChannelConfigSchema,
+  feishuChannelConfigSchema,
+  barkChannelConfigSchema,
+  pushdeerChannelConfigSchema,
+  type ChannelType 
+} from '@/lib/validations/channelSchemas'
+import { EmailChannelConfig } from '@/components/notifications/EmailChannelConfig'
+import { WecomChannelConfig } from '@/components/notifications/WecomChannelConfig'
+import { OneBotChannelConfig } from '@/components/notifications/OneBotChannelConfig'
+import { WebhookChannelConfig } from '@/components/notifications/WebhookChannelConfig'
+import { TelegramChannelConfig } from '@/components/notifications/TelegramChannelConfig'
+import { DingTalkChannelConfig } from '@/components/notifications/DingTalkChannelConfig'
+import { FeishuChannelConfig } from '@/components/notifications/FeishuChannelConfig'
+import { BarkChannelConfig } from '@/components/notifications/BarkChannelConfig'
+import { PushDeerChannelConfig } from '@/components/notifications/PushDeerChannelConfig'
 
-const CHANNELS = ['email','dingtalk','wecom','webhook','bark','pushdeer','onebot','telegram'] as const
+const CHANNELS = CHANNEL_TYPES
 
-type ChannelKey = typeof CHANNELS[number]
+type ChannelKey = ChannelType
 
 type ChannelsState = Record<string, any>
 
@@ -47,7 +70,6 @@ export default function NotificationsPage() {
 
   // 规则表单
   const ruleForm = useForm<NotificationRuleFormData>({
-    // @ts-expect-error - zod 类型推断问题
     resolver: zodResolver(notificationRuleSchema),
     defaultValues: {
       name: '',
@@ -116,29 +138,50 @@ export default function NotificationsPage() {
       return
     }
 
-    // 根据渠道类型验证
-    if (k === 'email') {
-      const result = emailChannelSchema.safeParse(config)
+    // 根据渠道类型选择对应的schema进行验证
+    let schema: any = null
+    
+    switch (k) {
+      case 'email':
+        schema = emailChannelConfigSchema
+        break
+      case 'wecom':
+        schema = wecomChannelConfigSchema
+        break
+      case 'onebot':
+        schema = onebotChannelConfigSchema
+        break
+      case 'webhook':
+        schema = webhookChannelConfigSchema
+        break
+      case 'telegram':
+        schema = telegramChannelConfigSchema
+        break
+      case 'dingtalk':
+        schema = dingtalkChannelConfigSchema
+        break
+      case 'feishu':
+        schema = feishuChannelConfigSchema
+        break
+      case 'bark':
+        schema = barkChannelConfigSchema
+        break
+      case 'pushdeer':
+        schema = pushdeerChannelConfigSchema
+        break
+      // 所有渠道都已支持
+      default:
+        schema = null
+    }
+
+    if (schema) {
+      const result = schema.safeParse(config)
       if (!result.success) {
         result.error.issues.forEach((err: any) => {
           if (err.path && err.path[0]) {
             errors[err.path[0] as string] = err.message
           }
         })
-      }
-    } else if (k === 'webhook') {
-      const result = webhookChannelSchema.safeParse(config)
-      if (!result.success) {
-        result.error.issues.forEach((err: any) => {
-          if (err.path && err.path[0]) {
-            errors[err.path[0] as string] = err.message
-          }
-        })
-      }
-    } else {
-      // 其他渠道：启用时必须填写 target
-      if (config.enabled && !config.target) {
-        errors.target = '启用渠道时必须填写目标'
       }
     }
 
@@ -268,48 +311,137 @@ export default function NotificationsPage() {
           {loading ? (
             <div className="text-sm text-muted-foreground py-10 text-center">加载中...</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {CHANNELS.map(k => {
                 const c = channels[k] || {}
+                const channelName = CHANNEL_NAMES[k] || k
+                
                 return (
-                  <section key={k} className="card p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h2 className="font-medium">{k}</h2>
+                  <section key={k} className="card p-4 space-y-4">
+                    <div className="flex items-center justify-between border-b pb-3">
+                      <h2 className="font-medium text-lg">{channelName}</h2>
                       <label className="inline-flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={!!c.enabled} onChange={e=>setField(k,'enabled',e.target.checked)} /> 启用
+                        <input 
+                          type="checkbox" 
+                          checked={!!c.enabled} 
+                          onChange={e=>setField(k,'enabled',e.target.checked)} 
+                        /> 
+                        <span className="font-medium">启用</span>
                       </label>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 text-sm">
-                      <div>
-                        <div className="text-muted-foreground">目标</div>
-                        <Input 
-                          value={c.target||''} 
-                          onChange={e=>setField(k,'target',e.target.value)} 
-                          placeholder={k === 'email' ? 'example@example.com' : k === 'webhook' ? 'https://example.com/webhook' : '邮箱 / Webhook URL / ChatID 等'}
-                          className={channelErrors[k]?.target ? 'border-destructive' : ''}
-                        />
-                        {channelErrors[k]?.target && (
-                          <span className="text-xs text-destructive mt-1">{channelErrors[k].target}</span>
+                    
+                    {c.enabled && (
+                      <>
+                        {/* 根据渠道类型渲染不同的配置表单 */}
+                        {k === 'email' && (
+                          <EmailChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
                         )}
+                        {k === 'wecom' && (
+                          <WecomChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'onebot' && (
+                          <OneBotChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'webhook' && (
+                          <WebhookChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'telegram' && (
+                          <TelegramChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'dingtalk' && (
+                          <DingTalkChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'feishu' && (
+                          <FeishuChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'bark' && (
+                          <BarkChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {k === 'pushdeer' && (
+                          <PushDeerChannelConfig
+                            config={c}
+                            errors={channelErrors[k] || {}}
+                            onChange={(field, value) => setField(k, field, value)}
+                          />
+                        )}
+                        {/* 所有渠道都已支持专用配置组件 */}
+                        {!['email', 'wecom', 'onebot', 'webhook', 'telegram', 'dingtalk', 'feishu', 'bark', 'pushdeer'].includes(k) && (
+                          <div className="grid grid-cols-1 gap-2 text-sm">
+                            <div>
+                              <div className="text-muted-foreground">目标</div>
+                              <Input 
+                                value={c.target||''} 
+                                onChange={e=>setField(k,'target',e.target.value)} 
+                                placeholder={k === 'webhook' ? 'https://example.com/webhook' : '目标地址'}
+                                className={channelErrors[k]?.target ? 'border-destructive' : ''}
+                              />
+                              {channelErrors[k]?.target && (
+                                <span className="text-xs text-destructive mt-1">{channelErrors[k].target}</span>
+                              )}
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Token（可选）</div>
+                              <Input 
+                                value={c.token||''} 
+                                onChange={e=>setField(k,'token',e.target.value)} 
+                                placeholder="如需要鉴权则填写"
+                              />
+                            </div>
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2 text-xs text-yellow-800">
+                              ⚠️ 此渠道暂不支持Web界面配置，请使用配置文件或API直接配置
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="pt-2 border-t">
+                          <Button 
+                            variant="outline" 
+                            onClick={()=>onTest(k)}
+                            disabled={testingChannel === k || Object.keys(channelErrors[k] || {}).length > 0}
+                          >
+                            {testingChannel === k ? '测试中...' : '测试发送'}
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                    
+                    {!c.enabled && (
+                      <div className="text-sm text-muted-foreground py-4 text-center">
+                        勾选"启用"以配置此通知渠道
                       </div>
-                      <div>
-                        <div className="text-muted-foreground">Token（可选）</div>
-                        <Input 
-                          value={c.token||''} 
-                          onChange={e=>setField(k,'token',e.target.value)} 
-                          placeholder="如需要鉴权则填写"
-                        />
-                      </div>
-                    </div>
-                    <div className="pt-2">
-                      <Button 
-                        variant="outline" 
-                        onClick={()=>onTest(k)}
-                        disabled={testingChannel === k || !c.enabled || !c.target}
-                      >
-                        {testingChannel === k ? '测试中...' : '测试发送'}
-                      </Button>
-                    </div>
+                    )}
                   </section>
                 )
               })}
