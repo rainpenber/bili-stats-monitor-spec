@@ -60,11 +60,12 @@ export async function initializeSettings(db: DrizzleInstance): Promise<void> {
 
     if (settingsList.length === 0) {
       await db.insert(settings).values({
-        id: 'default',
-        maxTaskInterval: 1440, // 1 天（分钟）
-        defaultTaskDeadline: 90, // 90 天
-        dataRetentionDays: 365, // 1 年
-        config: {},
+        key: 'system',
+        value: {
+          maxTaskInterval: 1440, // 1 天（分钟）
+          defaultTaskDeadline: 90, // 90 天
+          dataRetentionDays: 365, // 1 年
+        },
         updatedAt: new Date(),
       })
 
