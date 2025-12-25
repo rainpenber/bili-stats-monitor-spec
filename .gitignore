@@ -18,6 +18,10 @@ backend/dist/
 backend/build/
 backend/*.log
 backend/.drizzle/
-# Frontend build artifacts
+# Frontend
 frontend/web/dist/
 frontend/web/tsconfig.tsbuildinfo
+frontend/web/.env
+frontend/web/.env.development
+frontend/web/.env.production
+frontend/web/.env.local
