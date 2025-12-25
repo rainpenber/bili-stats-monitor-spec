@@ -6,9 +6,25 @@ import { errorHandler } from './middlewares/error'
 import { requestLogger } from './middlewares/logger'
 import { success } from './utils/response'
 import { createAccountsRoutes } from './routes/accounts'
+import { createTasksRoutes } from './routes/tasks'
+import { createMetricsRoutes } from './routes/metrics'
+import { createNotificationsRoutes } from './routes/notifications'
+import { createAuthRoutes } from './routes/auth'
+import { createSettingsRoutes } from './routes/settings'
+import { createLogsRoutes } from './routes/logs'
+import { createSchedulerRoutes } from './routes/scheduler'
+import { initializeApp } from './init'
 
 const config = loadConfig()
 const container = createContainer(config)
+
+// 初始化应用（在启动服务之前）
+await initializeApp(container.db)
+
+// 启动调度器
+console.log('🚀 启动任务调度器...')
+await container.scheduler.initializeTaskSchedules()
+container.scheduler.start()
 
 type Env = {
   Variables: {
@@ -34,12 +50,32 @@ app.get('/health', (c) => {
 })
 
 // API routes
+app.route('/api/v1/auth', createAuthRoutes(container.db, config.jwtSecret))
+app.route('/api/v1/settings', createSettingsRoutes(container.db, config.jwtSecret))
 app.route('/api/v1/accounts', createAccountsRoutes(container.db))
+app.route('/api/v1/tasks', createTasksRoutes(container.db))
+app.route('/api/v1/tasks', createMetricsRoutes(container.db))
+app.route('/api/v1/notifications', createNotificationsRoutes(container.db))
+app.route('/api/v1/logs', createLogsRoutes(container.db))
+app.route('/api/v1/scheduler', createSchedulerRoutes(container.scheduler))
 
 const port = config.port
 
 console.log(`🚀 Server running on http://localhost:${port}`)
 console.log(`📦 Database: ${config.database.type}`)
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\n🛑 收到 SIGINT 信号，正在关闭服务器...')
+  container.scheduler.stop()
+  process.exit(0)
+})
+
+process.on('SIGTERM', () => {
+  console.log('\n🛑 收到 SIGTERM 信号，正在关闭服务器...')
+  container.scheduler.stop()
+  process.exit(0)
+})
 
 export default {
   port,

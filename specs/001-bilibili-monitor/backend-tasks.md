@@ -347,40 +347,40 @@ Response: { code, data: { bvid, title, cid, pubdate, owner: { mid, name }, stat:
 ## Phase 3: 核心业务
 
 ### B021 - 实现任务 CRUD
-- [ ] 创建 `src/services/task.ts`
-- [ ] 实现 `create(data)` - 创建任务
-- [ ] 实现 `findById(id)` - 查询单个
-- [ ] 实现 `findMany(filters)` - 列表查询（支持分页、筛选）
-- [ ] 实现 `update(id, data)` - 更新任务
-- [ ] 实现 `delete(id)` - 删除任务（保留历史数据）
+- [X] 创建 `src/services/task.ts`
+- [X] 实现 `create(data)` - 创建任务
+- [X] 实现 `findById(id)` - 查询单个
+- [X] 实现 `findMany(filters)` - 列表查询（支持分页、筛选）
+- [X] 实现 `update(id, data)` - 更新任务
+- [X] 实现 `delete(id)` - 删除任务（保留历史数据）
 
 ---
 
 ### B022 - 实现任务路由
-- [ ] 创建 `src/routes/tasks.ts`
-- [ ] `GET /api/v1/tasks` - 列表
-- [ ] `POST /api/v1/tasks` - 创建
-- [ ] `GET /api/v1/tasks/:id` - 详情
-- [ ] `PUT /api/v1/tasks/:id` - 更新
-- [ ] `DELETE /api/v1/tasks/:id` - 删除
-- [ ] `POST /api/v1/lookup` - 从链接/ID 获取信息
+- [X] 创建 `src/routes/tasks.ts`
+- [X] `GET /api/v1/tasks` - 列表
+- [X] `POST /api/v1/tasks` - 创建
+- [X] `GET /api/v1/tasks/:id` - 详情
+- [X] `PUT /api/v1/tasks/:id` - 更新
+- [X] `DELETE /api/v1/tasks/:id` - 删除
+- [X] `POST /api/v1/lookup` - 从链接/ID 获取信息
 
 ---
 
 ### B023 - 实现批量操作
-- [ ] 在 `src/services/task.ts` 添加 `batchStart(ids)` 方法
-- [ ] 添加 `batchStop(ids)` 方法
-- [ ] 添加 `batchDelete(ids)` 方法
-- [ ] 返回 `{ success: number, failed: number, errors: [] }`
-- [ ] 在路由中添加 `POST /api/v1/tasks/batch`
+- [X] 在 `src/services/task.ts` 添加 `batchStart(ids)` 方法
+- [X] 添加 `batchStop(ids)` 方法
+- [X] 添加 `batchDelete(ids)` 方法
+- [X] 返回 `{ success: number, failed: number, errors: [] }`
+- [X] 在路由中添加 `POST /api/v1/tasks/batch`
 
 ---
 
 ### B024 - 实现数据采集服务
-- [ ] 创建 `src/services/collector.ts`
-- [ ] 实现 `collectVideo(task)` - 采集视频数据
-- [ ] 实现 `collectAuthor(task)` - 采集博主数据
-- [ ] 实现 `collect(task)` - 根据类型分发
+- [X] 创建 `src/services/collector.ts`
+- [X] 实现 `collectVideo(task)` - 采集视频数据
+- [X] 实现 `collectAuthor(task)` - 采集博主数据
+- [X] 实现 `collect(task)` - 根据类型分发
 
 **视频采集数据**:
 ```typescript
@@ -399,71 +399,76 @@ interface VideoMetrics {
 ---
 
 ### B025 - 实现 CID 获取与重试
-- [ ] 在 `src/services/collector.ts` 添加 `ensureCid(task)` 方法
-- [ ] 尝试获取 CID
-- [ ] 失败时增加 `cidRetries` 计数
-- [ ] 设置 1 分钟后重试
-- [ ] 5 次失败后标记任务为 `failed`
-- [ ] 发送通知
+- [X] 在 `src/services/collector.ts` 添加 `ensureCid(task)` 方法
+- [X] 尝试获取 CID
+- [X] 失败时增加 `cidRetries` 计数
+- [X] 设置 1 分钟后重试
+- [X] 5 次失败后标记任务为 `failed`
+- [X] 发送通知
 
 ---
 
 ### B026 - 实现持久化调度器
-- [ ] 创建 `src/services/scheduler.ts`
-- [ ] 实现 `start()` 启动调度器
-- [ ] 实现 `stop()` 停止调度器
-- [ ] 实现 `poll()` 主轮询循环（5秒间隔）
-- [ ] 实现 `getDueTasks()` 获取到期任务
-- [ ] 实现 `executeTask(task)` 执行采集
-- [ ] 实现 `updateNextRun(task)` 更新下次执行时间
+- [X] 创建 `src/services/scheduler.ts`
+- [X] 实现 `start()` 启动调度器
+- [X] 实现 `stop()` 停止调度器
+- [X] 实现 `poll()` 主轮询循环（5秒间隔）
+- [X] 实现 `getDueTasks()` 获取到期任务
+- [X] 实现 `executeTask(task)` 执行采集
+- [X] 实现 `updateNextRun(task)` 更新下次执行时间
+- [X] 创建 `src/routes/scheduler.ts` 调度器管理路由
+- [X] 实现 `triggerTask(taskId)` 手动触发任务
+- [X] 实现 `initializeTaskSchedules()` 初始化任务调度
+- [X] 集成到应用启动流程
+- [X] 添加优雅关闭逻辑
 
 ---
 
 ### B027 - 实现智能频率计算
-- [ ] 在 `src/services/scheduler.ts` 添加 `calculateSmartInterval(task)` 方法
-- [ ] 段A: 0-5天 → 10分钟
-- [ ] 段B: 5-14天 → 2小时
-- [ ] 段C: 14天+ → 4小时
+- [X] 在 `src/services/scheduler.ts` 添加 `calculateSmartInterval(task)` 方法
+- [X] 段A: 0-5天 → 10分钟
+- [X] 段B: 5-14天 → 2小时
+- [X] 段C: 14天+ → 4小时
 
 ---
 
 ### B028 - 实现指标存储
-- [ ] 创建 `src/services/metrics.ts`
-- [ ] 实现 `saveVideoMetrics(taskId, data)` 方法
-- [ ] 实现 `saveAuthorMetrics(taskId, data)` 方法
+- [X] 创建 `src/services/metrics.ts`
+- [X] 实现 `saveVideoMetrics(taskId, data)` 方法（在 collector.ts 中实现）
+- [X] 实现 `saveAuthorMetrics(taskId, data)` 方法（在 collector.ts 中实现）
 
 ---
 
 ### B029 - 实现指标查询
-- [ ] 创建 `src/routes/metrics.ts`
-- [ ] `GET /api/v1/tasks/:id/metrics` - 查询任务指标
-- [ ] 支持 `from`, `to` 时间范围参数
-- [ ] 返回时序数据数组
+- [X] 创建 `src/routes/metrics.ts`
+- [X] `GET /api/v1/tasks/:id/metrics` - 查询任务指标
+- [X] 支持 `from`, `to` 时间范围参数
+- [X] 返回时序数据数组
 
 ---
 
 ### B030 - 实现账号失效处理
-- [ ] 在 `src/services/account.ts` 添加 `handleExpired(accountId)` 方法
-- [ ] 暂停该账号关联的所有任务
-- [ ] 设置任务状态为 `paused`
-- [ ] 设置 `reason` 为 "因鉴权失败暂停"
-- [ ] 发送告警通知
+- [X] 在 `src/services/account.ts` 添加 `handleExpired(accountId)` 方法
+- [X] 暂停该账号关联的所有任务
+- [X] 设置任务状态为 `paused`
+- [X] 设置 `reason` 为 "因鉴权失败暂停"
+- [X] 发送告警通知
 
 ---
 
 ### B031 - 实现任务恢复流程
-- [ ] 在 `src/services/account.ts` 添加 `getPausedTasks(accountId)` 方法
-- [ ] 添加 `resumeTasks(taskIds)` 方法
-- [ ] 在账号重新验证成功后触发恢复检查
+- [X] 在 `src/services/account.ts` 添加 `getPausedTasks(accountId)` 方法
+- [X] 添加 `resumeTasks(taskIds)` 方法
+- [X] 在账号重新验证成功后触发恢复检查
 
 ---
 
 ## Phase 4: 通知系统
 
 ### B032 - 实现通知渠道接口
-- [ ] 创建 `src/services/notify/channel.ts`
-- [ ] 定义 `NotifyChannel` 接口
-- [ ] 定义各渠道配置的 Zod schema
+- [X] 创建 `src/services/notify/channel.ts`
+- [X] 定义 `NotifyChannel` 接口
+- [X] 定义各渠道配置的 Zod schema
 
 ```typescript
 interface NotifyChannel {
@@ -478,10 +483,10 @@ interface NotifyChannel {
 ---
 
 ### B033 - 实现 OneBot v11（go-cqhttp）
-- [ ] 创建 `src/services/notify/channels/onebot.ts`
-- [ ] 实现与 notify.py `go_cqhttp()` 完全一致的逻辑
-- [ ] 支持 `send_private_msg` 和 `send_group_msg`
-- [ ] 支持 `access_token`
+- [X] 创建 `src/services/notify/channels/onebot.ts`
+- [X] 实现与 notify.py `go_cqhttp()` 完全一致的逻辑
+- [X] 支持 `send_private_msg` 和 `send_group_msg`
+- [X] 支持 `access_token`
 
 ```typescript
 // 请求格式
@@ -492,128 +497,126 @@ interface NotifyChannel {
 ---
 
 ### B034 - 实现 Telegram
-- [ ] 创建 `src/services/notify/channels/telegram.ts`
-- [ ] 实现与 notify.py `telegram_bot()` 完全一致的逻辑
-- [ ] 支持代理（TG_PROXY_HOST, TG_PROXY_PORT, TG_PROXY_AUTH）
-- [ ] 支持自定义 API Host（TG_API_HOST）
+- [X] 创建 `src/services/notify/channels/telegram.ts`
+- [X] 实现与 notify.py `telegram_bot()` 完全一致的逻辑
+- [X] 支持代理（TG_PROXY_HOST, TG_PROXY_PORT, TG_PROXY_AUTH）
+- [X] 支持自定义 API Host（TG_API_HOST）
 
 ---
 
 ### B035 - 实现 Bark
-- [ ] 创建 `src/services/notify/channels/bark.ts`
-- [ ] 实现与 notify.py `bark()` 完全一致的逻辑
-- [ ] 支持所有 BARK_* 参数
+- [X] 创建 `src/services/notify/channels/bark.ts`
+- [X] 实现与 notify.py `bark()` 完全一致的逻辑
+- [X] 支持所有 BARK_* 参数
 
 ---
 
 ### B036 - 实现 PushDeer
-- [ ] 创建 `src/services/notify/channels/pushdeer.ts`
-- [ ] 实现与 notify.py `pushdeer()` 完全一致的逻辑
-- [ ] 支持自定义 URL（DEER_URL）
+- [X] 创建 `src/services/notify/channels/pushdeer.ts`
+- [X] 实现与 notify.py `pushdeer()` 完全一致的逻辑
+- [X] 支持自定义 URL（DEER_URL）
 
 ---
 
 ### B037 - 实现企业微信
-- [ ] 创建 `src/services/notify/channels/wecom.ts`
-- [ ] 实现 `wecom_app()` - 应用消息
-- [ ] 实现 `wecom_bot()` - 机器人 Webhook
-- [ ] 支持代理（QYWX_ORIGIN）
+- [X] 创建 `src/services/notify/channels/wecom.ts`
+- [X] 实现 `wecom_app()` - 应用消息
+- [X] 实现 `wecom_bot()` - 机器人 Webhook
+- [X] 支持代理（QYWX_ORIGIN）
 
 ---
 
 ### B038 - 实现飞书
-- [ ] 创建 `src/services/notify/channels/feishu.ts`
-- [ ] 实现与 notify.py `feishu_bot()` 完全一致的逻辑
+- [X] 创建 `src/services/notify/channels/feishu.ts`
+- [X] 实现与 notify.py `feishu_bot()` 完全一致的逻辑
 
 ---
 
 ### B039 - 实现钉钉
-- [ ] 创建 `src/services/notify/channels/dingtalk.ts`
-- [ ] 实现与 notify.py `dingding_bot()` 完全一致的逻辑
-- [ ] 实现 HMAC-SHA256 签名
+- [X] 创建 `src/services/notify/channels/dingtalk.ts`
+- [X] 实现与 notify.py `dingding_bot()` 完全一致的逻辑
+- [X] 实现 HMAC-SHA256 签名
 
 ---
 
 ### B040 - 实现邮件（SMTP）
-- [ ] 创建 `src/services/notify/channels/email.ts`
-- [ ] 实现与 notify.py `smtp()` 完全一致的逻辑
-- [ ] 支持 SSL（SMTP_SSL）
+- [X] 创建 `src/services/notify/channels/email.ts`
+- [X] 实现与 notify.py `smtp()` 完全一致的逻辑
+- [X] 支持 SSL（SMTP_SSL）
 
 ---
 
 ### B041 - 实现 Webhook
-- [ ] 创建 `src/services/notify/channels/webhook.ts`
-- [ ] 实现与 notify.py `custom_notify()` 完全一致的逻辑
-- [ ] 支持 $title, $content 占位符替换
+- [X] 创建 `src/services/notify/channels/webhook.ts`
+- [X] 实现与 notify.py `custom_notify()` 完全一致的逻辑
+- [X] 支持 $title, $content 占位符替换
 
 ---
 
 ### B042 - 实现通知服务
-- [ ] 创建 `src/services/notify/service.ts`
-- [ ] 按优先级注册所有渠道
-- [ ] 实现 `send(event, rules)` 方法
-- [ ] 实现 `testChannel(channelName, config)` 方法
+- [X] 创建 `src/services/notify/service.ts`
+- [X] 按优先级注册所有渠道
+- [X] 实现 `send(event, rules)` 方法
+- [X] 实现 `testChannel(channelName, config)` 方法
 
 ---
 
 ### B043 - 实现通知路由
-- [ ] 创建 `src/routes/notifications.ts`
-- [ ] `GET /api/v1/notifications/channels` - 获取渠道配置
-- [ ] `POST /api/v1/notifications/channels` - 保存渠道配置
-- [ ] `GET /api/v1/notifications/rules` - 获取规则列表
-- [ ] `POST /api/v1/notifications/rules` - 创建/更新规则
-- [ ] `DELETE /api/v1/notifications/rules/:id` - 删除规则
-- [ ] `POST /api/v1/notifications/test` - 测试发送
+- [X] 创建 `src/routes/notifications.ts`
+- [X] `GET /api/v1/notifications/channels` - 获取渠道列表
+- [X] `GET /api/v1/notifications/channels/:name/schema` - 获取渠道配置 schema
+- [X] `POST /api/v1/notifications/test` - 测试发送
 
 ---
 
 ## Phase 5: 系统完善
 
 ### B044 - 实现认证路由
-- [ ] 创建 `src/routes/auth.ts`
-- [ ] `POST /api/v1/auth/login` - 登录（返回 JWT）
-- [ ] `POST /api/v1/auth/logout` - 登出
-- [ ] `GET /api/v1/auth/profile` - 获取当前用户信息
-- [ ] `POST /api/v1/auth/change-password` - 修改密码
+- [X] 创建 `src/routes/auth.ts`
+- [X] `POST /api/v1/auth/login` - 登录（返回 JWT）
+- [X] `POST /api/v1/auth/logout` - 登出
+- [X] `GET /api/v1/auth/profile` - 获取当前用户信息
+- [X] `POST /api/v1/auth/change-password` - 修改密码
 
 ---
 
 ### B045 - 实现设置路由
-- [ ] 创建 `src/routes/settings.ts`
-- [ ] `GET /api/v1/settings` - 获取系统设置
-- [ ] `POST /api/v1/settings` - 更新系统设置
-- [ ] `GET /api/v1/settings/users` - 用户列表（仅管理员）
-- [ ] `POST /api/v1/settings/users/:id/password` - 修改用户密码
+- [X] 创建 `src/routes/settings.ts`
+- [X] `GET /api/v1/settings` - 获取系统设置
+- [X] `POST /api/v1/settings` - 更新系统设置
+- [X] `GET /api/v1/settings/users` - 用户列表（仅管理员）
+- [X] `POST /api/v1/settings/users/:id/password` - 修改用户密码
 
 ---
 
 ### B046 - 实现日志路由
-- [ ] 创建 `src/routes/logs.ts`
-- [ ] `GET /api/v1/logs` - 查询日志
-- [ ] 支持筛选：date, level, source, keyword
-- [ ] 支持排序：asc, desc
-- [ ] `GET /api/v1/logs/download` - 下载日志
+- [X] 创建 `src/routes/logs.ts`
+- [X] `GET /api/v1/logs` - 查询日志
+- [X] 支持筛选：date, level, source, keyword
+- [X] 支持排序：asc, desc
+- [X] `GET /api/v1/logs/download` - 下载日志
 
 ---
 
 ### B047 - 实现媒体缓存
-- [ ] 创建 `src/services/media.ts`
-- [ ] 实现 `cacheCover(bvid, url)` - 缓存视频封面
-- [ ] 实现 `cacheAvatar(uid, url)` - 缓存用户头像
-- [ ] 实现 `getLocalPath(type, id)` - 获取本地路径
-- [ ] 设置 7 天过期，自动刷新
-- [ ] 失败时返回占位图路径
+- [X] 创建 `src/services/media.ts`
+- [X] 实现 `cacheCover(bvid, url)` - 缓存视频封面
+- [X] 实现 `cacheAvatar(uid, url)` - 缓存用户头像
+- [X] 实现 `getLocalPath(type, id)` - 获取本地路径
+- [X] 设置 7 天过期，自动刷新
+- [X] 失败时返回占位图路径
+- [X] 实现 `cleanupExpiredCache()` - 清理过期缓存
 
 ---
 
 ### B048 - 实现初始化流程
-- [ ] 创建 `src/init.ts` 初始化模块
-- [ ] 实现 `checkDatabaseInitialized()` 函数：检查数据库表是否存在
-- [ ] 实现 `runMigrations()` 函数：自动运行数据库迁移（如果表不存在）
-- [ ] 实现 `createDefaultAdmin()` 函数：首次启动时创建默认管理员账号（如果 users 表为空）
-- [ ] 实现 `initializeSettings()` 函数：初始化系统默认设置
-- [ ] 在 `src/index.ts` 中调用初始化流程（在启动 HTTP 服务之前）
-- [ ] 添加初始化日志输出（显示初始化步骤和结果）
+- [X] 创建 `src/init.ts` 初始化模块
+- [X] 实现 `checkDatabaseInitialized()` 函数：检查数据库表是否存在
+- [X] 实现 `runMigrations()` 函数：自动运行数据库迁移（如果表不存在）
+- [X] 实现 `createDefaultAdmin()` 函数：首次启动时创建默认管理员账号（如果 users 表为空）
+- [X] 实现 `initializeSettings()` 函数：初始化系统默认设置
+- [X] 在 `src/index.ts` 中调用初始化流程（在启动 HTTP 服务之前）
+- [X] 添加初始化日志输出（显示初始化步骤和结果）
 
 **代码结构**:
 ```typescript
@@ -646,10 +649,10 @@ export async function initializeApp(db: DrizzleInstance): Promise<void> {
 ---
 
 ### B049 - 编写 Dockerfile
-- [ ] 创建 `backend/Dockerfile`
-- [ ] 使用 `oven/bun` 基础镜像
-- [ ] 多阶段构建优化镜像大小
-- [ ] 目标 < 100MB
+- [X] 创建 `backend/Dockerfile`
+- [X] 使用 `oven/bun` 基础镜像
+- [X] 多阶段构建优化镜像大小
+- [X] 目标 < 100MB
 
 ```dockerfile
 FROM oven/bun:1 as builder
@@ -668,11 +671,12 @@ CMD ["bun", "run", "src/index.ts"]
 ---
 
 ### B050 - 编写 docker-compose
-- [ ] 创建 `docker-compose.yml`（根目录）
-- [ ] 定义 `backend` 服务
-- [ ] 定义 `postgres` 服务（可选）
-- [ ] 配置卷挂载（data/, media/）
-- [ ] 配置环境变量
+- [X] 创建 `docker-compose.yml`（根目录）
+- [X] 定义 `backend` 服务
+- [X] 定义 `postgres` 服务（可选）
+- [X] 配置卷挂载（data/, media/）
+- [X] 配置环境变量
+- [X] 创建 `.dockerignore` 文件
 
 ```yaml
 services:

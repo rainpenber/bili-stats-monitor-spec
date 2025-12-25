@@ -21,7 +21,6 @@ export default function TaskFormModal() {
 
   // 根据任务类型选择 schema 和默认值
   const videoForm = useForm<VideoTaskFormData>({
-    // @ts-expect-error - zod 类型推断问题，tags 字段即使有 default 仍可能被推断为可选
     resolver: zodResolver(videoTaskSchema),
     defaultValues: {
       title: '',
@@ -38,7 +37,6 @@ export default function TaskFormModal() {
   })
 
   const authorForm = useForm<AuthorTaskFormData>({
-    // @ts-expect-error - zod 类型推断问题，tags 字段即使有 default 仍可能被推断为可选
     resolver: zodResolver(authorTaskSchema),
     defaultValues: {
       nickname: '',
