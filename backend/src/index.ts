@@ -61,6 +61,12 @@ app.route('/api/v1/scheduler', createSchedulerRoutes(container.scheduler))
 
 const port = config.port
 
+// Start the server
+const server = Bun.serve({
+  port,
+  fetch: app.fetch,
+})
+
 console.log(`🚀 Server running on http://localhost:${port}`)
 console.log(`📦 Database: ${config.database.type}`)
 
@@ -68,17 +74,16 @@ console.log(`📦 Database: ${config.database.type}`)
 process.on('SIGINT', () => {
   console.log('\n🛑 收到 SIGINT 信号，正在关闭服务器...')
   container.scheduler.stop()
+  server.stop()
   process.exit(0)
 })
 
 process.on('SIGTERM', () => {
   console.log('\n🛑 收到 SIGTERM 信号，正在关闭服务器...')
   container.scheduler.stop()
+  server.stop()
   process.exit(0)
 })
 
-export default {
-  port,
-  fetch: app.fetch,
-}
+export default server
 
