@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+bun.lockb
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test and coverage
+coverage/
+*.test.ts
+tests/
+
+# Documentation
+*.md
+!README.md
+
+# Data directories
+data/
+media/
+logs/
+
+# Drizzle
+.drizzle/
+

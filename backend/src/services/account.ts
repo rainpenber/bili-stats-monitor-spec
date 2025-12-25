@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { getEncryptKey, encrypt, decrypt } from '../utils/crypto'
 import { biliClient } from './bili/client'
 import { wbiService } from './bili/wbi'
@@ -163,28 +163,42 @@ export class AccountService {
       } else {
         // 失败：增加失败计数
         const newFailures = (account.lastFailures || 0) + 1
+        const newStatus = newFailures > 5 ? 'expired' : account.status
+
         await this.db
           .update(accounts)
           .set({
             lastFailures: newFailures,
-            status: newFailures > 5 ? 'expired' : account.status,
+            status: newStatus,
             updatedAt: new Date(),
           })
           .where(eq(accounts.id, accountId))
+
+        // 如果账号失效，触发失效处理
+        if (newStatus === 'expired' && account.status !== 'expired') {
+          await this.handleExpired(accountId)
+        }
 
         return false
       }
     } catch (error) {
       // 请求失败：增加失败计数
       const newFailures = (account.lastFailures || 0) + 1
+      const newStatus = newFailures > 5 ? 'expired' : account.status
+
       await this.db
         .update(accounts)
         .set({
           lastFailures: newFailures,
-          status: newFailures > 5 ? 'expired' : account.status,
+          status: newStatus,
           updatedAt: new Date(),
         })
         .where(eq(accounts.id, accountId))
+
+      // 如果账号失效，触发失效处理
+      if (newStatus === 'expired' && account.status !== 'expired') {
+        await this.handleExpired(accountId)
+      }
 
       return false
     }
@@ -279,6 +293,67 @@ export class AccountService {
       .limit(1)
 
     return accountList.length > 0 ? accountList[0] : null
+  }
+
+  /**
+   * 处理账号失效
+   */
+  async handleExpired(accountId: string): Promise<void> {
+    // 导入 tasks 表
+    const { tasks } = await import('../db/schema')
+
+    // 暂停该账号关联的所有运行中的任务
+    await this.db
+      .update(tasks)
+      .set({
+        status: 'paused',
+        reason: '因鉴权失败暂停',
+        updatedAt: new Date(),
+      })
+      .where(and(eq(tasks.accountId, accountId), eq(tasks.status, 'running'))!)
+
+    // TODO: 发送告警通知
+    console.warn(`Account ${accountId} expired, all related tasks have been paused`)
+  }
+
+  /**
+   * 获取被暂停的任务列表
+   */
+  async getPausedTasks(accountId: string) {
+    const { tasks } = await import('../db/schema')
+
+    const pausedTasks = await this.db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.accountId, accountId),
+          eq(tasks.status, 'paused'),
+          eq(tasks.reason, '因鉴权失败暂停')
+        )!
+      )
+
+    return pausedTasks
+  }
+
+  /**
+   * 恢复任务
+   */
+  async resumeTasks(taskIds: string[]): Promise<void> {
+    const { tasks } = await import('../db/schema')
+
+    for (const taskId of taskIds) {
+      await this.db
+        .update(tasks)
+        .set({
+          status: 'running',
+          reason: null,
+          updatedAt: new Date(),
+        })
+        .where(eq(tasks.id, taskId))
+    }
+
+    console.log(`Resumed ${taskIds.length} tasks`)
   }
 }
 

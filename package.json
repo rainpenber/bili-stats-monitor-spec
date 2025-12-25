@@ -11,12 +11,21 @@
     "build:web": "pnpm --filter bili-stats-monitor-spec build",
     "preview:web": "pnpm --filter bili-stats-monitor-spec preview",
     "dev:mock": "node specs/001-bilibili-monitor/mocks/mock-server.js",
-    "dev:all": "concurrently -k \"pnpm dev:mock\" \"pnpm dev:web\""
+    "dev:all": "concurrently -k \"pnpm dev:mock\" \"pnpm dev:web\"",
+    "test": "pnpm -r test",
+    "test:backend": "pnpm --filter bili-stats-monitor-backend test",
+    "test:frontend": "pnpm --filter bili-stats-monitor-spec test",
+    "test:coverage": "pnpm -r test:coverage",
+    "generate:types": "openapi-typescript specs/001-bilibili-monitor/api/openapi.yaml -o frontend/web/src/types/api-schema.d.ts",
+    "validate:contract": "bun run scripts/validate-api-contract.ts"
   },
   "devDependencies": {
     "body-parser": "^1.20.3",
     "concurrently": "^9.0.1",
     "cors": "^2.8.5",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "glob": "^13.0.0",
+    "openapi-typescript": "^7.10.1",
+    "yaml": "^2.8.2"
   }
 }
