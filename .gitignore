@@ -15,3 +15,4 @@ backend/dist/
 backend/build/
 backend/*.log
 backend/.drizzle/
+/frontend/web/dist
