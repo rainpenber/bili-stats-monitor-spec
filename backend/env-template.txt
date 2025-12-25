@@ -1,0 +1,122 @@
+# ============================================================
+# Bili Stats Monitor - 环境变量模板
+# Environment Variables Template
+# ============================================================
+# 
+# 使用说明：
+# 1. 开发环境：复制此文件为 .env.development
+# 2. 生产环境：复制此文件为 .env.production
+# 3. 根据实际情况修改配置值
+# 4. .env* 文件已被 .gitignore 忽略，不会提交到版本控制
+#
+# ============================================================
+
+# ===== 应用配置 =====
+# 环境模式: development | production
+NODE_ENV=development
+
+# 应用端口
+PORT=3000
+
+# ===== 数据库配置 =====
+# SQLite数据库文件路径
+# 开发环境示例: ./data/dev/bili-stats-dev.db
+# 生产环境示例: ./data/prod/bili-stats.db
+DATABASE_URL=./data/dev/bili-stats-dev.db
+
+# ===== JWT密钥配置 =====
+# JWT加密密钥（生产环境必须使用强密钥，至少32字符）
+# 生产环境请使用随机生成的强密钥，例如：
+# openssl rand -base64 48
+JWT_SECRET=your-secret-key-here-change-in-production
+
+# ===== Bilibili API配置 =====
+# User-Agent（模拟浏览器请求）
+BILI_USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+# API请求间隔（毫秒，避免请求过于频繁）
+# 开发环境: 1000
+# 生产环境: 2000（更保守）
+BILI_REQUEST_INTERVAL=1000
+
+# API请求超时时间（毫秒）
+BILI_REQUEST_TIMEOUT=10000
+
+# ===== 媒体资源配置 =====
+# 媒体文件存储路径（封面、头像等）
+# 开发环境: ./data/dev/media
+# 生产环境: ./data/prod/media
+MEDIA_STORAGE_PATH=./data/dev/media
+
+# 媒体缓存过期时间（小时）
+MEDIA_CACHE_EXPIRY=168
+
+# ===== 日志配置 =====
+# 日志级别: debug | info | warn | error
+# 开发环境建议: debug
+# 生产环境建议: info
+LOG_LEVEL=debug
+
+# 日志文件路径
+# 开发环境: ./data/dev/logs
+# 生产环境: ./data/prod/logs
+LOG_FILE_PATH=./data/dev/logs
+
+# 日志保留天数
+# 开发环境: 7
+# 生产环境: 30
+LOG_RETENTION_DAYS=7
+
+# ===== CORS配置 =====
+# 允许的前端域名（逗号分隔）
+# 开发环境示例: http://localhost:5173,http://localhost:5174
+# 生产环境示例: https://yourdomain.com,https://www.yourdomain.com
+CORS_ORIGIN=http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173
+
+# ===== 任务调度配置 =====
+# 默认最小采集间隔（分钟）
+# 开发环境: 1
+# 生产环境: 5
+MIN_COLLECTION_INTERVAL=1
+
+# 并发任务数量限制
+# 开发环境: 5
+# 生产环境: 10
+MAX_CONCURRENT_TASKS=5
+
+# ===== 通知配置 =====
+# 通知配置文件路径
+# 开发环境: ./data/dev/notifications.json
+# 生产环境: ./data/prod/notifications.json
+NOTIFICATION_CONFIG_PATH=./data/dev/notifications.json
+
+# ===== 性能配置 =====
+# 是否启用查询缓存
+ENABLE_QUERY_CACHE=true
+
+# 缓存过期时间（秒）
+# 开发环境: 300
+# 生产环境: 600
+CACHE_TTL=300
+
+# ===== 调试配置 =====
+# 是否启用详细错误信息（生产环境建议关闭）
+ENABLE_DETAILED_ERRORS=true
+
+# 是否启用API请求日志（生产环境建议关闭）
+ENABLE_API_LOGGING=true
+
+# 是否启用性能监控
+ENABLE_PERFORMANCE_MONITORING=true
+
+# ===== 前端配置 =====
+# 前端构建输出路径
+FRONTEND_DIST_PATH=../frontend/web/dist
+
+# ===== 开发工具配置（仅开发环境） =====
+# 是否启用热重载
+ENABLE_HOT_RELOAD=true
+
+# 是否启用Mock数据
+ENABLE_MOCK_DATA=false
+

@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run src/index.ts",
-    "start": "bun run src/index.ts",
+    "dev": "bun run scripts/start-dev.ts",
+    "start": "bun run scripts/start-prod.ts",
+    "start:dev": "bun run scripts/start-dev.ts",
+    "start:prod": "bun run scripts/start-prod.ts",
+    "generate-secret": "bun run scripts/generate-jwt-secret.ts",
     "db:generate": "drizzle-kit generate:sqlite",
     "db:generate:pg": "drizzle-kit generate:pg",
     "db:push": "drizzle-kit push:sqlite --schema ./src/db/schema.ts --url ./data/app.db --driver better-sqlite",
