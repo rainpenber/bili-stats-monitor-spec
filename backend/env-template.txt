@@ -19,10 +19,17 @@ NODE_ENV=development
 PORT=3000
 
 # ===== 数据库配置 =====
-# SQLite数据库文件路径
+# 数据库类型: sqlite | postgres
+DB_TYPE=sqlite
+
+# SQLite数据库文件路径（当DB_TYPE=sqlite时使用）
 # 开发环境示例: ./data/dev/bili-stats-dev.db
 # 生产环境示例: ./data/prod/bili-stats.db
-DATABASE_URL=./data/dev/bili-stats-dev.db
+SQLITE_PATH=./data/dev/bili-stats-dev.db
+
+# PostgreSQL连接URL（当DB_TYPE=postgres时使用）
+# 示例: postgresql://user:password@localhost:5432/dbname
+# DATABASE_URL=postgresql://user:password@localhost:5432/bili_stats
 
 # ===== JWT密钥配置 =====
 # JWT加密密钥（生产环境必须使用强密钥，至少32字符）

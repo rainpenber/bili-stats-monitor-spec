@@ -4,6 +4,31 @@
  * Development Environment Startup Script
  */
 
+import { readFileSync, existsSync } from 'fs'
+import { resolve } from 'path'
+
+// 加载 .env.development 文件
+const envPath = resolve(import.meta.dir, '../.env.development')
+if (existsSync(envPath)) {
+  try {
+    const envFile = readFileSync(envPath, 'utf-8')
+    envFile.split('\n').forEach(line => {
+      line = line.trim()
+      if (line && !line.startsWith('#')) {
+        const [key, ...values] = line.split('=')
+        if (key && !process.env[key.trim()]) {
+          process.env[key.trim()] = values.join('=').trim()
+        }
+      }
+    })
+    console.log('✅ Loaded .env.development')
+  } catch (error) {
+    console.warn('⚠️  Failed to load .env.development:', error)
+  }
+} else {
+  console.warn('⚠️  .env.development not found')
+}
+
 // 设置环境变量
 process.env.NODE_ENV = 'development'
 
