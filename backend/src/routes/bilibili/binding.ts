@@ -19,14 +19,19 @@ app.post(
   '/bind/cookie',
   zValidator('json', cookieBindingSchema),
   async (c) => {
+    const payload = c.get('jwtPayload')
+    const userId = payload.userId as string
+    
+    console.log(`[Bilibili Binding] Cookie binding attempt - userId: ${userId}`)
+    
     try {
       const { cookie } = c.req.valid('json')
-      const payload = c.get('jwtPayload')
-      const userId = payload.userId as string
 
       const result = await accountBindingService.bindByCookie(cookie, userId)
 
       if (!result.success) {
+        console.log(`[Bilibili Binding] Cookie binding failed - userId: ${userId}, reason: ${result.error}`)
+        
         // 错误码映射
         const errorMap: Record<string, { code: string; status: number }> = {
           '无效的Cookie或Cookie已过期': { code: 'COOKIE_INVALID', status: 400 },
@@ -41,6 +46,8 @@ app.post(
           errorInfo.status as 400 | 409 | 500
         )
       }
+
+      console.log(`[Bilibili Binding] Cookie binding success - userId: ${userId}, accountId: ${result.account!.id}, uid: ${result.account!.uid}`)
 
       // 成功响应
       return c.json(
@@ -57,7 +64,7 @@ app.post(
         201
       )
     } catch (error) {
-      console.error('Error in POST /bind/cookie:', error)
+      console.error(`[Bilibili Binding] Cookie binding error - userId: ${userId}`, error)
       return c.json(
         { error: 'INTERNAL_ERROR', message: '服务器内部错误' },
         500
@@ -71,18 +78,23 @@ app.post(
  * 生成二维码
  */
 app.post('/bind/qrcode/generate', async (c) => {
+  const payload = c.get('jwtPayload')
+  const userId = payload.userId as string
+  
+  console.log(`[Bilibili Binding] QR code generation attempt - userId: ${userId}`)
+  
   try {
-    const payload = c.get('jwtPayload')
-    const userId = payload.userId as string
-
     const result = await accountBindingService.generateQRCode(userId)
 
     if (!result.success) {
+      console.log(`[Bilibili Binding] QR code generation failed - userId: ${userId}, reason: ${result.error}`)
       return c.json(
         { error: 'QRCODE_GENERATION_FAILED', message: result.error || '生成二维码失败' },
         500
       )
     }
+
+    console.log(`[Bilibili Binding] QR code generated - userId: ${userId}, qrcodeKey: ${result.session!.qrcodeKey}`)
 
     // 成功响应
     return c.json(
@@ -94,7 +106,7 @@ app.post('/bind/qrcode/generate', async (c) => {
       201
     )
   } catch (error) {
-    console.error('Error in POST /bind/qrcode/generate:', error)
+    console.error(`[Bilibili Binding] QR code generation error - userId: ${userId}`, error)
     return c.json(
       { error: 'INTERNAL_ERROR', message: '服务器内部错误' },
       500

@@ -290,6 +290,47 @@ npm run start  # 自动使用生产配置
 - 📖 [完整环境配置指南](./docs/ENVIRONMENT_SETUP.md) - 详细的配置说明
 - 📖 [快速开始指南](./ENVIRONMENT_QUICKSTART.md) - 更多示例和技巧
 - 📖 [环境变量模板](./env-template.txt) - 所有可配置项的说明
+- 📖 [数据加密密钥说明](./ENCRYPT_KEY说明.md) - ENCRYPT_KEY配置和使用
+
+---
+
+## 🔗 B站账号绑定功能
+
+本系统支持绑定B站账号用于创建监控任务。提供两种绑定方式：
+
+### Cookie绑定
+- 用户手动从浏览器获取Cookie（包含SESSDATA字段）
+- 系统验证Cookie有效性并加密存储
+- 适合技术用户快速绑定
+
+### 扫码登录绑定
+- 系统生成二维码，用户使用B站App扫码
+- 每2秒自动轮询登录状态
+- 180秒二维码有效期
+- 适合普通用户安全绑定
+
+### 账号管理
+- 查看所有已绑定账号及其状态（有效/已过期）
+- 解绑不需要的账号
+- 过期账号一键重新绑定
+- 实时状态监控
+
+### 技术实现
+- **加密存储**: 使用AES-256-GCM加密SESSDATA和bili_jct
+- **JWT认证**: 所有API端点需要JWT Token
+- **智能轮询**: 自动状态管理，组件卸载时清理定时器
+- **错误处理**: 7种错误码映射，友好的错误提示
+
+### API端点
+```
+POST   /api/v1/bilibili/bind/cookie             # Cookie绑定
+POST   /api/v1/bilibili/bind/qrcode/generate    # 生成二维码
+GET    /api/v1/bilibili/bind/qrcode/poll        # 轮询二维码状态
+GET    /api/v1/bilibili/accounts                # 获取账号列表
+DELETE /api/v1/bilibili/accounts/:accountId     # 解绑账号
+```
+
+详见：`specs/004-bilibili-account-binding/` 目录下的完整规范文档。
 
 ---
 
@@ -300,11 +341,12 @@ npm run start  # 自动使用生产配置
 - ✅ 使用 `npm run start` 启动生产环境
 - ✅ 两套环境数据完全隔离
 - ✅ 一键切换，无需手动修改配置
+- ✅ 绑定B站账号创建监控任务
 
 祝开发愉快！🚀
 
 ---
 
-**最后更新**: 2025-12-25  
+**最后更新**: 2025-12-27  
 **创建者**: AI Assistant
 

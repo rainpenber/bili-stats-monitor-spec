@@ -149,37 +149,37 @@
 
 ### Error Handling & User Experience
 
-- [ ] T044 [P] 在所有API调用中统一错误处理（使用TanStack Query的error boundary）
-- [ ] T045 [P] 添加Loading状态指示器（绑定过程中的加载动画）
-- [ ] T046 [P] 实现网络超时处理（Cookie验证和二维码轮询的超时提示）
-- [ ] T047 统一错误提示样式和位置（使用sonner toast组件）
+- [x] T044 [P] 在所有API调用中统一错误处理（使用TanStack Query的error boundary）
+- [x] T045 [P] 添加Loading状态指示器（绑定过程中的加载动画）
+- [x] T046 [P] 实现网络超时处理（Cookie验证和二维码轮询的超时提示）
+- [x] T047 统一错误提示样式和位置（使用sonner toast组件）
 
 ### Performance & Security
 
-- [ ] T048 [P] 在backend路由中添加请求日志（记录绑定尝试、失败原因）
-- [ ] T049 [P] 验证ENCRYPT_KEY环境变量已正确配置（开发和生产环境）
-- [ ] T050 在frontend实现防抖处理（Cookie验证和二维码生成按钮）
-- [ ] T051 [P] 添加安全headers（CSP、CORS配置检查）
+- [x] T048 [P] 在backend路由中添加请求日志（记录绑定尝试、失败原因）
+- [x] T049 [P] 验证ENCRYPT_KEY环境变量已正确配置（开发和生产环境）
+- [x] T050 在frontend实现防抖处理（Cookie验证和二维码生成按钮）
+- [x] T051 [P] 添加安全headers（CSP、CORS配置检查）
 
 ### Testing (Optional - 建议补充)
 
-- [ ] T052 [P] 创建backend/tests/unit/services/bilibili/binding.test.ts单元测试（bindByCookie、generateQRCode、pollQRCode方法）
-- [ ] T053 [P] 创建backend/tests/integration/bilibili/binding.test.ts集成测试（完整绑定流程、错误处理）
-- [ ] T054 [P] 创建frontend/web/tests/components/bilibili/CookieBindingTab.test.tsx组件测试（表单验证、错误显示）
-- [ ] T055 [P] 创建frontend/web/tests/hooks/useQRCodePolling.test.ts Hook测试（轮询逻辑、清理机制）
+- [ ] T052 [P] [SKIPPED] 创建backend/tests/unit/services/bilibili/binding.test.ts单元测试（bindByCookie、generateQRCode、pollQRCode方法）
+- [ ] T053 [P] [SKIPPED] 创建backend/tests/integration/bilibili/binding.test.ts集成测试（完整绑定流程、错误处理）
+- [ ] T054 [P] [SKIPPED] 创建frontend/web/tests/components/bilibili/CookieBindingTab.test.tsx组件测试（表单验证、错误显示）
+- [ ] T055 [P] [SKIPPED] 创建frontend/web/tests/hooks/useQRCodePolling.test.ts Hook测试（轮询逻辑、清理机制）
 
 ### Documentation & Cleanup
 
-- [ ] T056 [P] 更新backend/README-环境配置.md，添加绑定功能说明
-- [ ] T057 [P] 在specs/004-bilibili-account-binding/contracts/中验证OpenAPI规范与实际实现一致
-- [ ] T058 代码审查和重构（移除任何直接数据库操作从路由层到服务层）
-- [ ] T059 [P] 运行quickstart.md中的检查清单验证所有功能点
-- [ ] T060 [P] 清理开发过程中的临时代码和注释
+- [x] T056 [P] 更新backend/README-环境配置.md，添加绑定功能说明
+- [x] T057 [P] 在specs/004-bilibili-account-binding/contracts/中验证OpenAPI规范与实际实现一致
+- [x] T058 代码审查和重构（移除任何直接数据库操作从路由层到服务层）
+- [x] T059 [P] 运行quickstart.md中的检查清单验证所有功能点
+- [x] T060 [P] 清理开发过程中的临时代码和注释
 
 ### Optional: Session Cleanup Task (Future Enhancement)
 
-- [ ] T061 [P] 实现定期清理过期二维码会话的后台任务（backend/src/services/scheduler.ts，每小时执行）
-- [ ] T062 [P] 在backend/src/services/scheduler.ts中添加定期验证账号凭证有效性的任务（每24小时调用validateAccount方法，实现FR-018需求）
+- [ ] T061 [P] [SKIPPED] 实现定期清理过期二维码会话的后台任务（backend/src/services/scheduler.ts，每小时执行）
+- [ ] T062 [P] [SKIPPED] 在backend/src/services/scheduler.ts中添加定期验证账号凭证有效性的任务（每24小时调用validateAccount方法，实现FR-018需求）
 
 ---
 
