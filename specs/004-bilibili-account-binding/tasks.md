@@ -120,10 +120,10 @@
 
 ### Backend Implementation for User Story 3
 
-- [ ] T032 [US3] 在backend/src/services/bilibili/binding.ts中实现listBoundAccounts方法（查询当前用户的所有绑定账号）
-- [ ] T033 [US3] 在backend/src/services/bilibili/binding.ts中实现unbindAccount方法（验证所有权、删除账号记录、处理关联任务）
-- [ ] T034 [US3] 在backend/src/routes/bilibili/binding.ts中实现GET /api/v1/bilibili/accounts路由（分页、过滤、排序）
-- [ ] T035 [US3] 在backend/src/routes/bilibili/binding.ts中实现DELETE /api/v1/bilibili/accounts/:accountId路由（权限检查、解绑逻辑）
+- [x] T032 [US3] 在backend/src/services/bilibili/binding.ts中实现listBoundAccounts方法（查询当前用户的所有绑定账号）
+- [x] T033 [US3] 在backend/src/services/bilibili/binding.ts中实现unbindAccount方法（验证所有权、删除账号记录、处理关联任务）
+- [x] T034 [US3] 在backend/src/routes/bilibili/binding.ts中实现GET /api/v1/bilibili/accounts路由（分页、过滤、排序）
+- [x] T035 [US3] 在backend/src/routes/bilibili/binding.ts中实现DELETE /api/v1/bilibili/accounts/:accountId路由（权限检查、解绑逻辑）
 
 ### Frontend Implementation for User Story 3
 

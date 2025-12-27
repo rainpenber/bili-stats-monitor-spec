@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { jwt } from 'hono/jwt'
 import { zValidator } from '@hono/zod-validator'
 import { accountBindingService } from '../../services/bilibili/binding'
-import { cookieBindingSchema, qrCodePollQuerySchema } from '../../validations/bilibili-binding'
+import { cookieBindingSchema, qrCodePollQuerySchema, accountIdParamSchema } from '../../validations/bilibili-binding'
 import { loadEnv } from '../../config/env'
 
 const env = loadEnv()
@@ -141,6 +141,67 @@ app.get(
       return c.json(
         { error: 'INTERNAL_ERROR', message: '服务器内部错误' },
         500
+      )
+    }
+  }
+)
+
+/**
+ * GET /api/v1/bilibili/accounts
+ * 获取已绑定的B站账号列表
+ */
+app.get('/accounts', async (c) => {
+  try {
+    const accounts = await accountBindingService.listAccounts()
+
+    return c.json(
+      {
+        accounts: accounts.map(account => ({
+          accountId: account.id,
+          uid: account.uid,
+          nickname: account.nickname,
+          bindMethod: account.bindMethod,
+          boundAt: account.boundAt.toISOString(),
+          status: account.status,
+        })),
+      },
+      200
+    )
+  } catch (error) {
+    console.error('Error in GET /accounts:', error)
+    return c.json(
+      { error: 'INTERNAL_ERROR', message: '服务器内部错误' },
+      500 as 500
+    )
+  }
+})
+
+/**
+ * DELETE /api/v1/bilibili/accounts/:accountId
+ * 解绑B站账号
+ */
+app.delete(
+  '/accounts/:accountId',
+  zValidator('param', accountIdParamSchema),
+  async (c) => {
+    try {
+      const { accountId } = c.req.valid('param')
+
+      const success = await accountBindingService.unbindAccount(accountId)
+
+      if (!success) {
+        return c.json(
+          { error: 'UNBIND_FAILED', message: '解绑失败，账号不存在或已被删除' },
+          404 as 404
+        )
+      }
+
+      return c.json({ message: '解绑成功' }, 200)
+    } catch (error) {
+      console.error('Error in DELETE /accounts/:accountId:', error)
+      return c.json(
+        { error: 'INTERNAL_ERROR', message: '服务器内部错误' },
+        500 as 500
       )
     }
   }
