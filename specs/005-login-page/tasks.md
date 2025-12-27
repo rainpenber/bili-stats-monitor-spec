@@ -26,9 +26,9 @@
 
 **目的**: 项目初始化和基础类型定义
 
-- [ ] T001 [P] 创建认证相关TypeScript类型定义 `frontend/web/src/types/auth.ts`
-- [ ] T002 [P] 创建Token存储工具函数 `frontend/web/src/utils/token.ts`
-- [ ] T003 [P] 创建登录表单Zod验证schema `frontend/web/src/lib/validations/authSchemas.ts`
+- [X] T001 [P] 创建认证相关TypeScript类型定义 `frontend/web/src/types/auth.ts`
+- [X] T002 [P] 创建Token存储工具函数 `frontend/web/src/utils/token.ts`
+- [X] T003 [P] 创建登录表单Zod验证schema `frontend/web/src/lib/validations/authSchemas.ts`
 
 ---
 
@@ -38,12 +38,12 @@
 
 **⚠️ 关键**: 所有用户故事工作必须等待此阶段完成
 
-- [ ] T004 扩展Zustand store，添加`loginModalOpen`和`pendingAction`状态 `frontend/web/src/store/uiSelection.ts`
-- [ ] T005 [P] 实现HTTP请求拦截器（自动注入JWT token） `frontend/web/src/utils/authInterceptor.ts`
-- [ ] T006 [P] 更新HTTP客户端集成拦截器 `frontend/web/src/lib/http.ts`
-- [ ] T007 [P] 扩展API客户端，添加`login()`和`logout()`方法 `frontend/web/src/lib/api.ts`
-- [ ] T008 [P] 创建`useAuth` Hook（认证状态管理） `frontend/web/src/hooks/useAuth.ts`
-- [ ] T009 [P] 创建`usePendingAction` Hook（Pending Action管理） `frontend/web/src/hooks/usePendingAction.ts`
+- [X] T004 扩展Zustand store，添加`loginModalOpen`和`pendingAction`状态 `frontend/web/src/store/uiSelection.ts`
+- [X] T005 [P] 实现HTTP请求拦截器（自动注入JWT token） `frontend/web/src/utils/authInterceptor.ts`
+- [X] T006 [P] 更新HTTP客户端集成拦截器 `frontend/web/src/lib/http.ts`
+- [X] T007 [P] 扩展API客户端，添加`login()`和`logout()`方法 `frontend/web/src/lib/api.ts`
+- [X] T008 [P] 创建`useAuth` Hook（认证状态管理） `frontend/web/src/hooks/useAuth.ts`
+- [X] T009 [P] 创建`usePendingAction` Hook（Pending Action管理） `frontend/web/src/hooks/usePendingAction.ts`
 
 **检查点**: 基础设施就绪 - 用户故事实施现在可以并行开始
 
@@ -57,10 +57,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T010 [P] [US1] 创建LoginForm组件（复用登录表单） `frontend/web/src/components/auth/LoginForm.tsx`
-- [ ] T011 [US1] 创建独立LoginPage页面 `frontend/web/src/pages/LoginPage.tsx`（使用T010组件）
-- [ ] T012 [US1] 在App.tsx中添加`/login`路由 `frontend/web/src/App.tsx`
-- [ ] T013 [US1] 实现已登录用户访问`/login`时重定向到仪表板逻辑（FR-024） `frontend/web/src/App.tsx`
+- [X] T010 [P] [US1] 创建LoginForm组件（复用登录表单） `frontend/web/src/components/auth/LoginForm.tsx`
+- [X] T011 [US1] 创建独立LoginPage页面 `frontend/web/src/pages/LoginPage.tsx`（使用T010组件）
+- [X] T012 [US1] 在App.tsx中添加`/login`路由 `frontend/web/src/App.tsx`
+- [X] T013 [US1] 实现已登录用户访问`/login`时重定向到仪表板逻辑（FR-024） `frontend/web/src/App.tsx`
 
 **检查点**: 用户故事1完全功能，可独立测试（独立登录页面可用）
 
@@ -74,10 +74,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T014 [US2] 创建ProtectedRoute HOC组件 `frontend/web/src/components/auth/ProtectedRoute.tsx`
-- [ ] T015 [US2] 更新App.tsx，为受保护路由添加ProtectedRoute包装 `frontend/web/src/App.tsx`
-- [ ] T016 [US2] 在ProtectedRoute中实现未登录时弹出Modal逻辑（FR-023）
-- [ ] T017 [US2] 实现登录成功后跳转到原始路径逻辑（通过sessionStorage记录） `frontend/web/src/components/auth/ProtectedRoute.tsx`
+- [X] T014 [US2] 创建ProtectedRoute HOC组件 `frontend/web/src/components/auth/ProtectedRoute.tsx`
+- [X] T015 [US2] 更新App.tsx，为受保护路由添加ProtectedRoute包装 `frontend/web/src/App.tsx`
+- [X] T016 [US2] 在ProtectedRoute中实现未登录时弹出Modal逻辑（FR-023）
+- [X] T017 [US2] 实现登录成功后跳转到原始路径逻辑（通过sessionStorage记录） `frontend/web/src/components/auth/ProtectedRoute.tsx`
 
 **检查点**: 用户故事2完全功能，路由保护机制工作正常
 
@@ -91,11 +91,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] 创建UserStatus组件（侧边栏用户状态模块） `frontend/web/src/components/auth/UserStatus.tsx`
-- [ ] T019 [US3] 在AppLayout中集成UserStatus组件（导航菜单末尾） `frontend/web/src/layouts/AppLayout.tsx`
-- [ ] T020 [US3] 实现UserStatus中的"未登录"状态UI（显示"未登录"+登录按钮）
-- [ ] T021 [US3] 实现UserStatus中的"已登录"状态UI（显示头像+用户名+登出按钮）
-- [ ] T022 [US3] 实现登出按钮点击逻辑（调用logout API，清除token，更新UI）
+- [X] T018 [US3] 创建UserStatus组件（侧边栏用户状态模块） `frontend/web/src/components/auth/UserStatus.tsx`
+- [X] T019 [US3] 在AppLayout中集成UserStatus组件（导航菜单末尾） `frontend/web/src/layouts/AppLayout.tsx`
+- [X] T020 [US3] 实现UserStatus中的"未登录"状态UI（显示"未登录"+登录按钮）
+- [X] T021 [US3] 实现UserStatus中的"已登录"状态UI（显示头像+用户名+登出按钮）
+- [X] T022 [US3] 实现登出按钮点击逻辑（调用logout API，清除token，更新UI）
 
 **检查点**: 用户故事3完全功能，用户可以正常退出登录
 
@@ -121,12 +121,12 @@
 
 ### Implementation for User Story 5
 
-- [ ] T023 [P] [US5] 创建LoginModal组件 `frontend/web/src/components/auth/LoginModal.tsx`（复用LoginForm）
-- [ ] T024 [US5] 在App.tsx或AppLayout中添加LoginModal组件（全局渲染）
-- [ ] T025 [US5] 实现HTTP拦截器401响应触发LoginModal逻辑（FR-020） `frontend/web/src/utils/authInterceptor.ts`
-- [ ] T026 [US5] 实现侧边栏"登录"按钮点击触发LoginModal逻辑（FR-006） `frontend/web/src/components/auth/UserStatus.tsx`
-- [ ] T027 [US5] 实现登录成功后自动重试Pending Action逻辑（FR-011） `frontend/web/src/components/auth/LoginModal.tsx`
-- [ ] T028 [US5] 实现Modal关闭（未登录）时清空Pending Action逻辑
+- [X] T023 [P] [US5] 创建LoginModal组件 `frontend/web/src/components/auth/LoginModal.tsx`（复用LoginForm）
+- [X] T024 [US5] 在App.tsx或AppLayout中添加LoginModal组件（全局渲染）
+- [X] T025 [US5] 实现HTTP拦截器401响应触发LoginModal逻辑（FR-020） `frontend/web/src/utils/authInterceptor.ts`
+- [X] T026 [US5] 实现侧边栏"登录"按钮点击触发LoginModal逻辑（FR-006） `frontend/web/src/components/auth/UserStatus.tsx`
+- [X] T027 [US5] 实现登录成功后自动重试Pending Action逻辑（FR-011） `frontend/web/src/components/auth/LoginModal.tsx`
+- [X] T028 [US5] 实现Modal关闭（未登录）时清空Pending Action逻辑
 
 **检查点**: 用户故事5完全功能，登录Modal可正常弹出并重试操作
 

@@ -6,6 +6,7 @@ import type {
   CookieBindingInput,
   CookieBindingResponse,
 } from '../types/bilibili'
+import type { LoginRequest, LoginResponse, User as AuthUser } from '../types/auth'
 
 // Type definitions based on OpenAPI schema
 export interface Task {
@@ -521,8 +522,10 @@ export async function pollQRCode(qrcodeKey: string): Promise<QRCodePollResponse>
  * 获取已绑定的B站账号列表
  */
 export async function listBilibiliAccounts(): Promise<BilibiliAccount[]> {
-  return http.get<BilibiliAccount[]>('/api/v1/bilibili/accounts')
+  const response = await http.get<{ accounts: BilibiliAccount[] }>('/api/v1/bilibili/accounts')
+  return response.accounts
 }
+
 
 /**
  * 解绑B站账号
@@ -530,3 +533,18 @@ export async function listBilibiliAccounts(): Promise<BilibiliAccount[]> {
 export async function unbindBilibiliAccount(accountId: string): Promise<void> {
   await http.delete(`/api/v1/bilibili/accounts/${accountId}`)
 }
+
+/**
+ * 用户登录
+ */
+export async function login(credentials: LoginRequest): Promise<LoginResponse> {
+  return http.post<LoginResponse>('/api/v1/auth/login', credentials)
+}
+
+/**
+ * 获取当前用户信息（通过token验证）
+ */
+export async function getCurrentUser(): Promise<AuthUser> {
+  return http.get<AuthUser>('/api/v1/auth/profile')
+}
+

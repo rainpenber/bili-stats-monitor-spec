@@ -38,8 +38,10 @@ export default function SettingsPage() {
     try {
       const [list, def] = await Promise.all([fetchAccounts(1, 100), fetchDefaultAccount()])
       setAccounts(list.items || [])
-      setDefaultAcc(def.id || '')
-      setHasDefaultAcc(!!def.id)
+      // 安全地访问 def.id，处理 null/undefined 情况
+      const defaultId = def?.id || ''
+      setDefaultAcc(defaultId)
+      setHasDefaultAcc(!!defaultId)
     } catch (e: any) {
       setAccounts([])
       setErrorMsg(e?.message || '加载账号信息失败')

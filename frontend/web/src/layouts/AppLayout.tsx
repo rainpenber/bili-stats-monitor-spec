@@ -1,7 +1,8 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import { PropsWithChildren, useEffect } from 'react'
 import { useUISelection } from '@/store/uiSelection'
 import { Button } from '@/components/ui/Button'
+import { UserStatus } from '@/components/auth/UserStatus'
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
@@ -50,15 +51,21 @@ export default function AppLayout({ children }: PropsWithChildren) {
 
   return (
     <div className="h-full grid grid-cols-[240px_1fr]">
-      <aside className="border-r border-border p-4 bg-card">
+      <aside className="border-r border-border p-4 bg-card flex flex-col">
         <div className="text-xl font-semibold mb-4">Bili Monitor</div>
-        <nav className="space-y-1">
+        <nav className="space-y-1 flex-1">
           <NavItem to="/" label="仪表板" />
           <NavItem to="/accounts" label="账号管理" />
           <NavItem to="/notifications" label="通知设置" />
           <NavItem to="/logs" label="日志" />
           <NavItem to="/settings" label="系统设置" />
         </nav>
+        
+        {/* 分隔线 */}
+        <div className="border-t border-border my-2" />
+        
+        {/* 用户状态模块 */}
+        <UserStatus />
       </aside>
       <main className="overflow-y-auto bg-background">
         {/* 顶部工具条：快速切换明暗模式 */}
@@ -67,6 +74,8 @@ export default function AppLayout({ children }: PropsWithChildren) {
           <Button variant={scheme === 'light' ? 'default' : 'outline'} size="sm" onClick={() => setScheme('light')}>浅色</Button>
           <Button variant={scheme === 'dark' ? 'default' : 'outline'} size="sm" onClick={() => setScheme('dark')}>深色</Button>
         </div>
+        {/* 使用Outlet渲染子路由，支持children作为后备 */}
+        <Outlet />
         {children}
       </main>
     </div>
