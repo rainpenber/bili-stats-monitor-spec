@@ -1,17 +1,19 @@
-import { db } from '../../db'
 import { accounts, qrcodeSessions } from '../../db/schema'
 import { biliClient } from '../bili/client'
 import { encrypt, decrypt, getEncryptKey } from '../../utils/crypto'
 import { eq, and, lt } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
+import type { DrizzleInstance } from '../../db'
 
 /**
  * B站账号绑定服务
  */
 export class AccountBindingService {
   private readonly encryptKey: string
+  private readonly db: DrizzleInstance
 
-  constructor() {
+  constructor(db: DrizzleInstance) {
+    this.db = db
     this.encryptKey = getEncryptKey()
   }
 
@@ -38,7 +40,7 @@ export class AccountBindingService {
       }
 
       // 2. 检查重复绑定
-      const existing = await db
+      const existing = await this.db
         .select()
         .from(accounts)
         .where(eq(accounts.uid, validation.uid))
@@ -67,7 +69,7 @@ export class AccountBindingService {
       const accountId = uuidv4()
       const now = new Date()
 
-      await db.insert(accounts).values({
+      await this.db.insert(accounts).values({
         id: accountId,
         uid: validation.uid,
         nickname: validation.nickname,
@@ -121,7 +123,7 @@ export class AccountBindingService {
       const sessionId = uuidv4()
       const expireAt = new Date(qrData.expireAt)
 
-      await db.insert(qrcodeSessions).values({
+      await this.db.insert(qrcodeSessions).values({
         id: sessionId,
         qrcodeKey: qrData.qrcodeKey,
         qrUrl: qrData.qrUrl,
@@ -165,7 +167,7 @@ export class AccountBindingService {
   }> {
     try {
       // 1. 查询会话
-      const session = await db
+      const session = await this.db
         .select()
         .from(qrcodeSessions)
         .where(
@@ -182,7 +184,7 @@ export class AccountBindingService {
 
       // 2. 检查是否过期
       if (new Date() > session.expireAt) {
-        await db
+        await this.db
           .update(qrcodeSessions)
           .set({ status: 'expired' })
           .where(eq(qrcodeSessions.id, session.id))
@@ -194,7 +196,7 @@ export class AccountBindingService {
 
       // 4. 更新会话状态
       if (pollResult.status !== session.status) {
-        await db
+        await this.db
           .update(qrcodeSessions)
           .set({ status: pollResult.status })
           .where(eq(qrcodeSessions.id, session.id))
@@ -244,7 +246,7 @@ export class AccountBindingService {
    */
   async validateAccount(accountId: string): Promise<boolean> {
     try {
-      const account = await db
+      const account = await this.db
         .select()
         .from(accounts)
         .where(eq(accounts.id, accountId))
@@ -262,7 +264,7 @@ export class AccountBindingService {
 
       if (!validation.valid) {
         // 标记为过期
-        await db
+        await this.db
           .update(accounts)
           .set({
             status: 'expired',
@@ -275,7 +277,7 @@ export class AccountBindingService {
 
       // 重置失败计数
       if (account.lastFailures > 0 || account.status !== 'valid') {
-        await db
+        await this.db
           .update(accounts)
           .set({
             status: 'valid',
@@ -305,7 +307,7 @@ export class AccountBindingService {
       status: 'valid' | 'expired'
     }>
   > {
-    const accountList = await db.select().from(accounts).all()
+    const accountList = await this.db.select().from(accounts).all()
     return accountList
   }
 
@@ -314,7 +316,7 @@ export class AccountBindingService {
    */
   async unbindAccount(accountId: string): Promise<boolean> {
     try {
-      await db.delete(accounts).where(eq(accounts.id, accountId))
+      await this.db.delete(accounts).where(eq(accounts.id, accountId))
       return true
     } catch (error) {
       console.error('Failed to unbind account:', error)
@@ -327,7 +329,7 @@ export class AccountBindingService {
    */
   async cleanupExpiredSessions(): Promise<number> {
     try {
-      const result = await db
+      const result = await this.db
         .delete(qrcodeSessions)
         .where(lt(qrcodeSessions.expireAt, new Date()))
       return result.changes
@@ -337,7 +339,4 @@ export class AccountBindingService {
     }
   }
 }
-
-// 导出单例
-export const accountBindingService = new AccountBindingService()
 

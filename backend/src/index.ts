@@ -13,7 +13,7 @@ import { createAuthRoutes } from './routes/auth'
 import { createSettingsRoutes } from './routes/settings'
 import { createLogsRoutes } from './routes/logs'
 import { createSchedulerRoutes } from './routes/scheduler'
-import bilibiliBindingRoutes from './routes/bilibili/binding'
+import { createBilibiliBindingRoutes } from './routes/bilibili/binding'
 import { initializeApp } from './init'
 
 const config = loadConfig()
@@ -59,7 +59,7 @@ app.route('/api/v1/tasks', createMetricsRoutes(container.db))
 app.route('/api/v1/notifications', createNotificationsRoutes(container.db))
 app.route('/api/v1/logs', createLogsRoutes(container.db))
 app.route('/api/v1/scheduler', createSchedulerRoutes(container.scheduler))
-app.route('/api/v1/bilibili', bilibiliBindingRoutes)
+app.route('/api/v1/bilibili', createBilibiliBindingRoutes(container))
 
 const port = config.port
 

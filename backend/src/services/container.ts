@@ -3,6 +3,7 @@ import { createDb, type DrizzleInstance } from '../db'
 import { LogService } from './log'
 import { AccountService } from './account'
 import { SchedulerService } from './scheduler'
+import { AccountBindingService } from './bilibili/binding'
 
 export interface ServiceContainer {
   config: AppConfig
@@ -10,6 +11,7 @@ export interface ServiceContainer {
   logger: LogService
   accountService: AccountService
   scheduler: SchedulerService
+  accountBindingService: AccountBindingService
   // Will be added in later phases:
   // biliApi: BiliApiClient
   // notifier: NotificationService
@@ -20,6 +22,7 @@ export function createContainer(config: AppConfig): ServiceContainer {
   const logger = new LogService(db)
   const accountService = new AccountService(db, config.encryptKey)
   const scheduler = new SchedulerService(db, accountService)
+  const accountBindingService = new AccountBindingService(db)
   
   return {
     config,
@@ -27,6 +30,7 @@ export function createContainer(config: AppConfig): ServiceContainer {
     logger,
     accountService,
     scheduler,
+    accountBindingService,
   }
 }
 

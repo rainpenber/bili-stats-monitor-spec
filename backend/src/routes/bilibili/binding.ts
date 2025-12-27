@@ -1,15 +1,18 @@
 import { Hono } from 'hono'
 import { jwt } from 'hono/jwt'
 import { zValidator } from '@hono/zod-validator'
-import { accountBindingService } from '../../services/bilibili/binding'
+import type { ServiceContainer } from '../../services/container'
 import { cookieBindingSchema, qrCodePollQuerySchema, accountIdParamSchema } from '../../validations/bilibili-binding'
-import { loadEnv } from '../../config/env'
 
-const env = loadEnv()
-const app = new Hono()
+/**
+ * 创建B站账号绑定路由
+ */
+export function createBilibiliBindingRoutes(container: ServiceContainer) {
+  const app = new Hono()
+  const { accountBindingService, config } = container
 
-// JWT中间件
-app.use('/*', jwt({ secret: env.JWT_SECRET }))
+  // JWT中间件
+  app.use('/*', jwt({ secret: config.jwt.secret }))
 
 /**
  * POST /api/v1/bilibili/bind/cookie
@@ -219,5 +222,6 @@ app.delete(
   }
 )
 
-export default app
+  return app
+}
 
