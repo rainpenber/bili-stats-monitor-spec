@@ -127,17 +127,17 @@
 
 ### Frontend Implementation for User Story 3
 
-- [ ] T036 [P] [US3] 创建frontend/web/src/components/bilibili/AccountList.tsx账号列表组件（表格展示、状态标签、操作按钮）
-- [ ] T037 [P] [US3] 创建frontend/web/src/components/bilibili/AccountListItem.tsx单个账号项组件（昵称、UID、绑定时间、状态、操作）
-- [ ] T038 [US3] 在frontend/web/src/lib/api.ts中实现listAccounts和unbindAccount API调用方法
-- [ ] T039 [US3] 创建frontend/web/src/pages/BilibiliAccountsPage.tsx或集成到现有设置页面
-- [ ] T040 [US3] 实现解绑确认对话框（Radix UI Alert Dialog）
+- [x] T036 [P] [US3] 创建frontend/web/src/components/bilibili/AccountList.tsx账号列表组件（表格展示、状态标签、操作按钮）
+- [x] T037 [P] [US3] 创建frontend/web/src/components/bilibili/AccountListItem.tsx单个账号项组件（昵称、UID、绑定时间、状态、操作）
+- [x] T038 [US3] 在frontend/web/src/lib/api.ts中实现listAccounts和unbindAccount API调用方法
+- [x] T039 [US3] 创建frontend/web/src/pages/BilibiliAccountsPage.tsx或集成到现有设置页面
+- [x] T040 [US3] 实现解绑确认对话框（Radix UI Alert Dialog）
 
 ### Status Display & Rebinding for User Story 3
 
-- [ ] T041 [US3] 在AccountListItem中实现状态标签显示（有效-绿色、过期-红色）
-- [ ] T042 [US3] 对于过期账号，提供"重新绑定"入口（打开AccountBindingModal并预填账号信息提示）
-- [ ] T043 [US3] 实现空状态UI（用户未绑定任何账号时显示引导）
+- [x] T041 [US3] 在AccountListItem中实现状态标签显示（有效-绿色、过期-红色）
+- [x] T042 [US3] 对于过期账号，提供"重新绑定"入口（打开AccountBindingModal并预填账号信息提示）
+- [x] T043 [US3] 实现空状态UI（用户未绑定任何账号时显示引导）
 
 **Checkpoint**: 账号管理功能完整可用，用户可以查看、解绑和重新绑定账号
 
