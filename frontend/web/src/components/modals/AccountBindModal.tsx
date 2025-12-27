@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Modal, ModalHeader, ModalBody } from '@/components/ui/Modal'
 import { useUISelection } from '@/store/uiSelection'
 import { CookieBindingTab } from '@/components/bilibili/CookieBindingTab'
+import { QRCodeBindingTab } from '@/components/bilibili/QRCodeBindingTab'
 
 export default function AccountBindModal() {
   const { accountBindOpen, setAccountBindOpen } = useUISelection()
@@ -15,6 +16,11 @@ export default function AccountBindModal() {
 
   const handleBindSuccess = () => {
     onClose()
+  }
+
+  // 切换模式时的处理（确保轮询停止）
+  const handleModeChange = (newMode: 'cookie' | 'qrcode') => {
+    setMode(newMode)
   }
 
   return (
@@ -32,7 +38,7 @@ export default function AccountBindModal() {
                 type="radio"
                 name="bindmode"
                 checked={mode === 'cookie'}
-                onChange={() => setMode('cookie')}
+                onChange={() => handleModeChange('cookie')}
                 className="cursor-pointer"
               />
               <span className="text-sm font-medium">Cookie 绑定</span>
@@ -42,7 +48,7 @@ export default function AccountBindModal() {
                 type="radio"
                 name="bindmode"
                 checked={mode === 'qrcode'}
-                onChange={() => setMode('qrcode')}
+                onChange={() => handleModeChange('qrcode')}
                 className="cursor-pointer"
               />
               <span className="text-sm font-medium">扫码登录</span>
@@ -53,12 +59,7 @@ export default function AccountBindModal() {
           {mode === 'cookie' ? (
             <CookieBindingTab onSuccess={handleBindSuccess} />
           ) : (
-            <div className="space-y-3 py-8 text-center text-muted-foreground">
-              <div className="text-lg">🚧 扫码登录功能开发中...</div>
-              <div className="text-sm">
-                此功能将在 User Story 2 中实现，敬请期待！
-              </div>
-            </div>
+            <QRCodeBindingTab isActive={mode === 'qrcode'} onSuccess={handleBindSuccess} />
           )}
         </div>
       </ModalBody>

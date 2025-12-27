@@ -88,25 +88,25 @@
 
 ### Backend Implementation for User Story 2
 
-- [ ] T019 [US2] 在backend/src/services/bilibili/binding.ts中实现generateQRCode方法（调用B站API生成二维码、创建会话记录）
-- [ ] T020 [US2] 在backend/src/services/bilibili/binding.ts中实现pollQRCode方法（查询会话、检查过期、调用B站API轮询、处理confirmed状态）
-- [ ] T021 [US2] 在backend/src/routes/bilibili/binding.ts中实现POST /api/v1/bilibili/bind/qrcode/generate路由
-- [ ] T022 [US2] 在backend/src/routes/bilibili/binding.ts中实现GET /api/v1/bilibili/bind/qrcode/poll路由（参数验证、用户隔离检查）
+- [x] T019 [US2] 在backend/src/services/bilibili/binding.ts中实现generateQRCode方法（调用B站API生成二维码、创建会话记录）
+- [x] T020 [US2] 在backend/src/services/bilibili/binding.ts中实现pollQRCode方法（查询会话、检查过期、调用B站API轮询、处理confirmed状态）
+- [x] T021 [US2] 在backend/src/routes/bilibili/binding.ts中实现POST /api/v1/bilibili/bind/qrcode/generate路由
+- [x] T022 [US2] 在backend/src/routes/bilibili/binding.ts中实现GET /api/v1/bilibili/bind/qrcode/poll路由（参数验证、用户隔离检查）
 
 ### Frontend Implementation for User Story 2
 
-- [ ] T023 [P] [US2] 创建frontend/web/src/hooks/useQRCodePolling.ts自定义Hook（2秒轮询、状态管理、定时器清理）
-- [ ] T024 [P] [US2] 创建frontend/web/src/components/bilibili/QRCodeDisplay.tsx二维码显示组件（使用qrcode.react或类似库）
-- [ ] T025 [US2] 创建frontend/web/src/components/bilibili/QRCodeBindingTab.tsx组件（生成二维码、显示状态提示、重新获取按钮）
-- [ ] T026 [US2] 在frontend/web/src/lib/api.ts中实现generateQRCode和pollQRCode API调用方法
-- [ ] T027 [US2] 在AccountBindingModal中集成QRCodeBindingTab标签页，确保切换标签时停止轮询
+- [x] T023 [P] [US2] 创建frontend/web/src/hooks/useQRCodePolling.ts自定义Hook（2秒轮询、状态管理、定时器清理）
+- [x] T024 [P] [US2] 创建frontend/web/src/components/bilibili/QRCodeDisplay.tsx二维码显示组件（使用qrcode.react或类似库）
+- [x] T025 [US2] 创建frontend/web/src/components/bilibili/QRCodeBindingTab.tsx组件（生成二维码、显示状态提示、重新获取按钮）
+- [x] T026 [US2] 在frontend/web/src/lib/api.ts中实现generateQRCode和pollQRCode API调用方法
+- [x] T027 [US2] 在AccountBindingModal中集成QRCodeBindingTab标签页，确保切换标签时停止轮询
 
 ### State Management & Lifecycle for User Story 2
 
-- [ ] T028 [US2] 在useQRCodePolling Hook中实现状态转换逻辑（pending→scanned→confirmed/expired）
-- [ ] T029 [US2] 在QRCodeBindingTab中实现UI状态更新（待扫码、已扫码、等待确认、已过期）
-- [ ] T030 [US2] 实现二维码过期后的"重新获取二维码"功能（清理旧会话、生成新二维码、重置状态）
-- [ ] T031 [US2] 确保组件卸载或标签页切换时清理轮询定时器（useEffect cleanup）
+- [x] T028 [US2] 在useQRCodePolling Hook中实现状态转换逻辑（pending→scanned→confirmed/expired）
+- [x] T029 [US2] 在QRCodeBindingTab中实现UI状态更新（待扫码、已扫码、等待确认、已过期）
+- [x] T030 [US2] 实现二维码过期后的"重新获取二维码"功能（清理旧会话、生成新二维码、重置状态）
+- [x] T031 [US2] 确保组件卸载或标签页切换时清理轮询定时器（useEffect cleanup）
 
 **Checkpoint**: 扫码绑定功能完整可用，用户可以通过扫码完成绑定，轮询机制正常工作无内存泄漏
 
