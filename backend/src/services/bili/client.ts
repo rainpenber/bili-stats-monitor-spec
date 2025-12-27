@@ -62,6 +62,35 @@ export class BiliClient {
   }
 
   /**
+   * 验证Cookie有效性
+   * @param cookie 完整的Cookie字符串（必须包含SESSDATA）
+   * @returns { valid, uid, nickname } - valid表示是否有效，uid和nickname仅在有效时返回
+   */
+  async validateCookie(cookie: string): Promise<{
+    valid: boolean
+    uid?: string
+    nickname?: string
+  }> {
+    try {
+      const response = await this.getNav(cookie)
+
+      // code=0 且 isLogin=true 表示Cookie有效
+      if (response.code === 0 && response.data?.isLogin) {
+        return {
+          valid: true,
+          uid: String(response.data.mid),
+          nickname: response.data.uname,
+        }
+      }
+
+      return { valid: false }
+    } catch (error) {
+      console.error('Failed to validate cookie:', error)
+      return { valid: false }
+    }
+  }
+
+  /**
    * 生成二维码登录
    * @returns { qrcodeKey, qrUrl, expireAt }
    */
@@ -131,6 +160,32 @@ export class BiliClient {
       code: 0,
       message: response.data?.message || '登录成功',
       cookie,
+    }
+  }
+
+  /**
+   * 轮询二维码状态（简化版，返回标准化状态）
+   * @param qrcodeKey 二维码 key
+   * @returns { status, cookie? }
+   * - status: 'pending'=未扫码, 'scanned'=已扫待确认, 'confirmed'=成功, 'expired'=过期
+   */
+  async pollQrcode(qrcodeKey: string): Promise<{
+    status: 'pending' | 'scanned' | 'confirmed' | 'expired'
+    cookie?: string
+  }> {
+    const result = await this.pollQrCodeStatus(qrcodeKey)
+
+    // 映射B站状态码到标准化状态
+    const statusMap: Record<number, 'pending' | 'scanned' | 'confirmed' | 'expired'> = {
+      86101: 'pending',
+      86090: 'scanned',
+      0: 'confirmed',
+      86038: 'expired',
+    }
+
+    return {
+      status: statusMap[result.code] || 'expired',
+      cookie: result.cookie,
     }
   }
 

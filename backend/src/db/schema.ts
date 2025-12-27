@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, real, index } from 'drizzle-orm/sqlite-core'
 import { sql } from 'drizzle-orm'
 
 // Users table
@@ -122,4 +122,18 @@ export const mediaAssets = sqliteTable('media_assets', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
+
+// QRCodeSessions table - for Bilibili account binding via QR code
+export const qrcodeSessions = sqliteTable('qrcode_sessions', {
+  id: text('id').primaryKey(),
+  qrcodeKey: text('qrcode_key').notNull().unique(),
+  qrUrl: text('qr_url').notNull(),
+  userId: text('user_id').notNull().references(() => users.id),
+  status: text('status', { enum: ['pending', 'scanned', 'confirmed', 'expired'] }).notNull().default('pending'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  expireAt: integer('expire_at', { mode: 'timestamp' }).notNull(),
+}, (table) => ({
+  userIdIdx: index('idx_qrcode_sessions_user_id').on(table.userId),
+  expireAtIdx: index('idx_qrcode_sessions_expire_at').on(table.expireAt),
+}))
 

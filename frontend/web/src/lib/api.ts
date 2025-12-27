@@ -1,4 +1,11 @@
 import { http } from './http'
+import type {
+  BilibiliAccount,
+  QRCodeSession,
+  QRCodePollResponse,
+  CookieBindingInput,
+  CookieBindingResponse,
+} from '../types/bilibili'
 
 // Type definitions based on OpenAPI schema
 export interface Task {
@@ -483,4 +490,43 @@ export async function saveSettings(settings: Settings) {
     settings
   })
   return true
+}
+
+// ============================================================================
+// Bilibili Account Binding API (Feature 004)
+// ============================================================================
+
+/**
+ * 通过Cookie绑定B站账号
+ */
+export async function bindByCookie(input: CookieBindingInput): Promise<CookieBindingResponse> {
+  return http.post<CookieBindingResponse>('/api/v1/bilibili/bind/cookie', input)
+}
+
+/**
+ * 生成扫码登录二维码
+ */
+export async function generateQRCode(): Promise<QRCodeSession> {
+  return http.post<QRCodeSession>('/api/v1/bilibili/bind/qrcode/generate', {})
+}
+
+/**
+ * 轮询二维码登录状态
+ */
+export async function pollQRCode(qrcodeKey: string): Promise<QRCodePollResponse> {
+  return http.get<QRCodePollResponse>(`/api/v1/bilibili/bind/qrcode/poll?qrcodeKey=${qrcodeKey}`)
+}
+
+/**
+ * 获取已绑定的B站账号列表
+ */
+export async function listBilibiliAccounts(): Promise<BilibiliAccount[]> {
+  return http.get<BilibiliAccount[]>('/api/v1/bilibili/accounts')
+}
+
+/**
+ * 解绑B站账号
+ */
+export async function unbindBilibiliAccount(accountId: string): Promise<void> {
+  await http.delete(`/api/v1/bilibili/accounts/${accountId}`)
 }

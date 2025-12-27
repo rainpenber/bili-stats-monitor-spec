@@ -1,0 +1,403 @@
+openapi: 3.0.3
+info:
+  title: B站账号绑定 API
+  description: 支持Cookie和扫码两种方式绑定B站账号，用于视频监控任务
+  version: 1.0.0
+  contact:
+    name: Bili Stats Monitor Team
+
+servers:
+  - url: http://localhost:38080/api/v1
+    description: 开发环境
+  - url: https://api.example.com/api/v1
+    description: 生产环境
+
+tags:
+  - name: bilibili-binding
+    description: B站账号绑定相关接口
+
+paths:
+  /bilibili/bind/cookie:
+    post:
+      summary: Cookie方式绑定B站账号
+      description: 用户粘贴从浏览器导出的B站Cookie，系统验证有效性后保存绑定
+      operationId: bindByCookie
+      tags:
+        - bilibili-binding
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cookie
+              properties:
+                cookie:
+                  type: string
+                  description: 完整的B站Cookie字符串，必须包含SESSDATA字段
+                  example: "SESSDATA=abc123def456; bili_jct=xyz789; buvid3=..."
+                  minLength: 100
+            examples:
+              validCookie:
+                summary: 有效的Cookie示例
+                value:
+                  cookie: "SESSDATA=cb06f4ec%2C1234567890%2Cabcdef*31; bili_jct=1234567890abcdef1234567890abcdef"
+      responses:
+        '200':
+          description: 绑定成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindSuccessResponse'
+              examples:
+                success:
+                  summary: 绑定成功
+                  value:
+                    code: 0
+                    message: "success"
+                    data:
+                      accountId: "abc123xyz"
+                      uid: "12345678"
+                      nickname: "用户昵称"
+                      bindMethod: "cookie"
+                      boundAt: "2025-12-27T12:00:00Z"
+        '400':
+          description: 请求参数错误或Cookie无效
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidFormat:
+                  summary: Cookie格式错误
+                  value:
+                    code: 40001
+                    message: "INVALID_COOKIE_FORMAT"
+                    data:
+                      detail: "Cookie格式错误，请检查是否包含SESSDATA字段"
+                      field: "cookie"
+                cookieInvalid:
+                  summary: Cookie验证失败
+                  value:
+                    code: 40002
+                    message: "COOKIE_INVALID"
+                    data:
+                      detail: "Cookie验证失败，请确保从已登录的浏览器复制"
+                cookieExpired:
+                  summary: Cookie已过期
+                  value:
+                    code: 40003
+                    message: "COOKIE_EXPIRED"
+                    data:
+                      detail: "Cookie已过期，请重新获取"
+                alreadyBound:
+                  summary: 账号已被绑定
+                  value:
+                    code: 40004
+                    message: "ACCOUNT_ALREADY_BOUND"
+                    data:
+                      detail: "该B站账号已绑定"
+                      uid: "12345678"
+                      boundAt: "2025-12-20T10:00:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: 服务器错误或B站API调用失败
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                biliApiError:
+                  summary: B站API调用失败
+                  value:
+                    code: 50001
+                    message: "BILI_API_ERROR"
+                    data:
+                      detail: "B站服务暂时不可用，请稍后重试"
+
+  /bilibili/bind/qrcode/generate:
+    post:
+      summary: 生成扫码登录二维码
+      description: 调用B站登录API生成二维码，返回二维码URL和轮询密钥
+      operationId: generateQRCode
+      tags:
+        - bilibili-binding
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 二维码生成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    required:
+                      - qrcodeKey
+                      - qrUrl
+                      - expireAt
+                    properties:
+                      qrcodeKey:
+                        type: string
+                        description: 轮询密钥，用于后续状态查询
+                        example: "8f8a1234567890abcdef"
+                      qrUrl:
+                        type: string
+                        description: 二维码内容（URL），前端转换为图片显示
+                        example: "https://passport.bilibili.com/h5-app/passport/qrcode?..."
+                      expireAt:
+                        type: string
+                        format: date-time
+                        description: 二维码过期时间（2分钟后）
+                        example: "2025-12-27T12:02:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: 服务器错误或B站API调用失败
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                biliApiError:
+                  summary: B站API调用失败
+                  value:
+                    code: 50001
+                    message: "BILI_API_ERROR"
+                    data:
+                      detail: "无法生成二维码，请稍后重试"
+
+  /bilibili/bind/qrcode/poll:
+    get:
+      summary: 轮询扫码状态
+      description: 前端每2秒调用一次，检查用户是否已扫码、已确认或二维码已过期
+      operationId: pollQRCode
+      tags:
+        - bilibili-binding
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: qrcode_key
+          in: query
+          required: true
+          description: 生成二维码时返回的轮询密钥
+          schema:
+            type: string
+            example: "8f8a1234567890abcdef"
+      responses:
+        '200':
+          description: 轮询成功，返回当前状态
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    required:
+                      - status
+                    properties:
+                      status:
+                        type: string
+                        enum: [pending, scanned, confirmed, expired]
+                        description: 扫码状态
+                        example: "pending"
+                      message:
+                        type: string
+                        description: 状态描述
+                        example: "待扫码"
+                      account:
+                        type: object
+                        description: 仅在status为confirmed时返回
+                        properties:
+                          accountId:
+                            type: string
+                          uid:
+                            type: string
+                          nickname:
+                            type: string
+                          bindMethod:
+                            type: string
+                            example: "qrcode"
+                          boundAt:
+                            type: string
+                            format: date-time
+              examples:
+                pending:
+                  summary: 待扫码
+                  value:
+                    code: 0
+                    message: "success"
+                    data:
+                      status: "pending"
+                      message: "待扫码"
+                scanned:
+                  summary: 已扫码（待确认）
+                  value:
+                    code: 0
+                    message: "success"
+                    data:
+                      status: "scanned"
+                      message: "已扫码，等待确认"
+                confirmed:
+                  summary: 已确认（绑定成功）
+                  value:
+                    code: 0
+                    message: "success"
+                    data:
+                      status: "confirmed"
+                      message: "绑定成功"
+                      account:
+                        accountId: "abc123xyz"
+                        uid: "12345678"
+                        nickname: "用户昵称"
+                        bindMethod: "qrcode"
+                        boundAt: "2025-12-27T12:01:30Z"
+                expired:
+                  summary: 二维码已过期
+                  value:
+                    code: 0
+                    message: "success"
+                    data:
+                      status: "expired"
+                      message: "二维码已过期，请重新获取"
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                sessionNotFound:
+                  summary: 会话不存在
+                  value:
+                    code: 40005
+                    message: "SESSION_NOT_FOUND"
+                    data:
+                      detail: "二维码会话不存在或已被删除"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 使用JWT Bearer Token进行认证
+
+  schemas:
+    BindSuccessResponse:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: integer
+          description: 响应码，0表示成功
+          example: 0
+        message:
+          type: string
+          description: 响应消息
+          example: "success"
+        data:
+          type: object
+          required:
+            - accountId
+            - uid
+            - nickname
+            - bindMethod
+            - boundAt
+          properties:
+            accountId:
+              type: string
+              description: 系统生成的账号ID
+              example: "abc123xyz"
+            uid:
+              type: string
+              description: B站用户ID（mid）
+              example: "12345678"
+            nickname:
+              type: string
+              description: B站用户昵称
+              example: "用户昵称"
+            bindMethod:
+              type: string
+              enum: [cookie, qrcode]
+              description: 绑定方式
+              example: "cookie"
+            boundAt:
+              type: string
+              format: date-time
+              description: 绑定时间
+              example: "2025-12-27T12:00:00Z"
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: 错误码
+          example: 40001
+        message:
+          type: string
+          description: 错误消息（英文标识符）
+          example: "INVALID_COOKIE_FORMAT"
+        data:
+          type: object
+          description: 错误详情
+          properties:
+            detail:
+              type: string
+              description: 详细错误信息（中文）
+              example: "Cookie格式错误，请检查是否包含SESSDATA字段"
+            field:
+              type: string
+              description: 错误相关的字段名
+              example: "cookie"
+
+  responses:
+    UnauthorizedError:
+      description: 未授权，JWT Token无效或过期
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 40100
+            message: "UNAUTHORIZED"
+            data:
+              detail: "请先登录"
+
+security:
+  - bearerAuth: []
+

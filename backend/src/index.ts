@@ -13,6 +13,7 @@ import { createAuthRoutes } from './routes/auth'
 import { createSettingsRoutes } from './routes/settings'
 import { createLogsRoutes } from './routes/logs'
 import { createSchedulerRoutes } from './routes/scheduler'
+import bilibiliBindingRoutes from './routes/bilibili/binding'
 import { initializeApp } from './init'
 
 const config = loadConfig()
@@ -50,14 +51,15 @@ app.get('/health', (c) => {
 })
 
 // API routes
-app.route('/api/v1/auth', createAuthRoutes(container.db, config.jwtSecret))
-app.route('/api/v1/settings', createSettingsRoutes(container.db, config.jwtSecret))
+app.route('/api/v1/auth', createAuthRoutes(container.db, config.jwt.secret))
+app.route('/api/v1/settings', createSettingsRoutes(container.db, config.jwt.secret))
 app.route('/api/v1/accounts', createAccountsRoutes(container.db))
 app.route('/api/v1/tasks', createTasksRoutes(container.db))
 app.route('/api/v1/tasks', createMetricsRoutes(container.db))
 app.route('/api/v1/notifications', createNotificationsRoutes(container.db))
 app.route('/api/v1/logs', createLogsRoutes(container.db))
 app.route('/api/v1/scheduler', createSchedulerRoutes(container.scheduler))
+app.route('/api/v1/bilibili', bilibiliBindingRoutes)
 
 const port = config.port
 
