@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import type { PendingAction } from '@/types/auth'
+import type { User } from '@/types/auth'
 
 export type ItemType = 'video' | 'author'
 export type ActiveItem = { type: ItemType; id: string } | null
@@ -32,6 +34,18 @@ export interface UISelectionState {
   addTaskOpen: boolean
   setAddTaskOpen: (open: boolean) => void
   setAddTaskType: (t: ItemType) => void
+  loginModalOpen: boolean
+  setLoginModalOpen: (open: boolean) => void
+  pendingAction: PendingAction | null
+  setPendingAction: (action: PendingAction | null) => void
+
+  // auth state (global)
+  user: User | null
+  isAuthenticated: boolean
+  isAuthLoading: boolean
+  setUser: (user: User | null) => void
+  setIsAuthenticated: (isAuthenticated: boolean) => void
+  setIsAuthLoading: (isLoading: boolean) => void
 
   // actions
   setType: (t: ItemType) => void
@@ -69,6 +83,18 @@ export const useUISelection = create<UISelectionState>((set, get) => ({
   addTaskOpen: false,
   setAddTaskOpen: (open) => set({ addTaskOpen: open }),
   setAddTaskType: (t) => set({ type: t, addTaskOpen: true }),
+  loginModalOpen: false,
+  setLoginModalOpen: (open) => set({ loginModalOpen: open }),
+  pendingAction: null,
+  setPendingAction: (action) => set({ pendingAction: action }),
+
+  // auth state
+  user: null,
+  isAuthenticated: false,
+  isAuthLoading: true,
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+  setIsAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
 
   setType: (t) => set({ type: t, activeItem: null, selection: new Set(), selectionMode: 'none', selecting: false, page: 1 }),
   setActiveItem: (a, meta) => set({ activeItem: a, activeMeta: meta }),

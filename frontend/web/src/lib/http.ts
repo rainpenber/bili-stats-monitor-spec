@@ -1,3 +1,5 @@
+import { getToken } from '@/utils/token'
+
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface HttpError extends Error {
@@ -17,13 +19,33 @@ interface RequestOptions {
 
 const DEFAULT_TIMEOUT = 15000
 
+// 401错误回调函数（由外部注册）
+let unauthorizedHandler: ((retryRequest: () => Promise<any>) => void) | null = null
+
+/**
+ * 注册401错误处理函数
+ * 应在应用初始化时调用，由LoginModal负责处理
+ */
+export function registerUnauthorizedHandler(
+  handler: (retryRequest: () => Promise<any>) => void
+) {
+  unauthorizedHandler = handler
+}
+
 async function request<T = any>(url: string, options: RequestOptions = {}): Promise<T> {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? DEFAULT_TIMEOUT)
+  
+  // 自动注入JWT token
+  const token = getToken()
   const mergedHeaders: Record<string, string> = {
     'Accept': 'application/json',
     ...options.headers,
   }
+  if (token) {
+    mergedHeaders['Authorization'] = `Bearer ${token}`
+  }
+  
   const init: RequestInit = {
     method: options.method ?? 'GET',
     headers: mergedHeaders,
@@ -52,6 +74,13 @@ async function request<T = any>(url: string, options: RequestOptions = {}): Prom
       err.status = resp.status
       err.url = url
       err.detail = json
+      
+      // 处理401错误 - 触发登录Modal
+      if (resp.status === 401 && unauthorizedHandler) {
+        const retryRequest = () => request<T>(url, options)
+        unauthorizedHandler(retryRequest)
+      }
+      
       throw err
     }
 
@@ -81,6 +110,9 @@ export const http = {
   post<T = any>(url: string, data?: any, opts: Omit<RequestOptions,'method'|'body'> = {}) {
     const jb = jsonBody(data)
     return request<T>(url, { ...opts, method: 'POST', headers: { ...(opts.headers||{}), 'Content-Type': 'application/json' }, body: jb.body })
+  },
+  delete<T = any>(url: string, opts: Omit<RequestOptions,'method'|'body'> = {}) {
+    return request<T>(url, { ...opts, method: 'DELETE' })
   },
   jsonBody,
 }
