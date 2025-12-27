@@ -17,7 +17,9 @@
       "@/pages/*": ["src/pages/*"],
       "@/layouts/*": ["src/layouts/*"],
       "@/store/*": ["src/store/*"],
-      "@/lib/*": ["src/lib/*"]
+      "@/lib/*": ["src/lib/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/types/*": ["src/types/*"]
     }
   },
   "include": ["src"],
