@@ -45,7 +45,7 @@ export class SettingsService {
   async saveDefaultAccountId(accountId: string | null): Promise<boolean> {
     try {
       const value = accountId || 'null'
-      const now = Math.floor(Date.now() / 1000)
+      const now = new Date()
 
       await this.db
         .insert(settings)
@@ -98,7 +98,7 @@ export class SettingsService {
    */
   async set(key: string, value: string): Promise<boolean> {
     try {
-      const now = Math.floor(Date.now() / 1000)
+      const now = new Date()
 
       await this.db
         .insert(settings)
