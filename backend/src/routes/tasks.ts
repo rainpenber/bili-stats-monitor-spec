@@ -260,11 +260,7 @@ export function createTasksRoutes(db: DrizzleInstance) {
 
           // 获取视频信息
           const videoInfo = await biliClient.getVideoView(bvid)
-          if (videoInfo.code !== 0 || !videoInfo.data) {
-            return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to fetch video info', undefined, 500)
-          }
-
-          title = videoInfo.data.title
+          title = videoInfo.title
         }
         // 用户空间链接: https://space.bilibili.com/123456
         else if (url.hostname === 'space.bilibili.com') {
@@ -277,10 +273,7 @@ export function createTasksRoutes(db: DrizzleInstance) {
           type = 'author'
 
           // 获取用户信息
-          const userInfo = await biliClient.getUserStat(uid)
-          if (userInfo.code !== 0 || !userInfo.data) {
-            return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to fetch user info', undefined, 500)
-          }
+          const userInfo = await biliClient.getUserStat(parseInt(uid, 10))
 
           // 注意：getUserStat 不返回昵称，需要额外调用或从其他接口获取
           // 这里简化处理，使用 UID 作为标题
@@ -300,21 +293,13 @@ export function createTasksRoutes(db: DrizzleInstance) {
           }
 
           const videoInfo = await biliClient.getVideoView(targetId)
-          if (videoInfo.code !== 0 || !videoInfo.data) {
-            return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to fetch video info', undefined, 500)
-          }
-
-          title = videoInfo.data.title
+          title = videoInfo.title
         } else {
           if (!/^\d+$/.test(targetId)) {
             return error(c, ErrorCodes.VALIDATION_ERROR, 'Invalid UID', undefined, 400)
           }
 
-          const userInfo = await biliClient.getUserStat(targetId)
-          if (userInfo.code !== 0 || !userInfo.data) {
-            return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to fetch user info', undefined, 500)
-          }
-
+          const userInfo = await biliClient.getUserStat(parseInt(targetId, 10))
           title = `UP主 ${targetId}`
         }
       } else {

@@ -33,7 +33,6 @@ export function TaskCardList({ tasks, loading, onTaskClick }: TaskCardListProps)
   if (tasks.length === 0) {
     return (
       <EmptyState
-        icon="📹"
         title="暂无视频任务"
         description="该账号尚未添加任何视频监控任务"
       />
