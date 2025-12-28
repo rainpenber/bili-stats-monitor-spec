@@ -151,14 +151,14 @@
 
 ### 实现任务
 
-- [ ] T045 [P] [US4] 创建AccountManagementPage页面组件 `frontend/web/src/pages/AccountManagementPage.tsx`
-- [ ] T046 [US4] 在AccountManagementPage中整合现有AccountList组件（账号列表）
-- [ ] T047 [US4] 在AccountManagementPage中整合现有AccountBindModal组件（绑定新账号）
-- [ ] T048 [US4] 在AccountManagementPage中添加"全局默认账号"设置区域
-- [ ] T049 [US4] 实现默认账号选择下拉框（从已绑定账号中选择）
-- [ ] T050 [US4] 实现默认账号保存按钮，调用API `POST /api/v1/accounts/default`
-- [ ] T051 [US4] 实现账号解绑时的默认账号清空逻辑（如果解绑的是默认账号）
-- [ ] T052 [US4] 在AccountManagementPage中显示已过期账号的警告标签
+- [x] T045 [P] [US4] 创建AccountManagementPage页面组件 `frontend/web/src/pages/AccountManagementPage.tsx`
+- [x] T046 [US4] 在AccountManagementPage中整合现有AccountList组件（账号列表）
+- [x] T047 [US4] 在AccountManagementPage中整合现有AccountBindModal组件（绑定新账号）
+- [x] T048 [US4] 在AccountManagementPage中添加"全局默认账号"设置区域
+- [x] T049 [US4] 实现默认账号选择下拉框（从已绑定账号中选择） (使用radio按钮)
+- [x] T050 [US4] 实现默认账号保存按钮，调用API `POST /api/v1/accounts/default`
+- [x] T051 [US4] 实现账号解绑时的默认账号清空逻辑（如果解绑的是默认账号）
+- [x] T052 [US4] 在AccountManagementPage中显示已过期账号的警告标签
 
 **Checkpoint**: 账号管理页面完整可用，支持绑定、解绑、设置默认账号
 

@@ -92,8 +92,8 @@ export async function fetchDefaultAccount() {
   return http.get<{ id?: string }>(`/api/v1/accounts/default`)
 }
 
-export async function saveDefaultAccount(id: string) {
-  await http.post(`/api/v1/accounts/default`, { id })
+export async function saveDefaultAccount(accountId: string) {
+  await http.post(`/api/v1/accounts/default`, { accountId })
   return true
 }
 
