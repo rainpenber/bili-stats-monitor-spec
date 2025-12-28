@@ -47,6 +47,10 @@ export interface UISelectionState {
   setIsAuthenticated: (isAuthenticated: boolean) => void
   setIsAuthLoading: (isLoading: boolean) => void
 
+  // selected account (for "My Account" page)
+  selectedAccountId: string | null
+  setSelectedAccountId: (id: string | null) => void
+
   // actions
   setType: (t: ItemType) => void
   setActiveItem: (a: ActiveItem, meta?: any) => void
@@ -95,6 +99,10 @@ export const useUISelection = create<UISelectionState>((set, get) => ({
   setUser: (user) => set({ user, isAuthenticated: !!user }),
   setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
   setIsAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
+
+  // selected account
+  selectedAccountId: null,
+  setSelectedAccountId: (id) => set({ selectedAccountId: id }),
 
   setType: (t) => set({ type: t, activeItem: null, selection: new Set(), selectionMode: 'none', selecting: false, page: 1 }),
   setActiveItem: (a, meta) => set({ activeItem: a, activeMeta: meta }),

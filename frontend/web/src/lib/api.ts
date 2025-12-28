@@ -548,3 +548,58 @@ export async function getCurrentUser(): Promise<AuthUser> {
   return http.get<AuthUser>('/api/v1/auth/profile')
 }
 
+/**
+ * 作者粉丝数据点
+ */
+export interface AuthorMetricDataPoint {
+  collected_at: string
+  follower: number
+}
+
+/**
+ * 作者粉丝历史响应
+ */
+export interface AuthorMetricsResponse {
+  uid: string
+  metrics: AuthorMetricDataPoint[]
+}
+
+/**
+ * 获取作者粉丝历史数据
+ * 
+ * @param uid - 作者UID
+ * @returns 粉丝历史数据
+ */
+export async function fetchAuthorMetrics(uid: string): Promise<AuthorMetricsResponse> {
+  return http.get<AuthorMetricsResponse>(`/api/v1/authors/${uid}/metrics`)
+}
+
+/**
+ * 按作者UID查询任务列表
+ * 
+ * @param authorUid - 作者UID
+ * @param options - 查询选项（分页、排序等）
+ * @returns 任务列表（分页响应）
+ */
+export async function fetchTasksByAuthorUid(
+  authorUid: string,
+  options: {
+    page?: number
+    page_size?: number
+    orderBy?: 'createdAt' | 'updatedAt' | 'nextRunAt'
+    orderDir?: 'asc' | 'desc'
+  } = {}
+): Promise<{ items: Task[]; page: number; page_size: number; total: number }> {
+  const params = new URLSearchParams({
+    author_uid: authorUid,
+    page: String(options.page || 1),
+    page_size: String(options.page_size || 20),
+    ...(options.orderBy && { orderBy: options.orderBy }),
+    ...(options.orderDir && { orderDir: options.orderDir }),
+  })
+
+  return http.get<{ items: Task[]; page: number; page_size: number; total: number }>(
+    `/api/v1/tasks?${params.toString()}`
+  )
+}
+

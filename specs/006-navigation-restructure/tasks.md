@@ -64,11 +64,11 @@
 
 ### 前端全局状态扩展
 
-- [ ] T018 扩展Zustand store添加selectedAccountId字段 `frontend/web/src/store/uiSelection.ts`
-- [ ] T019 [P] 创建useSelectedAccount Hook `frontend/web/src/hooks/useSelectedAccount.ts`
-- [ ] T020 [P] 创建useAuthorMetrics Hook `frontend/web/src/hooks/useAuthorMetrics.ts`
-- [ ] T021 扩展API client添加fetchAuthorMetrics方法 `frontend/web/src/lib/api.ts`
-- [ ] T022 扩展API client添加fetchTasksByAuthorUid方法 `frontend/web/src/lib/api.ts`
+- [x] T018 扩展Zustand store添加selectedAccountId字段 `frontend/web/src/store/uiSelection.ts`
+- [x] T019 [P] 创建useSelectedAccount Hook `frontend/web/src/hooks/useSelectedAccount.ts`
+- [x] T020 [P] 创建useAuthorMetrics Hook `frontend/web/src/hooks/useAuthorMetrics.ts`
+- [x] T021 扩展API client添加fetchAuthorMetrics方法 `frontend/web/src/lib/api.ts`
+- [x] T022 扩展API client添加fetchTasksByAuthorUid方法 `frontend/web/src/lib/api.ts`
 
 **Checkpoint**: 基础设施就绪 - 用户故事实现可以并行开始
 
