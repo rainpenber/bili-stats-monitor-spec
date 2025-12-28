@@ -5,7 +5,7 @@ import { useUISelection } from '@/store/uiSelection'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { listBilibiliAccounts, fetchDefaultAccount, saveDefaultAccount } from '@/lib/api'
 import { AccountList } from '@/components/bilibili/AccountList'
-import { AccountBindModal } from '@/components/modals/AccountBindModal'
+import AccountBindModal from '@/components/modals/AccountBindModal'
 import type { BilibiliAccount } from '@/types/bilibili'
 import { toast } from 'sonner'
 
