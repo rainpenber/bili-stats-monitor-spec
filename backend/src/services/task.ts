@@ -201,6 +201,59 @@ export class TaskService {
   }
 
   /**
+   * 按作者UID查询任务列表
+   * 
+   * @param authorUid - 作者UID
+   * @param options - 可选的排序和分页选项
+   * @returns 任务列表
+   */
+  async getTasksByAuthorUid(
+    authorUid: string,
+    options: {
+      orderBy?: 'createdAt' | 'updatedAt' | 'nextRunAt'
+      orderDir?: 'asc' | 'desc'
+      limit?: number
+      offset?: number
+    } = {}
+  ): Promise<Task[]> {
+    const orderBy = options.orderBy || 'createdAt'
+    const orderDir = options.orderDir || 'desc'
+    const orderFn = orderDir === 'asc' ? asc : desc
+    
+    let orderByColumn
+    switch (orderBy) {
+      case 'updatedAt':
+        orderByColumn = orderFn(tasks.updatedAt)
+        break
+      case 'nextRunAt':
+        orderByColumn = orderFn(tasks.nextRunAt)
+        break
+      case 'createdAt':
+      default:
+        orderByColumn = orderFn(tasks.createdAt)
+        break
+    }
+
+    // 查询该作者发布的所有任务
+    let query = this.db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.authorUid, authorUid))
+
+    let result: Task[] = await (query as any).orderBy(orderByColumn)
+    
+    // 手动实现分页
+    if (options.offset) {
+      result = Array.from(result).slice(options.offset)
+    }
+    if (options.limit) {
+      result = Array.from(result).slice(0, options.limit)
+    }
+
+    return result
+  }
+
+  /**
    * 更新任务
    */
   async update(id: string, data: UpdateTaskData): Promise<void> {

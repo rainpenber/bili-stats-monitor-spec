@@ -48,11 +48,11 @@
 
 ### 后端服务层扩展
 
-- [ ] T009 [P] 创建AuthorService `backend/src/services/author.ts`
-- [ ] T010 [P] 在AuthorService中实现getAuthorMetrics方法（粉丝数据聚合查询）
-- [ ] T011 [P] 创建SettingsService `backend/src/services/settings.ts`
-- [ ] T012 [P] 在SettingsService中实现getDefaultAccountId和saveDefaultAccountId方法
-- [ ] T013 扩展TaskService添加getTasksByAuthorUid方法 `backend/src/services/task.ts`
+- [x] T009 [P] 创建AuthorService `backend/src/services/author.ts`
+- [x] T010 [P] 在AuthorService中实现getAuthorMetrics方法（粉丝数据聚合查询）
+- [x] T011 [P] 创建SettingsService `backend/src/services/settings.ts`
+- [x] T012 [P] 在SettingsService中实现getDefaultAccountId和saveDefaultAccountId方法
+- [x] T013 扩展TaskService添加getTasksByAuthorUid方法 `backend/src/services/task.ts`
 
 ### 后端API路由扩展
 
