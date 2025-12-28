@@ -27,7 +27,7 @@
 **目的**: 数据库迁移准备和环境配置
 
 - [ ] T001 备份现有数据库 `backend/data/dev/bili-stats-dev.db` → `bili-stats-dev.db.backup`
-- [ ] T002 [P] 更新后端schema添加tasks表新字段 `backend/src/db/schema.ts`
+- [ ] T002 [P] 更新后端schema添加tasks表新字段（author_uid, bili_account_id），详细设计参考data-model.md `backend/src/db/schema.ts`
 - [ ] T003 [P] 生成Drizzle迁移SQL `bun run drizzle-kit generate:sqlite`
 - [ ] T004 [P] 在settings表初始化default_account_id记录（迁移SQL）
 
@@ -57,7 +57,7 @@
 ### 后端API路由扩展
 
 - [ ] T014 [P] 创建Authors路由 `backend/src/routes/authors.ts`
-- [ ] T015 [P] 实现GET /api/v1/authors/:uid/metrics端点
+- [ ] T015 [P] 实现GET /api/v1/authors/:uid/metrics端点，使用SQL GROUP BY + MAX聚合查询（按collected_at分组，取MAX(follower)，参考research.md R2）
 - [ ] T016 扩展Tasks路由支持author_uid查询参数 `backend/src/routes/tasks.ts`
 - [ ] T017 修改Accounts路由的POST /api/v1/accounts/default端点实现持久化 `backend/src/routes/accounts.ts`
 - [ ] T017a 重构现有路由层代码，将直接数据库操作移至服务层（确保宪章VI合规） `backend/src/routes/accounts.ts`
@@ -134,9 +134,9 @@
 
 ### 实现任务
 
-- [ ] T041 [US3] 重命名DashboardPage为TasksMonitorPage `frontend/web/src/pages/DashboardPage.tsx` → `frontend/web/src/pages/TasksMonitorPage.tsx`
-- [ ] T042 [US3] 更新App.tsx路由配置，将"/dashboard"改为"/tasks" `frontend/web/src/App.tsx`
-- [ ] T043 [US3] 更新Sidebar导航项文案："仪表板" → "监视任务" `frontend/web/src/layouts/AppLayout.tsx`或`Sidebar.tsx`
+- [ ] T041 [US3] 重命名DashboardPage为TasksMonitorPage，文件名改为`TasksMonitorPage.tsx` `frontend/web/src/pages/DashboardPage.tsx` → `frontend/web/src/pages/TasksMonitorPage.tsx`
+- [ ] T042 [US3] 更新App.tsx路由配置，将"/dashboard"改为"/tasks"并添加重定向`<Navigate to="/tasks" replace />`保持向后兼容 `frontend/web/src/App.tsx`
+- [ ] T043 [US3] 更新Sidebar导航项文案和路由："仪表板" → "监视任务"，路径"/dashboard" → "/tasks" `frontend/web/src/layouts/AppLayout.tsx`或`Sidebar.tsx`
 - [ ] T044 [US3] 验证TasksMonitorPage的所有现有功能（搜索、筛选、卡片点击）正常工作
 
 **Checkpoint**: "监视任务"页面功能完整，与原"仪表板"功能一致
@@ -189,11 +189,11 @@
 ### 实现任务
 
 - [ ] T056 [P] [US6] 创建OtherSettingsPage页面组件 `frontend/web/src/pages/OtherSettingsPage.tsx`
-- [ ] T057 [P] [US6] 实现主题色选择器（默认、绿色、蓝色、紫色、橙色）
-- [ ] T058 [P] [US6] 实现配色方案选择器（浅色、深色、跟随系统）
-- [ ] T059 [US6] 实现主题色和配色方案的即时更新逻辑（CSS变量或class切换）
+- [ ] T057 [P] [US6] 实现主题色选择器（默认、绿色、蓝色、紫色、橙色），使用localStorage存储用户偏好（key: 'theme_color'）
+- [ ] T058 [P] [US6] 实现配色方案选择器（浅色、深色、跟随系统），使用localStorage存储用户偏好（key: 'color_scheme'）
+- [ ] T059 [US6] 实现主题色和配色方案的即时更新逻辑（CSS变量或class切换），从localStorage读取并应用
 - [ ] T060 [US6] 实现管理员密码修改表单（旧密码、新密码、确认新密码）
-- [ ] T061 [US6] 实现密码修改API调用和验证逻辑 `POST /api/v1/auth/change-password`
+- [ ] T061 [US6] 实现密码修改API调用和验证逻辑，调用现有端点`POST /api/v1/auth/change-password`（参考contracts/auth-api.yaml）
 
 **Checkpoint**: 其他设置页面完整可用，主题色和密码修改功能正常
 
@@ -222,7 +222,7 @@
 
 **目的**: 提升整体质量和用户体验
 
-- [ ] T070 [P] 优化AccountDataDashboard卡片布局（固定大小、多列、左对齐）
+- [ ] T070 [P] 优化AccountDataDashboard卡片布局：2列网格布局，每个卡片宽度约200px，左对齐，固定高度约120px `frontend/web/src/components/account/AccountDataDashboard.tsx`
 - [ ] T071 [P] 优化FollowerChart加载状态和空状态处理
 - [ ] T072 [P] 优化TaskCardList加载状态和空状态处理
 - [ ] T073 [P] 添加所有页面的加载骨架屏（Skeleton）
