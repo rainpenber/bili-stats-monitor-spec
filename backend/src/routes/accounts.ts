@@ -2,10 +2,12 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import { success, error, ErrorCodes } from '../utils/response'
 import { AccountService } from '../services/account'
+import { SettingsService } from '../services/settings'
 import { biliClient } from '../services/bili/client'
 import type { DrizzleInstance } from '../db'
 
 const accountService = (db: DrizzleInstance) => new AccountService(db)
+const settingsService = (db: DrizzleInstance) => new SettingsService(db)
 
 // 请求验证 schema
 const bindCookieSchema = z.object({
@@ -22,6 +24,7 @@ const setDefaultSchema = z.object({
 export function createAccountsRoutes(db: DrizzleInstance) {
   const app = new Hono()
   const service = accountService(db)
+  const settings = settingsService(db)
 
   /**
    * GET /api/v1/accounts - 获取账号列表
@@ -131,10 +134,22 @@ export function createAccountsRoutes(db: DrizzleInstance) {
    */
   app.get('/default', async (c) => {
     try {
-      const account = await service.getDefaultAccount()
-      if (!account) {
-        return success(c, null, 'No default account found')
+      // 从settings表读取默认账号ID
+      const defaultAccountId = await settings.getDefaultAccountId()
+      
+      if (!defaultAccountId) {
+        return success(c, null, 'No default account set')
       }
+
+      // 获取账号详情
+      const account = await service.findAccountById(defaultAccountId)
+      
+      if (!account) {
+        // 默认账号已被删除，清除设置
+        await settings.saveDefaultAccountId(null)
+        return success(c, null, 'Default account not found (cleaned up)')
+      }
+
       return success(c, account)
     } catch (err: any) {
       return error(c, ErrorCodes.INTERNAL_ERROR, err.message || 'Failed to get default account', undefined, 500)
@@ -155,8 +170,12 @@ export function createAccountsRoutes(db: DrizzleInstance) {
         return error(c, ErrorCodes.NOT_FOUND, 'Account not found', undefined, 404)
       }
 
-      // TODO: 如果需要实现"默认账号"功能，可以在 settings 表中存储
-      // 目前先返回成功
+      // 保存到settings表
+      const saved = await settings.saveDefaultAccountId(accountId)
+      
+      if (!saved) {
+        return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to save default account', undefined, 500)
+      }
 
       return success(c, { accountId }, 'Default account set successfully')
     } catch (err: any) {

@@ -10,6 +10,7 @@ import { createTasksRoutes } from './routes/tasks'
 import { createMetricsRoutes } from './routes/metrics'
 import { createNotificationsRoutes } from './routes/notifications'
 import { createAuthRoutes } from './routes/auth'
+import { createAuthorsRoutes } from './routes/authors'
 import { createSettingsRoutes } from './routes/settings'
 import { createLogsRoutes } from './routes/logs'
 import { createSchedulerRoutes } from './routes/scheduler'
@@ -54,6 +55,7 @@ app.get('/health', (c) => {
 app.route('/api/v1/auth', createAuthRoutes(container.db, config.jwt.secret))
 app.route('/api/v1/settings', createSettingsRoutes(container.db, config.jwt.secret))
 app.route('/api/v1/accounts', createAccountsRoutes(container.db))
+app.route('/api/v1/authors', createAuthorsRoutes(container.db))
 app.route('/api/v1/tasks', createTasksRoutes(container.db))
 app.route('/api/v1/tasks', createMetricsRoutes(container.db))
 app.route('/api/v1/notifications', createNotificationsRoutes(container.db))

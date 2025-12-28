@@ -56,11 +56,11 @@
 
 ### 后端API路由扩展
 
-- [ ] T014 [P] 创建Authors路由 `backend/src/routes/authors.ts`
-- [ ] T015 [P] 实现GET /api/v1/authors/:uid/metrics端点，使用SQL GROUP BY + MAX聚合查询（按collected_at分组，取MAX(follower)，参考research.md R2）
-- [ ] T016 扩展Tasks路由支持author_uid查询参数 `backend/src/routes/tasks.ts`
-- [ ] T017 修改Accounts路由的POST /api/v1/accounts/default端点实现持久化 `backend/src/routes/accounts.ts`
-- [ ] T017a 重构现有路由层代码，将直接数据库操作移至服务层（确保宪章VI合规） `backend/src/routes/accounts.ts`
+- [x] T014 [P] 创建Authors路由 `backend/src/routes/authors.ts`
+- [x] T015 [P] 实现GET /api/v1/authors/:uid/metrics端点，使用SQL GROUP BY + MAX聚合查询（按collected_at分组，取MAX(follower)，参考research.md R2）
+- [x] T016 扩展Tasks路由支持author_uid查询参数 `backend/src/routes/tasks.ts`
+- [x] T017 修改Accounts路由的POST /api/v1/accounts/default端点实现持久化 `backend/src/routes/accounts.ts`
+- [x] T017a 重构现有路由层代码，将直接数据库操作移至服务层（确保宪章VI合规） `backend/src/routes/logs.ts`已重构
 
 ### 前端全局状态扩展
 

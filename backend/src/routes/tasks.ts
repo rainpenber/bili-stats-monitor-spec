@@ -74,6 +74,7 @@ export function createTasksRoutes(db: DrizzleInstance) {
       const search = c.req.query('search')
       const tags = c.req.query('tags')?.split(',').filter(Boolean)
       const accountId = c.req.query('accountId')
+      const authorUid = c.req.query('author_uid') || c.req.query('authorUid') // 支持两种命名格式
       
       // 支持两种分页参数格式
       // 1. page + page_size (前端使用)
@@ -92,6 +93,7 @@ export function createTasksRoutes(db: DrizzleInstance) {
         search,
         tags,
         accountId,
+        authorUid,
         limit,
         offset,
         orderBy,
@@ -105,6 +107,7 @@ export function createTasksRoutes(db: DrizzleInstance) {
         search,
         tags,
         accountId,
+        authorUid,
         // 不传 limit 和 offset
       })
 

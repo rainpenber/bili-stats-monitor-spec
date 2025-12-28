@@ -62,6 +62,7 @@ export interface TaskFilters {
   search?: string // 搜索标题或 targetId
   tags?: string[] // 标签过滤（AND 逻辑）
   accountId?: string
+  authorUid?: string // 按作者UID过滤
   limit?: number
   offset?: number
   orderBy?: 'createdAt' | 'updatedAt' | 'nextRunAt'
@@ -137,6 +138,11 @@ export class TaskService {
     // 账号过滤
     if (filters.accountId) {
       conditions.push(eq(tasks.accountId, filters.accountId))
+    }
+
+    // 作者UID过滤
+    if (filters.authorUid) {
+      conditions.push(eq(tasks.authorUid, filters.authorUid))
     }
 
     // 搜索（标题或 targetId）
