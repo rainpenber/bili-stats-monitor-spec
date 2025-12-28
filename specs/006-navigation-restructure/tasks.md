@@ -100,7 +100,7 @@
 - [x] T030 [US1] 在MyAccountPage中实现粉丝图表渲染（调用FollowerChart + useAuthorMetrics）
 - [x] T031 [US1] 在MyAccountPage中实现视频任务列表渲染（调用TaskCardList + fetchTasksByAuthorUid）
 - [x] T032 [US1] 实现空状态处理：未绑定任何账号时显示引导提示
-- [ ] T033 [US1] 更新App.tsx路由配置，将"/"路由指向MyAccountPage `frontend/web/src/App.tsx`
+- [x] T033 [US1] 更新App.tsx路由配置，将"/"路由指向MyAccountPage，保留/dashboard旧路由 `frontend/web/src/App.tsx`
 
 **Checkpoint**: "我的账号"页面完整可用，能展示账号数据、图表和任务列表
 
