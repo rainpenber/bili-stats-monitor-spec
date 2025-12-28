@@ -203,13 +203,13 @@ export default function AccountManagementPage() {
           ) : (
             <div className="space-y-3">
               <div className="space-y-2">
-                {accounts.map(acc => {
+                {accounts.map((acc, index) => {
                   const isSelected = defaultAccountId === acc.accountId
                   const isExpired = acc.status === 'expired'
                   
                   return (
                     <label
-                      key={acc.id}
+                      key={acc.accountId || `account-${index}`}
                       className={`flex items-center gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
                         isSelected
                           ? 'border-primary bg-primary/5'
