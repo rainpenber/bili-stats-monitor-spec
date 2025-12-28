@@ -30,7 +30,7 @@ export function AccountDataDashboard({ totalVideos, followerCount, loading }: Ac
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="flex gap-4">
       {/* 总监视视频数 */}
       <div className="w-[200px] h-[120px] p-4 border rounded-lg bg-card flex flex-col justify-between">
         <div className="text-sm text-muted-foreground">总监视视频数</div>

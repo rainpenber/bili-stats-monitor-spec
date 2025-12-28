@@ -1,5 +1,6 @@
 import { Modal, ModalHeader, ModalBody } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
+import { toast } from 'sonner'
 import type { BilibiliAccount } from '@/types/bilibili'
 
 /**
@@ -29,8 +30,12 @@ export function AccountSwitchModal({
   onSelect
 }: AccountSwitchModalProps) {
   const handleSelect = (accountId: string) => {
+    const selectedAccount = accounts.find(acc => acc.id === accountId)
     onSelect(accountId)
     onClose()
+    if (selectedAccount) {
+      toast.success(`已切换到账号：${selectedAccount.nickname}`)
+    }
   }
 
   return (
