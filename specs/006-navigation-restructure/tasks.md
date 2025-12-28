@@ -26,10 +26,10 @@
 
 **目的**: 数据库迁移准备和环境配置
 
-- [ ] T001 备份现有数据库 `backend/data/dev/bili-stats-dev.db` → `bili-stats-dev.db.backup`
-- [ ] T002 [P] 更新后端schema添加tasks表新字段（author_uid, bili_account_id），详细设计参考data-model.md `backend/src/db/schema.ts`
-- [ ] T003 [P] 生成Drizzle迁移SQL `bun run drizzle-kit generate:sqlite`
-- [ ] T004 [P] 在settings表初始化default_account_id记录（迁移SQL）
+- [x] T001 备份现有数据库 `backend/data/dev/bili-stats-dev.db` → `bili-stats-dev.db.backup`
+- [x] T002 [P] 更新后端schema添加tasks表新字段（author_uid, bili_account_id），详细设计参考data-model.md `backend/src/db/schema.ts`
+- [x] T003 [P] 生成Drizzle迁移SQL `bun run drizzle-kit generate:sqlite`
+- [x] T004 [P] 在settings表初始化default_account_id记录（迁移SQL）
 
 ---
 

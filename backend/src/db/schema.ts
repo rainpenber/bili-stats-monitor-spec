@@ -34,7 +34,9 @@ export const tasks = sqliteTable('tasks', {
   title: text('title'),
   cid: text('cid'), // Video CID (for online viewers)
   cidRetries: integer('cid_retries').default(0), // Retry count for CID fetching
-  accountId: text('account_id').references(() => accounts.id),
+  accountId: text('account_id').references(() => accounts.id), // Task creator (historical field)
+  authorUid: text('author_uid'), // NEW: Publisher UID (for video: author UID, for author: = targetId)
+  biliAccountId: text('bili_account_id').references(() => accounts.id), // NEW: Account ID for querying
   strategy: text('strategy', { mode: 'json' }).notNull(), // { mode, value?, unit? }
   deadline: integer('deadline', { mode: 'timestamp' }).notNull(),
   status: text('status', { enum: ['running', 'stopped', 'completed', 'failed', 'paused'] }).notNull().default('running'),
