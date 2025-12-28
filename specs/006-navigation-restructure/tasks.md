@@ -188,12 +188,12 @@
 
 ### 实现任务
 
-- [ ] T056 [P] [US6] 创建OtherSettingsPage页面组件 `frontend/web/src/pages/OtherSettingsPage.tsx`
-- [ ] T057 [P] [US6] 实现主题色选择器（默认、绿色、蓝色、紫色、橙色），使用localStorage存储用户偏好（key: 'theme_color'）
-- [ ] T058 [P] [US6] 实现配色方案选择器（浅色、深色、跟随系统），使用localStorage存储用户偏好（key: 'color_scheme'）
-- [ ] T059 [US6] 实现主题色和配色方案的即时更新逻辑（CSS变量或class切换），从localStorage读取并应用
-- [ ] T060 [US6] 实现管理员密码修改表单（旧密码、新密码、确认新密码）
-- [ ] T061 [US6] 实现密码修改API调用和验证逻辑，调用现有端点`POST /api/v1/auth/change-password`（参考contracts/auth-api.yaml）
+- [x] T056 [P] [US6] 创建OtherSettingsPage页面组件 `frontend/web/src/pages/OtherSettingsPage.tsx`
+- [x] T057 [P] [US6] 实现主题色选择器（默认、绿色、蓝色、紫色、橙色），使用localStorage存储用户偏好（key: 'theme_color'）
+- [x] T058 [P] [US6] 实现配色方案选择器（浅色、深色、跟随系统），使用localStorage存储用户偏好（key: 'color_scheme'）
+- [x] T059 [US6] 实现主题色和配色方案的即时更新逻辑（CSS变量或class切换），从localStorage读取并应用 (Zustand store自动处理)
+- [x] T060 [US6] 实现管理员密码修改表单（旧密码、新密码、确认新密码）
+- [x] T061 [US6] 实现密码修改API调用和验证逻辑，调用现有端点`POST /api/v1/auth/change-password`（参考contracts/auth-api.yaml）
 
 **Checkpoint**: 其他设置页面完整可用，主题色和密码修改功能正常
 

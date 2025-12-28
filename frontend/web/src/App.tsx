@@ -5,6 +5,7 @@ import TasksMonitorPage from '@/pages/TasksMonitorPage'
 import AccountManagementPage from '@/pages/AccountManagementPage'
 import AccountsPage from '@/pages/AccountsPage'
 import SettingsPage from '@/pages/SettingsPage'
+import OtherSettingsPage from '@/pages/OtherSettingsPage'
 import LogsPage from '@/pages/LogsPage'
 import NotificationsPage from '@/pages/NotificationsPage'
 import LoginPage from '@/pages/LoginPage'
@@ -62,6 +63,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <LogsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings/other" 
+            element={
+              <ProtectedRoute>
+                <OtherSettingsPage />
               </ProtectedRoute>
             } 
           />

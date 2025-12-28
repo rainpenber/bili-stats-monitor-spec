@@ -64,11 +64,34 @@ export interface UISelectionState {
   setSelecting: (v: boolean) => void
 }
 
+// 从localStorage读取主题设置
+const getInitialTheme = (): ThemePreset => {
+  if (typeof window === 'undefined') return 'default'
+  const stored = localStorage.getItem('theme_color') as ThemePreset | null
+  return stored && ['default', 'green', 'blue', 'purple', 'orange'].includes(stored) ? stored : 'default'
+}
+
+const getInitialScheme = (): Scheme => {
+  if (typeof window === 'undefined') return 'system'
+  const stored = localStorage.getItem('color_scheme') as Scheme | null
+  return stored && ['system', 'light', 'dark'].includes(stored) ? stored : 'system'
+}
+
 export const useUISelection = create<UISelectionState>((set, get) => ({
-  theme: 'default',
-  setTheme: (t) => set({ theme: t }),
-  scheme: 'system',
-  setScheme: (s) => set({ scheme: s }),
+  theme: getInitialTheme(),
+  setTheme: (t) => {
+    set({ theme: t })
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme_color', t)
+    }
+  },
+  scheme: getInitialScheme(),
+  setScheme: (s) => {
+    set({ scheme: s })
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('color_scheme', s)
+    }
+  },
 
   type: 'video',
   activeItem: null,
