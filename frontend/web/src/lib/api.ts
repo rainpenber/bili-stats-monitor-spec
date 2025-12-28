@@ -390,16 +390,6 @@ export async function fetchVideoInsights(bv: string) {
   return http.get<InsightPoint[]>(`/api/v1/videos/${bv}/insights/daily`)
 }
 
-/**
- * 获取博主粉丝时序
- */
-export async function fetchAuthorMetrics(uid: string, params?: TimeRangeParams) {
-  const qs = new URLSearchParams()
-  if (params?.from) qs.set('from', params.from)
-  if (params?.to) qs.set('to', params.to)
-  return http.get<{ series: MetricPoint[] }>(`/api/v1/authors/${uid}/metrics?${qs.toString()}`)
-}
-
 // Media API (T033-T035)
 
 /**
