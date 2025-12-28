@@ -40,15 +40,15 @@ export function createAuthorsRoutes(db: DrizzleInstance) {
       const uid = c.req.param('uid')
 
       if (!uid) {
-        return c.json(error(ErrorCodes.VALIDATION_ERROR, 'UID is required'))
+        return error(c, ErrorCodes.VALIDATION_ERROR, 'UID is required')
       }
 
       const result = await authorService.getAuthorMetrics(uid)
 
-      return c.json(success(result))
+      return success(c, result)
     } catch (err) {
       console.error('Failed to get author metrics:', err)
-      return c.json(error(ErrorCodes.INTERNAL_ERROR, 'Failed to get author metrics'))
+      return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to get author metrics', undefined, 500)
     }
   })
 
