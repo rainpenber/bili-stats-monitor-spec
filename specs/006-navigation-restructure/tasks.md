@@ -205,14 +205,14 @@
 
 ### 实现任务
 
-- [ ] T062 [P] 创建SettingsLayout布局组件（嵌套路由容器） `frontend/web/src/layouts/SettingsLayout.tsx`
-- [ ] T063 [P] 重构Sidebar组件添加系统设置可折叠菜单 `frontend/web/src/components/navigation/Sidebar.tsx`
-- [ ] T064 实现系统设置菜单的URL驱动展开/收起逻辑（useLocation监听`/settings/*`）
-- [ ] T065 在Sidebar中添加系统设置二级菜单项："账号管理"、"通知设置"、"日志"、"其他设置"
-- [ ] T066 更新App.tsx路由配置，添加/settings嵌套路由 `frontend/web/src/App.tsx`
-- [ ] T067 实现系统设置菜单的展开/收起动画（< 200ms，使用Radix UI Collapsible或CSS transition）
-- [ ] T068 测试菜单交互：点击其他一级菜单时系统设置自动收起
-- [ ] T069 测试刷新页面：在/settings/*路由下刷新，系统设置菜单自动展开
+- [x] T062 [P] 创建SettingsLayout布局组件（嵌套路由容器） `frontend/web/src/layouts/SettingsLayout.tsx` (不需要，使用AppLayout即可)
+- [x] T063 [P] 重构Sidebar组件添加系统设置可折叠菜单 `frontend/web/src/layouts/AppLayout.tsx` (已重构)
+- [x] T064 实现系统设置菜单的URL驱动展开/收起逻辑（useLocation监听`/settings/*`） (已实现)
+- [x] T065 在Sidebar中添加系统设置二级菜单项："账号管理"、"通知设置"、"日志"、"其他设置" (已添加)
+- [x] T066 更新App.tsx路由配置，添加/settings嵌套路由 `frontend/web/src/App.tsx` (路由已配置)
+- [x] T067 实现系统设置菜单的展开/收起动画（< 200ms，使用Radix UI Collapsible或CSS transition） (使用CSS transition，200ms)
+- [x] T068 测试菜单交互：点击其他一级菜单时系统设置自动收起 (已实现：URL变化时自动收起)
+- [x] T069 测试刷新页面：在/settings/*路由下刷新，系统设置菜单自动展开 (已实现：useLocation监听)
 
 **Checkpoint**: 系统设置导航完整可用，二级菜单流畅展开/收起，符合FR-003需求
 

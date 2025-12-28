@@ -1,5 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import { PropsWithChildren, useEffect } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { PropsWithChildren, useEffect, useState } from 'react'
 import { useUISelection } from '@/store/uiSelection'
 import { Button } from '@/components/ui/Button'
 import { UserStatus } from '@/components/auth/UserStatus'
@@ -22,8 +22,35 @@ function NavItem({ to, label }: { to: string; label: string }) {
   )
 }
 
+function SettingsSubNavItem({ to, label }: { to: string; label: string }) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `block px-3 py-2 pl-8 rounded-md text-sm transition-colors ${
+          isActive
+            ? 'bg-accent text-accent-foreground font-medium'
+            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+        }`
+      }
+    >
+      {label}
+    </NavLink>
+  )
+}
+
 export default function AppLayout({ children }: PropsWithChildren) {
   const { theme, scheme, setScheme } = useUISelection()
+  const location = useLocation()
+  
+  // 系统设置菜单展开状态（URL驱动）
+  const isSettingsRoute = location.pathname.startsWith('/settings')
+  const [settingsExpanded, setSettingsExpanded] = useState(isSettingsRoute)
+
+  // URL变化时自动展开/收起
+  useEffect(() => {
+    setSettingsExpanded(isSettingsRoute)
+  }, [isSettingsRoute])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -56,10 +83,37 @@ export default function AppLayout({ children }: PropsWithChildren) {
         <nav className="space-y-1 flex-1">
           <NavItem to="/" label="我的账号" />
           <NavItem to="/tasks" label="监视任务" />
-          <NavItem to="/accounts" label="账号管理" />
-          <NavItem to="/notifications" label="通知设置" />
-          <NavItem to="/logs" label="日志" />
-          <NavItem to="/settings" label="系统设置" />
+          
+          {/* 系统设置可折叠菜单 */}
+          <div>
+            <button
+              onClick={() => setSettingsExpanded(!settingsExpanded)}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isSettingsRoute
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              }`}
+            >
+              <span>系统设置</span>
+              <span className={`transition-transform duration-200 ${settingsExpanded ? 'rotate-90' : ''}`}>
+                ▶
+              </span>
+            </button>
+            
+            {/* 二级菜单 */}
+            <div
+              className={`overflow-hidden transition-all duration-200 ${
+                settingsExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <div className="space-y-1 mt-1">
+                <SettingsSubNavItem to="/settings/accounts" label="账号管理" />
+                <SettingsSubNavItem to="/settings/notifications" label="通知设置" />
+                <SettingsSubNavItem to="/settings/logs" label="日志" />
+                <SettingsSubNavItem to="/settings/other" label="其他设置" />
+              </div>
+            </div>
+          </div>
         </nav>
         
         {/* 分隔线 */}
