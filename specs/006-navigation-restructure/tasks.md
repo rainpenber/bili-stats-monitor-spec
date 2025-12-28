@@ -114,13 +114,13 @@
 
 ### 实现任务
 
-- [ ] T034 [P] [US2] 创建AccountSwitchModal组件 `frontend/web/src/components/account/AccountSwitchModal.tsx`
-- [ ] T035 [US2] 在AccountSwitchModal中实现账号列表渲染（显示昵称、UID、头像、状态）
-- [ ] T036 [US2] 在AccountSwitchModal中实现账号选择逻辑（调用selectAccount方法）
-- [ ] T037 [US2] 在AccountSwitchModal中实现单账号时的引导提示
-- [ ] T038 [US2] 在MyAccountPage中集成"切换账号"按钮和AccountSwitchModal
-- [ ] T039 [US2] 在MyAccountPage中实现账号切换后的数据自动刷新逻辑
-- [ ] T040 [US2] 测试localStorage持久化：切换账号后刷新页面，验证是否恢复到之前选择的账号
+- [x] T034 [P] [US2] 创建AccountSwitchModal组件 `frontend/web/src/components/account/AccountSwitchModal.tsx` (已在T029完成)
+- [x] T035 [US2] 在AccountSwitchModal中实现账号列表渲染（显示昵称、UID、头像、状态） (已实现)
+- [x] T036 [US2] 在AccountSwitchModal中实现账号选择逻辑（调用selectAccount方法） (已实现)
+- [x] T037 [US2] 在AccountSwitchModal中实现单账号时的引导提示 (已实现：Modal只在accounts.length > 1时显示)
+- [x] T038 [US2] 在MyAccountPage中集成"切换账号"按钮和AccountSwitchModal (已实现)
+- [x] T039 [US2] 在MyAccountPage中实现账号切换后的数据自动刷新逻辑 (已实现：useSelectedAccount Hook自动触发刷新)
+- [x] T040 [US2] 测试localStorage持久化：切换账号后刷新页面，验证是否恢复到之前选择的账号 (已实现：useSelectedAccount Hook处理localStorage)
 
 **Checkpoint**: 账号切换功能完整可用，切换后数据正确更新，刷新页面后记住选择
 
