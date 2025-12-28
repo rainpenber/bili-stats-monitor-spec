@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from '@/layouts/AppLayout'
 import MyAccountPage from '@/pages/MyAccountPage'
-import DashboardPage from '@/pages/DashboardPage'
+import TasksMonitorPage from '@/pages/TasksMonitorPage'
 import AccountsPage from '@/pages/AccountsPage'
 import SettingsPage from '@/pages/SettingsPage'
 import LogsPage from '@/pages/LogsPage'
@@ -26,7 +26,8 @@ export default function App() {
         {/* 主应用路由（使用AppLayout + ProtectedRoute） */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<MyAccountPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/tasks" element={<TasksMonitorPage />} />
+          <Route path="/dashboard" element={<Navigate to="/tasks" replace />} />
           <Route 
             path="/accounts" 
             element={

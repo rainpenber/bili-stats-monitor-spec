@@ -12,7 +12,7 @@ import type { VideoItem, AuthorItem } from '@/lib/fake'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
-export default function DashboardPage() {
+export default function TasksMonitorPage() {
   const { type, keyword, page, pageSize, setAddTaskType } = useUISelection()
 
   const [loading, setLoading] = useState(false)

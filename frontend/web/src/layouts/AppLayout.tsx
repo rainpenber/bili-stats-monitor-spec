@@ -54,7 +54,8 @@ export default function AppLayout({ children }: PropsWithChildren) {
       <aside className="border-r border-border p-4 bg-card flex flex-col">
         <div className="text-xl font-semibold mb-4">Bili Monitor</div>
         <nav className="space-y-1 flex-1">
-          <NavItem to="/" label="仪表板" />
+          <NavItem to="/" label="我的账号" />
+          <NavItem to="/tasks" label="监视任务" />
           <NavItem to="/accounts" label="账号管理" />
           <NavItem to="/notifications" label="通知设置" />
           <NavItem to="/logs" label="日志" />

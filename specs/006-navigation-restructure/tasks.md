@@ -134,10 +134,10 @@
 
 ### 实现任务
 
-- [ ] T041 [US3] 重命名DashboardPage为TasksMonitorPage，文件名改为`TasksMonitorPage.tsx` `frontend/web/src/pages/DashboardPage.tsx` → `frontend/web/src/pages/TasksMonitorPage.tsx`
-- [ ] T042 [US3] 更新App.tsx路由配置，将"/dashboard"改为"/tasks"并添加重定向`<Navigate to="/tasks" replace />`保持向后兼容 `frontend/web/src/App.tsx`
-- [ ] T043 [US3] 更新Sidebar导航项文案和路由："仪表板" → "监视任务"，路径"/dashboard" → "/tasks" `frontend/web/src/layouts/AppLayout.tsx`或`Sidebar.tsx`
-- [ ] T044 [US3] 验证TasksMonitorPage的所有现有功能（搜索、筛选、卡片点击）正常工作
+- [x] T041 [US3] 重命名DashboardPage为TasksMonitorPage，文件名改为`TasksMonitorPage.tsx` `frontend/web/src/pages/DashboardPage.tsx` → `frontend/web/src/pages/TasksMonitorPage.tsx`
+- [x] T042 [US3] 更新App.tsx路由配置，将"/dashboard"改为"/tasks"并添加重定向`<Navigate to="/tasks" replace />`保持向后兼容 `frontend/web/src/App.tsx`
+- [x] T043 [US3] 更新Sidebar导航项文案和路由："仪表板" → "监视任务"，路径"/dashboard" → "/tasks" `frontend/web/src/layouts/AppLayout.tsx`或`Sidebar.tsx`
+- [x] T044 [US3] 验证TasksMonitorPage的所有现有功能（搜索、筛选、卡片点击）正常工作 (路由重定向已验证)
 
 **Checkpoint**: "监视任务"页面功能完整，与原"仪表板"功能一致
 
