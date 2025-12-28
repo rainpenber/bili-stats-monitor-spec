@@ -90,16 +90,16 @@
 
 ### 实现任务
 
-- [ ] T023 [P] [US1] 创建MyAccountPage页面组件 `frontend/web/src/pages/MyAccountPage.tsx`
-- [ ] T024 [P] [US1] 创建AccountDataDashboard组件（数据仪表板卡片） `frontend/web/src/components/account/AccountDataDashboard.tsx`
-- [ ] T025 [P] [US1] 扩展FollowerChart组件支持时间缩放到最近30天 `frontend/web/src/components/charts/FollowerChart.tsx`
-- [ ] T026 [P] [US1] 扩展TaskCardList组件支持按author_uid筛选 `frontend/web/src/components/tasks/TaskCardList.tsx`
-- [ ] T027 [US1] 在MyAccountPage中集成useSelectedAccount Hook和数据加载逻辑
-- [ ] T028 [US1] 在MyAccountPage中实现账号信息区域渲染（昵称、UID、头像）
-- [ ] T029 [US1] 在MyAccountPage中实现数据仪表板渲染（调用AccountDataDashboard）
-- [ ] T030 [US1] 在MyAccountPage中实现粉丝图表渲染（调用FollowerChart + useAuthorMetrics）
-- [ ] T031 [US1] 在MyAccountPage中实现视频任务列表渲染（调用TaskCardList + fetchTasksByAuthorUid）
-- [ ] T032 [US1] 实现空状态处理：未绑定任何账号时显示引导提示
+- [x] T023 [P] [US1] 创建MyAccountPage页面组件 `frontend/web/src/pages/MyAccountPage.tsx`
+- [x] T024 [P] [US1] 创建AccountDataDashboard组件（数据仪表板卡片） `frontend/web/src/components/account/AccountDataDashboard.tsx`
+- [x] T025 [P] [US1] 扩展FollowerChart组件支持时间缩放到最近30天 `frontend/web/src/components/account/FollowerChart.tsx`
+- [x] T026 [P] [US1] 扩展TaskCardList组件支持按author_uid筛选 `frontend/web/src/components/account/TaskCardList.tsx`
+- [x] T027 [US1] 在MyAccountPage中集成useSelectedAccount Hook和数据加载逻辑
+- [x] T028 [US1] 在MyAccountPage中实现账号信息区域渲染（昵称、UID、头像）
+- [x] T029 [US1] 在MyAccountPage中实现数据仪表板渲染（调用AccountDataDashboard）+ AccountSwitchModal
+- [x] T030 [US1] 在MyAccountPage中实现粉丝图表渲染（调用FollowerChart + useAuthorMetrics）
+- [x] T031 [US1] 在MyAccountPage中实现视频任务列表渲染（调用TaskCardList + fetchTasksByAuthorUid）
+- [x] T032 [US1] 实现空状态处理：未绑定任何账号时显示引导提示
 - [ ] T033 [US1] 更新App.tsx路由配置，将"/"路由指向MyAccountPage `frontend/web/src/App.tsx`
 
 **Checkpoint**: "我的账号"页面完整可用，能展示账号数据、图表和任务列表
