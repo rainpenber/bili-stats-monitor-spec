@@ -157,20 +157,20 @@ export default function AccountManagementPage() {
 
       {/* 账号列表 */}
       <Card>
-        <CardHeader>
+        <CardHeader className="p-4 pb-3">
           <h2 className="font-medium">已绑定账号</h2>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-4 pt-0">
           <AccountList ref={accountListRef} onBindNew={handleBindNew} onRebind={handleRebind} />
         </CardContent>
       </Card>
 
       {/* 全局默认账号设置 */}
       <Card>
-        <CardHeader>
+        <CardHeader className="p-4 pb-3">
           <h2 className="font-medium">全局默认账号</h2>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-4 pt-0 space-y-4">
           {/* 未设置默认账号的警告 */}
           {!defaultAccountId && !loading && (
             <Card className="border-yellow-500/50 bg-yellow-500/10">
