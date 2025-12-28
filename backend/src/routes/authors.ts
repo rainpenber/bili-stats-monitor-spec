@@ -9,7 +9,7 @@ import type { DrizzleInstance } from '../db'
  * 提供作者相关的数据查询接口
  */
 export function createAuthorsRoutes(db: DrizzleInstance) {
-  const router = new Hono()
+  const app = new Hono()
   const authorService = new AuthorService(db)
 
   /**
@@ -35,7 +35,7 @@ export function createAuthorsRoutes(db: DrizzleInstance) {
    *   }
    * }
    */
-  router.get('/:uid/metrics', async (c) => {
+  app.get('/:uid/metrics', async (c) => {
     try {
       const uid = c.req.param('uid')
 
@@ -52,6 +52,6 @@ export function createAuthorsRoutes(db: DrizzleInstance) {
     }
   })
 
-  return router
+  return app
 }
 

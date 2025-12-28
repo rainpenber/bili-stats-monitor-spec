@@ -84,7 +84,6 @@ export default function MyAccountPage() {
     return (
       <div className="container-page py-6">
         <EmptyState
-          icon="⚠️"
           title="加载失败"
           description={accountError}
           action={
@@ -102,7 +101,6 @@ export default function MyAccountPage() {
     return (
       <div className="container-page py-6">
         <EmptyState
-          icon="👤"
           title="暂无已绑定账号"
           description="请先前往账号管理页面绑定B站账号"
           action={
