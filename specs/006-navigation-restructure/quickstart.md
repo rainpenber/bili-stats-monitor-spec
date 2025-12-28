@@ -1,156 +1,239 @@
-# 功能规格创建完成报告
+# Quick Start: 前端导航结构重组
 
-## 基本信息
-
-- **功能名称**: 前端导航结构重组
-- **功能分支**: `006-navigation-restructure`
-- **规格文件**: `specs/006-navigation-restructure/spec.md`
-- **创建日期**: 2025-12-28
-- **状态**: ✅ 已完成规格编写和质量验证
-
-## 功能概述
-
-本功能对前端导航结构进行重组，将原有的扁平化菜单(仪表板、账号管理、通知设置、日志、系统设置)重构为更合理的三级结构：
-
-### 新导航结构
-
-1. **我的账号** (一级菜单)
-   - 显示当前选择账号的数据仪表板
-   - 粉丝数量变化图表
-   - 该账号发布的所有视频监控任务
-   - 支持切换账号功能
-
-2. **监视任务** (一级菜单，原"仪表板")
-   - 显示系统中所有监控任务
-   - 保持原有功能不变
-
-3. **系统设置** (一级可折叠菜单)
-   - **账号管理** (二级菜单): 整合原账号管理页面 + 全局默认账号设置
-   - **通知设置** (二级菜单): 保持原有功能
-   - **日志** (二级菜单): 保持原有功能
-   - **其他设置** (二级菜单): 主题色、配色方案、密码修改
-
-## 规格质量验证结果
-
-### ✅ 内容质量检查 (4/4 通过)
-- ✅ 无实现细节(框架、语言、API)
-- ✅ 聚焦用户价值和业务需求
-- ✅ 面向非技术干系人编写
-- ✅ 所有强制性章节已完成
-
-### ✅ 需求完整性检查 (8/8 通过)
-- ✅ 无 [NEEDS CLARIFICATION] 标记
-- ✅ 需求可测试且无歧义
-- ✅ 成功标准可度量
-- ✅ 成功标准与技术无关
-- ✅ 所有验收场景已定义
-- ✅ 边界情况已识别
-- ✅ 范围边界清晰
-- ✅ 依赖和假设已识别
-
-### ✅ 功能就绪性检查 (4/4 通过)
-- ✅ 所有功能需求有明确验收标准
-- ✅ 用户场景覆盖主要流程
-- ✅ 功能满足成功标准定义的可度量结果
-- ✅ 规格中无实现细节泄漏
-
-## 规格内容统计
-
-- **用户故事**: 6个 (优先级P1: 2个, P2: 2个, P3: 2个)
-- **功能需求**: 36个 (FR-001 至 FR-036)
-- **成功标准**: 8个 (SC-001 至 SC-008)
-- **验收场景**: 20个
-- **边界情况**: 6个
-- **关键实体**: 4个
-
-## 核心功能需求亮点
-
-### 1. 导航结构 (FR-001 至 FR-004)
-- 三个一级菜单，系统设置支持折叠
-- 自动收起逻辑，视觉高亮反馈
-
-### 2. 我的账号页面 (FR-005 至 FR-015)
-- 账号信息展示 + 切换功能
-- 数据仪表板(监视视频数、粉丝量)
-- 粉丝变化图表
-- 账号相关视频任务列表
-- 空状态引导
-- 记住用户选择(localStorage)
-
-### 3. 账号管理整合 (FR-019 至 FR-025)
-- 整合原账号管理 + 全局默认账号
-- 绑定/解绑操作
-- 过期状态标记
-- 默认账号设置和警告
-
-### 4. 数据抓取逻辑 (FR-032 至 FR-036)
-- 优先使用发布者账号Cookie
-- 备用全局默认账号
-- 过期提醒机制
-
-## 成功标准亮点
-
-所有8个成功标准都是**可度量**且**与技术无关**的：
-
-- **SC-001**: 账号切换操作 < 3秒
-- **SC-002**: 导航到账号管理 ≤ 2次点击
-- **SC-003**: 数据渲染完成 < 2秒
-- **SC-004**: 菜单动画延迟 < 200ms
-- **SC-005**: 新用户理解导航结构 < 1分钟
-- **SC-006**: 数据抓取逻辑正确率 = 100%
-- **SC-007**: 状态刷新 < 500ms
-- **SC-008**: localStorage恢复 < 1秒
-
-## 下一步行动
-
-### 推荐流程
-
-✅ **规格已通过所有质量检查，可以直接进入下一阶段：**
-
-1. **选项A**: 执行 `/speckit.plan` 创建技术实现计划
-2. **选项B**: 执行 `/speckit.clarify` 进一步澄清需求(如有疑问)
-
-### 准备就绪的交付物
-
-- ✅ `specs/006-navigation-restructure/spec.md` - 完整功能规格
-- ✅ `specs/006-navigation-restructure/checklists/requirements.md` - 质量检查清单
-- ✅ Git分支 `006-navigation-restructure` 已创建并检出
-
-## 假设和依赖
-
-### 关键假设
-1. 现有账号绑定、数据抓取API稳定
-2. 用户已理解B站账号绑定和Cookie概念
-3. 最多同时绑定10个账号
-4. 粉丝数据每小时更新
-5. 现代浏览器支持(Chrome/Firefox/Safari)
-
-### 外部依赖
-- 后端API: 账号粉丝数据、任务列表、默认账号管理、Cookie有效性检查
-- 前端组件: 可折叠导航菜单、账号切换Modal、数据仪表板
-- 状态管理: Zustand(当前选择账号ID)
-
-## 范围边界
-
-### 包含在本功能中
-✅ 前端路由重构  
-✅ 导航菜单重组  
-✅ 页面布局调整  
-✅ 账号切换逻辑  
-✅ 状态管理优化
-
-### 明确排除
-❌ 账号绑定流程修改  
-❌ 任务创建/编辑功能  
-❌ 通知和日志功能重构  
-❌ 数据抓取调度优化  
-❌ 移动端适配  
-❌ 账号权限管理  
-❌ 批量操作功能
+**Feature**: 006-navigation-restructure  
+**For**: 开发者快速上手本功能开发
 
 ---
 
-**报告生成时间**: 2025-12-28  
-**规格版本**: Draft v1.0  
-**验证状态**: ✅ 所有检查项通过，已就绪
+## 前置条件
 
+- Node.js 18+ & Bun 1.x已安装
+- pnpm已安装
+- 已克隆项目并安装依赖: `pnpm install`
+
+---
+
+## 1. 数据库迁移
+
+### 1.1 备份现有数据库
+
+```bash
+cd backend/data/dev
+cp bili-stats-dev.db bili-stats-dev.db.backup
+```
+
+### 1.2 运行迁移脚本
+
+```bash
+cd backend
+
+# 生成迁移SQL
+bun run drizzle-kit generate:sqlite
+
+# 应用迁移
+bun run db:push
+
+# 执行数据回填
+bun run src/scripts/backfill-author-uid.ts
+```
+
+### 1.3 验证迁移
+
+```bash
+# 进入SQLite shell
+sqlite3 data/dev/bili-stats-dev.db
+
+# 检查新字段
+.schema tasks
+
+# 检查数据
+SELECT id, type, target_id, author_uid, bili_account_id 
+FROM tasks LIMIT 5;
+
+# 退出
+.quit
+```
+
+---
+
+## 2. 启动开发服务器
+
+### 2.1 后端服务
+
+```bash
+cd backend
+bun run dev
+# 后端运行在 http://localhost:38080
+```
+
+### 2.2 前端服务
+
+```bash
+# 新终端
+cd frontend/web
+pnpm dev
+# 前端运行在 http://localhost:5173
+```
+
+---
+
+## 3. 测试新功能
+
+### 3.1 测试"我的账号"页面
+
+1. 访问 `http://localhost:5173/`
+2. 如果未登录，会弹出LoginModal，输入 `admin / admin123`
+3. 登录后应看到：
+   - 顶部：账号信息 + "切换账号"按钮
+   - 数据仪表板：监视视频数、粉丝数（大数字卡片）
+   - 粉丝图表：折线图显示历史数据
+   - 视频任务列表：该账号发布的所有任务
+
+### 3.2 测试账号切换
+
+1. 点击"切换账号"按钮
+2. 在弹出的Modal中选择另一个已绑定账号
+3. 验证页面数据是否更新为新账号的数据
+
+### 3.3 测试系统设置菜单
+
+1. 点击侧边栏的"系统设置"
+2. 验证二级菜单自动展开
+3. 点击"账号管理"子菜单
+4. 验证整合了原账号管理页面 + 默认账号设置
+
+### 3.4 测试刷新页面
+
+1. 在"我的账号"页面，切换到某个账号
+2. 刷新浏览器(F5)
+3. 验证是否自动恢复到之前选择的账号（localStorage）
+
+---
+
+## 4. API测试
+
+### 4.1 测试author_uid筛选
+
+```bash
+# 获取作者UID为12345678的所有任务
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:38080/api/v1/tasks?author_uid=12345678"
+```
+
+### 4.2 测试粉丝数据聚合
+
+```bash
+# 获取作者12345678的粉丝历史数据
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:38080/api/v1/authors/12345678/metrics"
+```
+
+### 4.3 测试默认账号设置
+
+```bash
+# 设置默认账号
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"id":"acc_xyz789"}' \
+  "http://localhost:38080/api/v1/accounts/default"
+
+# 获取默认账号
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:38080/api/v1/accounts/default"
+```
+
+---
+
+## 5. 常见问题排查
+
+### Q1: author_uid字段为空
+
+**症状**: "我的账号"页面显示"暂无任务"，但实际有任务存在
+
+**排查**:
+```sql
+-- 检查是否有未填充author_uid的任务
+SELECT COUNT(*) FROM tasks WHERE author_uid IS NULL;
+
+-- 如果有，重新运行回填脚本
+cd backend
+bun run src/scripts/backfill-author-uid.ts
+```
+
+### Q2: 粉丝图表无数据
+
+**症状**: 图表显示"暂无数据"
+
+**排查**:
+1. 检查author_metrics表是否有数据:
+   ```sql
+   SELECT COUNT(*) FROM author_metrics WHERE task_id IN (
+     SELECT id FROM tasks WHERE author_uid = '12345678'
+   );
+   ```
+2. 检查API响应: 打开浏览器DevTools → Network → 找到`/api/v1/authors/*/metrics`请求
+3. 确认账号UID正确: 在"账号管理"页面查看UID
+
+### Q3: LocalStorage账号ID失效
+
+**症状**: 每次刷新页面都切换到第一个账号
+
+**排查**:
+1. 打开浏览器DevTools → Application → Local Storage
+2. 检查`selected_account_id`的值
+3. 在"账号管理"页面验证该ID的账号是否存在
+4. 如果账号已解绑，清除localStorage: `localStorage.removeItem('selected_account_id')`
+
+### Q4: 系统设置菜单不展开
+
+**症状**: 点击"系统设置"无反应或不展开
+
+**排查**:
+1. 打开浏览器DevTools → Console，查看是否有报错
+2. 检查当前路由: 在Console输入`window.location.pathname`
+3. 确认Sidebar组件中的`isSettingsRoute`逻辑正确
+
+### Q5: 数据库迁移失败
+
+**症状**: `bun run db:push`报错
+
+**解决**:
+```bash
+# 回滚到备份
+cd backend/data/dev
+cp bili-stats-dev.db.backup bili-stats-dev.db
+
+# 检查Drizzle配置
+cat drizzle.config.ts
+
+# 重新生成迁移
+bun run drizzle-kit generate:sqlite --force
+bun run db:push
+```
+
+---
+
+## 6. 开发建议
+
+- **前端组件**: 复用现有组件(Card, Modal, Button)，避免重复造轮子
+- **状态管理**: 使用`useUISelection()`访问全局状态，不要创建新store
+- **API调用**: 使用`frontend/web/src/lib/api.ts`的封装方法，不要直接调用axios
+- **样式**: 使用TailwindCSS utility classes，保持与现有页面一致
+- **类型定义**: 更新`frontend/web/src/types/*.ts`，确保类型安全
+
+---
+
+## 7. 相关文档
+
+- **规格说明**: `specs/006-navigation-restructure/spec.md`
+- **技术研究**: `specs/006-navigation-restructure/research.md`
+- **数据模型**: `specs/006-navigation-restructure/data-model.md`
+- **API合约**: `specs/006-navigation-restructure/contracts/*.yaml`
+- **实现计划**: `specs/006-navigation-restructure/plan.md`
+
+---
+
+**祝开发顺利！** 🚀
+
+如有问题，请参考research.md中的详细技术决策说明。

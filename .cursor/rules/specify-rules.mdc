@@ -32,7 +32,6 @@ Frontend: TypeScript 5 + React 18 / Vite 5；Backend: TypeScript on Bun 1.x: Fol
 ## Recent Changes
 - 004-bilibili-account-binding: Added TypeScript 5.6 (前端) / TypeScript 5.3 (后端) / Bun 最新稳定版
 - 003-integration-test-suite: Added TypeScript 5.x (前后端统一)
-- 002-python-csv-backend-data-old-migrate-follower-views: Added TypeScript 5.3+ / Bun 1.x
 
 
 <!-- MANUAL ADDITIONS START -->
