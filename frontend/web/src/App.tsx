@@ -50,21 +50,24 @@ export default function App() {
             } 
           />
           <Route 
-            path="/logs" 
-            element={
-              <ProtectedRoute>
-                <LogsPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/notifications" 
+            path="/settings/notifications" 
             element={
               <ProtectedRoute>
                 <NotificationsPage />
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/settings/logs" 
+            element={
+              <ProtectedRoute>
+                <LogsPage />
+              </ProtectedRoute>
+            } 
+          />
+          {/* 向后兼容：保留旧路由并重定向 */}
+          <Route path="/logs" element={<Navigate to="/settings/logs" replace />} />
+          <Route path="/notifications" element={<Navigate to="/settings/notifications" replace />} />
           <Route path="*" element={<div className="p-6">未找到页面</div>} />
         </Route>
       </Routes>

@@ -172,9 +172,9 @@
 
 ### 实现任务
 
-- [ ] T053 [US5] 验证NotificationsPage组件存在且功能正常 `frontend/web/src/pages/NotificationsPage.tsx`
-- [ ] T054 [US5] 验证LogsPage组件存在且功能正常 `frontend/web/src/pages/LogsPage.tsx`
-- [ ] T055 [US5] （如需要）调整页面布局以适配系统设置子菜单风格
+- [x] T053 [US5] 验证NotificationsPage组件存在且功能正常 `frontend/web/src/pages/NotificationsPage.tsx` (已验证，功能完整)
+- [x] T054 [US5] 验证LogsPage组件存在且功能正常 `frontend/web/src/pages/LogsPage.tsx` (已验证，功能完整)
+- [x] T055 [US5] （如需要）调整页面布局以适配系统设置子菜单风格 (已更新路由配置)
 
 **Checkpoint**: 通知设置和日志页面功能正常，整合到系统设置菜单
 
