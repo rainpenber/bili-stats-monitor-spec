@@ -2,7 +2,7 @@ import React from 'react'
 import ReactECharts from 'echarts-for-react'
 import dayjs from 'dayjs'
 import { useUISelection } from '@/store/uiSelection'
-import type { AuthorMetricDataPoint } from '@/hooks/useAuthorMetrics'
+import type { AuthorMetricDataPoint } from '@/lib/api'
 
 /**
  * FollowerChart - 粉丝数量变化图表

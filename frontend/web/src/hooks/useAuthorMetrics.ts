@@ -1,20 +1,8 @@
 import { useEffect, useState } from 'react'
+import { fetchAuthorMetrics, type AuthorMetricsResponse, type AuthorMetricDataPoint } from '@/lib/api'
 
-/**
- * 作者粉丝数据点
- */
-export interface AuthorMetricDataPoint {
-  collected_at: string // ISO 8601 timestamp
-  follower: number
-}
-
-/**
- * 作者粉丝历史响应
- */
-export interface AuthorMetricsResponse {
-  uid: string
-  metrics: AuthorMetricDataPoint[]
-}
+// Re-export types for convenience
+export type { AuthorMetricDataPoint, AuthorMetricsResponse }
 
 /**
  * useAuthorMetrics Hook
@@ -38,19 +26,8 @@ export function useAuthorMetrics(uid: string | null, autoRefresh?: number) {
       setLoading(true)
       setError(null)
 
-      const response = await fetch(`/api/v1/authors/${authorUid}/metrics`)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      }
-
-      const result = await response.json()
-      
-      if (result.code !== 200) {
-        throw new Error(result.message || 'Failed to fetch author metrics')
-      }
-
-      setData(result.data)
+      const result = await fetchAuthorMetrics(authorUid)
+      setData(result)
     } catch (err) {
       console.error('Failed to load author metrics:', err)
       setError(err instanceof Error ? err.message : 'Failed to load author metrics')
