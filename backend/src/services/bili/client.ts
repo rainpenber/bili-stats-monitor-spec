@@ -135,17 +135,18 @@ export class BiliClient {
       url?: string
     }>(this.passportUrl + `/x/passport-login/web/qrcode/poll?qrcode_key=${qrcodeKey}`)
 
+    // ⚠️ 关键修复：B站 API 的外层 code 总是 0，真正的状态码在 data.code 里
     if (response.code !== 0) {
-      // 非成功状态码（86101, 86090, 86038 等）
-      return {
-        code: response.code,
-        message: response.data?.message || response.message,
-      }
+      throw new Error(`API error: ${response.message}`)
     }
+
+    // 获取真正的状态码（在 data 里）
+    const dataCode = response.data?.code ?? 0
+    const dataMessage = response.data?.message || '未知状态'
 
     // 成功时从 URL 提取 Cookie
     let cookie: string | undefined
-    if (response.data?.url) {
+    if (dataCode === 0 && response.data?.url) {
       // URL 格式：https://passport.bilibili.com/xxx?SESSDATA=xxx&bili_jct=xxx
       const urlObj = new URL(response.data.url)
       const sessdata = urlObj.searchParams.get('SESSDATA')
@@ -157,8 +158,8 @@ export class BiliClient {
     }
 
     return {
-      code: 0,
-      message: response.data?.message || '登录成功',
+      code: dataCode,
+      message: dataMessage,
       cookie,
     }
   }

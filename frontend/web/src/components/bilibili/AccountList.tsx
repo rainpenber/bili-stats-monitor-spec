@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { AccountListItem } from './AccountListItem'
 import { Button } from '@/components/ui/Button'
 import { listBilibiliAccounts, unbindBilibiliAccount } from '@/lib/api'
@@ -10,11 +10,15 @@ interface AccountListProps {
   onRebind: (account: BilibiliAccount) => void
 }
 
+export interface AccountListRef {
+  reload: () => void
+}
+
 /**
  * B站账号列表组件
  * 显示所有已绑定账号，支持解绑和重绑操作
  */
-export function AccountList({ onBindNew, onRebind }: AccountListProps) {
+export const AccountList = forwardRef<AccountListRef, AccountListProps>(({ onBindNew, onRebind }, ref) => {
   const [accounts, setAccounts] = useState<BilibiliAccount[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -40,11 +44,6 @@ export function AccountList({ onBindNew, onRebind }: AccountListProps) {
 
   // 解绑账号
   const handleUnbind = async (accountId: string) => {
-    // 显示确认对话框
-    if (!window.confirm('确定要解绑此账号吗？解绑后，相关的监控任务将无法继续运行。')) {
-      return
-    }
-
     setUnbindingAccountId(accountId)
 
     try {
@@ -60,6 +59,13 @@ export function AccountList({ onBindNew, onRebind }: AccountListProps) {
       setUnbindingAccountId(null)
     }
   }
+
+  // 暴露 reload 方法给父组件
+  useImperativeHandle(ref, () => ({
+    reload: () => {
+      loadAccounts()
+    }
+  }), [])
 
   // 初始加载
   useEffect(() => {
@@ -136,5 +142,5 @@ export function AccountList({ onBindNew, onRebind }: AccountListProps) {
       </div>
     </div>
   )
-}
+})
 

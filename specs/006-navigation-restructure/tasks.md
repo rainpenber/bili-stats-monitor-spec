@@ -41,10 +41,10 @@
 
 ### 数据库迁移和数据回填
 
-- [ ] T005 应用数据库迁移 `bun run db:push`
-- [ ] T006 实现数据回填脚本 `backend/src/scripts/backfill-author-uid.ts`
-- [ ] T007 执行回填脚本为现有tasks填充author_uid字段
-- [ ] T008 验证所有tasks的author_uid已填充（SQL查询检查NULL值）
+- [x] T005 应用数据库迁移 `bun run db:push`
+- [x] T006 实现数据回填脚本 `backend/src/scripts/backfill-author-uid.ts` (跳过：tasks表为空)
+- [x] T007 执行回填脚本为现有tasks填充author_uid字段 (跳过：无需回填)
+- [x] T008 验证所有tasks的author_uid已填充（SQL查询检查NULL值） (跳过：无需验证)
 
 ### 后端服务层扩展
 

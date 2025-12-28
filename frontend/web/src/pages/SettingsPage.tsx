@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useUISelection } from '@/store/uiSelection'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
@@ -68,8 +69,46 @@ export default function SettingsPage() {
     }
   }
 
+  const location = useLocation()
+  const [lastRefreshTime, setLastRefreshTime] = useState(0)
+
+  // 初始加载
   useEffect(() => {
     loadAccounts()
+    setLastRefreshTime(Date.now())
+  }, [])
+
+  // 监听路由变化：当导航到设置页面时刷新账号列表
+  // 添加防抖：如果距离上次刷新不足2秒，则跳过
+  useEffect(() => {
+    if (location.pathname === '/settings') {
+      const now = Date.now()
+      // 如果距离上次刷新超过2秒，或者这是首次加载，则刷新
+      if (now - lastRefreshTime > 2000 || lastRefreshTime === 0) {
+        const timer = setTimeout(() => {
+          loadAccounts()
+          setLastRefreshTime(Date.now())
+        }, 300)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [location.pathname, lastRefreshTime])
+
+  // 监听自定义事件：当账号绑定成功时刷新
+  useEffect(() => {
+    const handleAccountBound = () => {
+      // 延迟刷新，确保后端数据已更新
+      setTimeout(() => {
+        loadAccounts()
+        setLastRefreshTime(Date.now())
+      }, 500)
+    }
+
+    window.addEventListener('account:bound', handleAccountBound)
+
+    return () => {
+      window.removeEventListener('account:bound', handleAccountBound)
+    }
   }, [])
 
   // 演示：Toast 与 HTTP SDK

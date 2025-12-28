@@ -74,8 +74,15 @@ export function createTasksRoutes(db: DrizzleInstance) {
       const search = c.req.query('search')
       const tags = c.req.query('tags')?.split(',').filter(Boolean)
       const accountId = c.req.query('accountId')
-      const limit = parseInt(c.req.query('limit') || '20')
-      const offset = parseInt(c.req.query('offset') || '0')
+      
+      // 支持两种分页参数格式
+      // 1. page + page_size (前端使用)
+      // 2. limit + offset (传统格式)
+      const page = parseInt(c.req.query('page') || '1')
+      const pageSize = parseInt(c.req.query('page_size') || '20')
+      const limit = parseInt(c.req.query('limit') || String(pageSize))
+      const offset = parseInt(c.req.query('offset') || String((page - 1) * pageSize))
+      
       const orderBy = (c.req.query('orderBy') || 'createdAt') as any
       const orderDir = (c.req.query('orderDir') || 'desc') as 'asc' | 'desc'
 
@@ -91,7 +98,26 @@ export function createTasksRoutes(db: DrizzleInstance) {
         orderDir,
       })
 
-      return success(c, tasks)
+      // 获取总数（不带分页限制）
+      const totalTasks = await taskService.findMany({
+        type,
+        status,
+        search,
+        tags,
+        accountId,
+        // 不传 limit 和 offset
+      })
+
+      // 计算分页参数
+      const responsePage = page
+      const responsePageSize = limit
+
+      return success(c, {
+        items: tasks,
+        page: responsePage,
+        page_size: responsePageSize,
+        total: totalTasks.length,
+      })
     } catch (err: any) {
       return error(c, ErrorCodes.INTERNAL_ERROR, err.message || 'Failed to get tasks', undefined, 500)
     }

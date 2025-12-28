@@ -1,5 +1,16 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/AlertDialog'
 import type { BilibiliAccount } from '@/types/bilibili'
 
 interface AccountListItemProps {
@@ -95,14 +106,40 @@ export function AccountListItem({ account, onUnbind, onRebind }: AccountListItem
             重新绑定
           </Button>
         )}
-        <Button
-          variant="outline"
-          onClick={handleUnbind}
-          disabled={isUnbinding}
-          className="text-red-600 border-red-600 hover:bg-red-50"
-        >
-          {isUnbinding ? '解绑中...' : '解绑'}
-        </Button>
+        
+        {/* 解绑确认对话框 */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              disabled={isUnbinding}
+              className="text-red-600 border-red-600 hover:bg-red-50"
+            >
+              {isUnbinding ? '解绑中...' : '解绑'}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>确认解绑账号？</AlertDialogTitle>
+              <AlertDialogDescription>
+                你即将解绑账号 <strong className="text-foreground">{account.nickname}</strong> (UID: {account.uid})。
+                <br />
+                解绑后，使用该账号的所有监控任务将停止运行。
+                <br />
+                <span className="text-amber-600 font-medium">此操作不可撤销。</span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>取消</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleUnbind}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                确认解绑
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   )

@@ -1,16 +1,17 @@
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 import { useUISelection } from '@/store/uiSelection'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { fetchDefaultAccount } from '@/lib/api'
 import { Link } from 'react-router-dom'
 import { AccountList } from '@/components/bilibili/AccountList'
 import type { BilibiliAccount } from '@/types/bilibili'
 
 export default function AccountsPage() {
-  const { setAccountBindOpen } = useUISelection()
+  const { setAccountBindOpen, accountBindOpen } = useUISelection()
   const [hasDefaultAcc, setHasDefaultAcc] = useState<boolean>(true)
   const [rebindingAccount, setRebindingAccount] = useState<BilibiliAccount | null>(null)
+  const accountListRef = useRef<{ reload: () => void } | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -23,6 +24,14 @@ export default function AccountsPage() {
     }
     load()
   }, [])
+
+  // 监听 modal 关闭，刷新账号列表
+  useEffect(() => {
+    if (!accountBindOpen) {
+      // Modal 关闭时刷新列表
+      accountListRef.current?.reload()
+    }
+  }, [accountBindOpen])
 
   // 打开绑定对话框
   const handleBindNew = () => {
@@ -53,7 +62,7 @@ export default function AccountsPage() {
 
       <Card>
         <CardContent className="p-6">
-          <AccountList onBindNew={handleBindNew} onRebind={handleRebind} />
+          <AccountList ref={accountListRef} onBindNew={handleBindNew} onRebind={handleRebind} />
         </CardContent>
       </Card>
 

@@ -22,10 +22,21 @@ export function QRCodeBindingTab({ isActive, onSuccess }: QRCodeBindingTabProps)
   const [isGenerating, setIsGenerating] = useState(false)
   const [generateError, setGenerateError] = useState<string | null>(null)
 
+  // 绑定成功回调
+  function handleBindSuccess(account: BilibiliAccount) {
+    toast.success(`账号 ${account.nickname} 绑定成功！`)
+    onSuccess()
+  }
+
+  // 二维码过期回调
+  function handleExpired() {
+    toast.warning('二维码已过期，请重新获取')
+  }
+
   // 使用轮询Hook
   const { status, message, account, isPolling, error: pollingError } = useQRCodePolling({
     qrcodeKey,
-    enabled: isActive && qrcodeKey !== null && status !== 'confirmed',
+    enabled: isActive && qrcodeKey !== null,
     interval: 2000,
     onSuccess: handleBindSuccess,
     onExpired: handleExpired,
@@ -49,17 +60,6 @@ export function QRCodeBindingTab({ isActive, onSuccess }: QRCodeBindingTabProps)
     } finally {
       setIsGenerating(false)
     }
-  }
-
-  // 绑定成功回调
-  function handleBindSuccess(account: BilibiliAccount) {
-    toast.success(`账号 ${account.nickname} 绑定成功！`)
-    onSuccess()
-  }
-
-  // 二维码过期回调
-  function handleExpired() {
-    toast.warning('二维码已过期，请重新获取')
   }
 
   // 重新获取二维码

@@ -15,6 +15,8 @@ export default function AccountBindModal() {
   }
 
   const handleBindSuccess = () => {
+    // 触发自定义事件，通知其他组件账号已绑定
+    window.dispatchEvent(new CustomEvent('account:bound'))
     onClose()
   }
 

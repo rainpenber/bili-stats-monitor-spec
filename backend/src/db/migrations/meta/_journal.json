@@ -8,6 +8,13 @@
       "when": 1766830969759,
       "tag": "0000_married_payback",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1766925417296,
+      "tag": "0001_daffy_swordsman",
+      "breakpoints": true
     }
   ]
 }

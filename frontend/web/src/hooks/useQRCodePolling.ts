@@ -35,8 +35,17 @@ export function useQRCodePolling({
   const [isPolling, setIsPolling] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const isMountedRef = useRef(true)
+  // 使用 ref 存储最新的回调，避免 poll 函数频繁重建
+  const onSuccessRef = useRef(onSuccess)
+  const onExpiredRef = useRef(onExpired)
+
+  // 更新回调 ref
+  useEffect(() => {
+    onSuccessRef.current = onSuccess
+    onExpiredRef.current = onExpired
+  }, [onSuccess, onExpired])
 
   // 轮询函数
   const poll = useCallback(async () => {
@@ -57,18 +66,38 @@ export function useQRCodePolling({
       // 处理不同状态
       switch (result.status) {
         case 'confirmed':
-          // 绑定成功
-          if (result.account) {
-            setAccount(result.account)
-            onSuccess?.(result.account)
+          // #region agent log
+          fetch('http://127.0.0.1:7244/ingest/ff8a6709-c0e0-4c9f-a3a0-04db521a82d0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useQRCodePolling.ts:68',message:'CONFIRMED branch entered',data:{hasTimer:!!timerRef.current,timerIdBefore:timerRef.current},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B,D'})}).catch(()=>{});
+          // #endregion
+          // 绑定成功 - 立即清理定时器
+          if (timerRef.current) {
+            clearInterval(timerRef.current)
+            timerRef.current = null
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/ff8a6709-c0e0-4c9f-a3a0-04db521a82d0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useQRCodePolling.ts:72',message:'Timer cleared in confirmed',data:{timerAfterClear:timerRef.current},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
           }
           setIsPolling(false)
+          
+          if (result.account) {
+            setAccount(result.account)
+            // 使用 ref 中的最新回调
+            onSuccessRef.current?.(result.account)
+          }
           break
 
         case 'expired':
-          // 二维码过期
+          // #region agent log
+          fetch('http://127.0.0.1:7244/ingest/ff8a6709-c0e0-4c9f-a3a0-04db521a82d0',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useQRCodePolling.ts:83',message:'EXPIRED branch entered',data:{hasTimer:!!timerRef.current},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+          // #endregion
+          // 二维码过期 - 立即清理定时器
+          if (timerRef.current) {
+            clearInterval(timerRef.current)
+            timerRef.current = null
+          }
           setIsPolling(false)
-          onExpired?.()
+          // 使用 ref 中的最新回调
+          onExpiredRef.current?.()
           break
 
         case 'scanned':
@@ -88,7 +117,7 @@ export function useQRCodePolling({
       setError(err.message || '轮询失败')
       setIsPolling(false)
     }
-  }, [qrcodeKey, enabled, onSuccess, onExpired])
+  }, [qrcodeKey, enabled]) // 移除 onSuccess 和 onExpired 依赖
 
   // 启动/停止轮询
   useEffect(() => {
@@ -129,6 +158,9 @@ export function useQRCodePolling({
 
   // 组件卸载时清理
   useEffect(() => {
+    // 设置为已挂载
+    isMountedRef.current = true
+    
     return () => {
       isMountedRef.current = false
       if (timerRef.current) {
