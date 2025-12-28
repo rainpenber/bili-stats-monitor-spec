@@ -43,12 +43,12 @@ export function AccountSwitchModal({
       <ModalHeader title="切换账号" onClose={onClose} />
       <ModalBody>
         <div className="space-y-2">
-          {accounts.map(account => {
+          {accounts.map((account, index) => {
             const isSelected = account.id === currentAccountId
             
             return (
               <button
-                key={account.id}
+                key={account.id || `account-${index}`}
                 onClick={() => handleSelect(account.id)}
                 className={`w-full p-4 border rounded-lg text-left transition-colors ${
                   isSelected
