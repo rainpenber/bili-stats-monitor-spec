@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Authors API (Extended for Navigation Restructure)
+  version: 1.1.0
+  description: Authors API，提供作者粉丝历史数据和博主列表（扩展博主选择功能）
+
+paths:
+  /api/v1/authors:
+    get:
+      summary: 获取博主列表
+      description: 从tasks表中提取所有不同的author_uid，返回博主基本信息（用于博主选择Modal）
+      parameters:
+        - name: search
+          in: query
+          description: 搜索关键词（支持按昵称和UID搜索）
+          required: false
+          schema:
+            type: string
+            example: "沐可"
+      responses:
+        '200':
+          description: 成功返回博主列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      authors:
+                        type: array
+                        description: 博主列表
+                        items:
+                          $ref: '#/components/schemas/AuthorInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/authors/{uid}/metrics:
+    get:
+      summary: 获取作者粉丝历史数据
+      description: 聚合查询指定作者的粉丝数量变化趋势（用于"我的账号"页面的粉丝图表）
+      parameters:
+        - name: uid
+          in: path
+          description: 作者UID
+          required: true
+          schema:
+            type: string
+            example: "12345678"
+        - name: from
+          in: query
+          description: 开始时间（Unix timestamp，可选）
+          required: false
+          schema:
+            type: integer
+            format: unix-timestamp
+            example: 1704038400
+        - name: to
+          in: query
+          description: 结束时间（Unix timestamp，可选）
+          required: false
+          schema:
+            type: integer
+            format: unix-timestamp
+            example: 1735574400
+      responses:
+        '200':
+          description: 成功返回粉丝历史数据
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      series:
+                        type: array
+                        description: 时间序列数据点
+                        items:
+                          type: object
+                          properties:
+                            timestamp:
+                              type: integer
+                              format: unix-timestamp
+                              description: 采集时间
+                              example: 1735401600
+                            follower:
+                              type: integer
+                              description: 粉丝数
+                              example: 123456
+                      author_uid:
+                        type: string
+                        example: "12345678"
+                      count:
+                        type: integer
+                        description: 数据点总数
+                        example: 720
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    AuthorInfo:
+      type: object
+      description: 博主基本信息
+      properties:
+        uid:
+          type: string
+          description: 博主UID
+          example: "1871297"
+        nickname:
+          type: string
+          description: 博主昵称
+          example: "沐可Milco"
+        avatar:
+          type: string
+          format: uri
+          description: 博主头像URL
+          example: "https://i0.hdslb.com/bfs/face/xxx.jpg"
+        hasBoundAccount:
+          type: boolean
+          description: 是否有对应的已绑定账号
+          example: true
+      required:
+        - uid
+        - nickname
+
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Invalid parameter: from must be < to"
+    Unauthorized:
+      description: 未授权
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: "Unauthorized"
+    NotFound:
+      description: 作者不存在或无数据
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "No metrics found for author: 12345678"
+

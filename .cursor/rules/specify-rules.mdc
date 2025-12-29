@@ -1,0 +1,38 @@
+﻿# bili-stats-monitor-spec Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-12-16
+
+## Active Technologies
+- [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (001-bilibili-monitor)
+- [if applicable, e.g., PostgreSQL, CoreData, files or N/A] (001-bilibili-monitor)
+- TypeScript 5.3+ / Bun 1.x (002-python-csv-backend-data-old-migrate-follower-views)
+- TypeScript 5.x (前后端统一) (003-integration-test-suite)
+- SQLite (测试数据库，每次测试前重置) (003-integration-test-suite)
+- TypeScript 5.6 (前端) / TypeScript 5.3 (后端) / Bun 最新稳定版 (004-bilibili-account-binding)
+- SQLite (使用better-sqlite3驱动，生产环境支持PostgreSQL切换) (004-bilibili-account-binding)
+
+- Frontend: TypeScript 5 + React 18 / Vite 5；Backend: TypeScript on Bun 1.x + Frontend: React Router, Zustand, @tanstack/react-query, Tailwind CSS, Radix UI, ECharts；Backend: Bun HTTP（配合轻量路由框架如 Hono/Elysia）、PostgreSQL 驱动（如 postgres.js / Kysely / Drizzle）、任务调度库（如 node-cron 等在 Bun 下可用实现） (001-bilibili-monitor)
+
+## Project Structure
+
+```text
+backend/
+frontend/
+tests/
+```
+
+## Commands
+
+npm test; npm run lint
+
+## Code Style
+
+Frontend: TypeScript 5 + React 18 / Vite 5；Backend: TypeScript on Bun 1.x: Follow standard conventions
+
+## Recent Changes
+- 004-bilibili-account-binding: Added TypeScript 5.6 (前端) / TypeScript 5.3 (后端) / Bun 最新稳定版
+- 003-integration-test-suite: Added TypeScript 5.x (前后端统一)
+
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

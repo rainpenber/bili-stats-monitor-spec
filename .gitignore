@@ -1,0 +1,28 @@
+node_modules
+
+/.claude
+/.clinerules
+/.kilocode
+/.specstory
+/openspec
+/.cursorindexingignore
+
+# Backend
+backend/data/
+backend/media/
+backend/.env
+backend/.env.development
+backend/.env.production
+backend/.env.local
+backend/dist/
+backend/build/
+backend/*.log
+backend/.drizzle/
+# Frontend
+frontend/web/dist/
+frontend/web/tsconfig.tsbuildinfo
+frontend/web/.env
+frontend/web/.env.development
+frontend/web/.env.production
+frontend/web/.env.local
+

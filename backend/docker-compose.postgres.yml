@@ -1,0 +1,62 @@
+# PostgreSQL Docker Compose 配置
+# 在服务器上使用此配置启动 PostgreSQL 数据库
+# 
+# 使用方法：
+# 1. 创建 .env 文件并设置密码
+# 2. 运行: docker-compose -f docker-compose.postgres.yml up -d
+
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: bili-monitor-postgres-test
+    environment:
+      POSTGRES_USER: bili_monitor_test
+      POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD:-change_me_test}
+      POSTGRES_DB: bili_monitor_test
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5555:5432"  # 测试环境端口
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - bili-monitor-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bili_monitor_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-prod:
+    image: postgres:16-alpine
+    container_name: bili-monitor-postgres-prod
+    environment:
+      POSTGRES_USER: bili_monitor_prod
+      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD:-change_me_prod}
+      POSTGRES_DB: bili_monitor_prod
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5556:5432"  # 生产环境端口
+    volumes:
+      - postgres-prod-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - bili-monitor-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bili_monitor_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-test-data:
+    driver: local
+  postgres-prod-data:
+    driver: local
+
+networks:
+  bili-monitor-network:
+    driver: bridge
+

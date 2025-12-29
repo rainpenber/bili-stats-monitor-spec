@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Tasks API (Extended for Navigation Restructure)
+  version: 1.1.0
+  description: 扩展Tasks API，添加author_uid筛选功能
+
+paths:
+  /api/v1/tasks:
+    get:
+      summary: 获取任务列表
+      description: 获取所有监控任务，支持按作者UID筛选
+      parameters:
+        - name: author_uid
+          in: query
+          description: 按任务发布者UID筛选（用于"我的账号"页面）
+          required: false
+          schema:
+            type: string
+            example: "12345678"
+        - name: type
+          in: query
+          description: 任务类型筛选
+          required: false
+          schema:
+            type: string
+            enum: [video, author]
+        - name: status
+          in: query
+          description: 任务状态筛选
+          required: false
+          schema:
+            type: string
+            enum: [running, stopped, completed, failed, paused]
+        - name: keyword
+          in: query
+          description: 关键词搜索（标题）
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 页码（从1开始）
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          description: 每页数量
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: 成功返回任务列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Task'
+                      page:
+                        type: integer
+                        example: 1
+                      page_size:
+                        type: integer
+                        example: 20
+                      total:
+                        type: integer
+                        example: 45
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "task_abc123"
+        type:
+          type: string
+          enum: [video, author]
+        target_id:
+          type: string
+          description: BVID或博主UID
+          example: "BV1234567890"
+        title:
+          type: string
+          example: "测试视频标题"
+        author_uid:
+          type: string
+          description: 任务发布者UID（新增字段）
+          example: "12345678"
+        bili_account_id:
+          type: string
+          nullable: true
+          description: 指定查询用账号ID（新增字段）
+          example: "acc_xyz789"
+        account_id:
+          type: string
+          nullable: true
+          description: 任务创建者账号ID（历史字段）
+          example: "acc_creator"
+        strategy:
+          type: string
+          example: '{"type":"fixed","value":60,"unit":"minute"}'
+        deadline:
+          type: integer
+          format: unix-timestamp
+          example: 1735387200
+        status:
+          type: string
+          enum: [running, stopped, completed, failed, paused]
+        reason:
+          type: string
+          nullable: true
+        tags:
+          type: string
+          nullable: true
+          example: '["重要","测试"]'
+        next_run_at:
+          type: integer
+          nullable: true
+        published_at:
+          type: integer
+          nullable: true
+        created_at:
+          type: integer
+        updated_at:
+          type: integer
+
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Invalid parameter: page must be >= 1"
+    Unauthorized:
+      description: 未授权
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: "Unauthorized"
+

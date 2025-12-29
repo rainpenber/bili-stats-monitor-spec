@@ -1,0 +1,44 @@
+import { useUISelection } from '@/store/uiSelection'
+import { Button } from '@/components/ui/Button'
+import { updateStatus } from '@/lib/fake'
+import { toast } from 'sonner'
+
+export default function BulkActionsBar({ currentPageIds }: { currentPageIds: string[] }) {
+  const { selection, selectionMode, clearSelection, selectPage, selectAll, type, selecting } = useUISelection()
+
+  // 仅在选择模式下显示
+  if (!selecting) return null
+
+  const count = selectionMode === 'all' ? '已选择：全量（跨页）' : `已选择：${selection.size} 项`
+
+  const onSelectPage = () => selectPage(currentPageIds)
+  const onSelectAll = () => selectAll()
+  const onClear = () => clearSelection()
+
+  const doAction = (action: 'enable' | 'disable') => {
+    if (selectionMode === 'all') {
+      toast.success(`已对全量集合执行：${action === 'enable' ? '启用' : '禁用'}（演示）`)
+      clearSelection()
+      return
+    }
+    const ids = Array.from(selection)
+    if (ids.length === 0) return
+    updateStatus(ids, action === 'enable' ? 'running' : 'stopped', type)
+    toast.success(`已${action === 'enable' ? '启用' : '禁用'} ${ids.length} 个任务`)
+    clearSelection()
+  }
+
+  return (
+    <div className="flex items-center justify-between bg-muted border border-border rounded-md p-2">
+      <div className="text-sm text-foreground">{count}</div>
+      <div className="flex items-center gap-2">
+        <Button variant="outline" onClick={onSelectPage}>本页全选</Button>
+        <Button variant="outline" onClick={onSelectAll}>全量全选</Button>
+        <Button variant="ghost" onClick={onClear}>清除</Button>
+        <div className="w-px h-6 bg-border" />
+        <Button onClick={() => doAction('enable')}>启用</Button>
+        <Button variant="outline" onClick={() => doAction('disable')}>禁用</Button>
+      </div>
+    </div>
+  )
+}

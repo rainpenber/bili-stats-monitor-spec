@@ -1,0 +1,1016 @@
+openapi: 3.0.3
+info:
+  title: Bili Stats Monitor API
+  version: v1
+  description: |
+    B站数据监控工具 API（MVP）。
+
+    统一约定：
+    - 仅使用 GET / POST。所有变更/删除等操作通过 POST + body.action 指定，不使用 PUT/PATCH/DELETE。
+    - 统一响应包：{ code, message, data }
+    - 时间：ISO 8601，时区 Asia/Shanghai（北京时间）
+    - 分页：page（默认1），page_size（默认20，最大100）
+    - 选择语义：
+      - 批量接口 selection: { type: "ids"|"all", ids?: string[], filters?: object }
+      - type=all 时作用于“当前筛选条件下的全部结果（跨页）”
+servers:
+  - url: http://localhost:8080
+    description: Local dev
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Users
+  - name: Accounts
+  - name: Tasks
+  - name: Metrics
+  - name: Media
+  - name: Notifications
+  - name: Alerts
+  - name: Logs
+  - name: Settings
+paths:
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: 登录并获取令牌
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string, format: password }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAuth'
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: 退出登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [logout]
+                  default: logout
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/auth/profile:
+    get:
+      tags: [Auth]
+      summary: 获取当前用户信息
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUser'
+  /api/v1/users/{id}/password:
+    post:
+      tags: [Users]
+      summary: 修改密码（管理员可改普通用户；普通用户只能改自己）
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password: { type: string }
+                new_password: { type: string }
+              required: [new_password]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/accounts:
+    get:
+      tags: [Accounts]
+      summary: 账号列表
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/page_size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAccountList'
+  /api/v1/accounts/default:
+    get:
+      tags: [Accounts]
+      summary: 获取全局默认账号
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data: { type: object, properties: { id: { type: string, nullable: true } } }
+    post:
+      tags: [Accounts]
+      summary: 设置全局默认账号
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+
+  /api/v1/accounts/cookie:
+    post:
+      tags: [Accounts]
+      summary: 绑定账号（Cookie）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cookie]
+              properties:
+                cookie: { type: string, description: '需包含 SESSDATA' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAccount'
+  /api/v1/accounts/qrcode:
+    post:
+      tags: [Accounts]
+      summary: 获取扫码登录二维码
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [create]
+                  default: create
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      session_id: { type: string }
+                      qr_url: { type: string }
+                      expire_at: { type: string, format: date-time }
+                      poll_interval_sec: { type: integer, default: 2 }
+  /api/v1/accounts/qrcode/status:
+    get:
+      tags: [Accounts]
+      summary: 轮询扫码登录状态
+      parameters:
+        - in: query
+          name: session_id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [pending, scanned, confirmed, expired]
+                      account:
+                        $ref: '#/components/schemas/Account'
+  /api/v1/accounts/{id}/action:
+    post:
+      tags: [Accounts]
+      summary: 账号操作（validate/unbind）
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [validate, unbind]
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/tasks:
+    get:
+      tags: [Tasks]
+      summary: 查询任务（卡片视图数据）
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/page_size'
+        - in: query
+          name: keyword
+          schema: { type: string, description: 'BV/UID/标题/博主名' }
+        - in: query
+          name: type
+          schema: { type: string, enum: [video, author] }
+        - in: query
+          name: author_uid
+          schema: { type: string }
+        - in: query
+          name: tags
+          schema: { type: string, description: '逗号分隔' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseTaskList'
+    post:
+      tags: [Tasks]
+      summary: 创建任务
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseTask'
+  /api/v1/tasks/{id}:
+    get:
+      tags: [Tasks]
+      summary: 获取任务详情
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseTask'
+    post:
+      tags: [Tasks]
+      summary: 更新/删除任务（POST + action）
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/TaskUpdateAction'
+                - $ref: '#/components/schemas/TaskDeleteAction'
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/tasks/batch:
+    post:
+      tags: [Tasks]
+      summary: 批量启用/禁用任务
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action, selection]
+              properties:
+                action:
+                  type: string
+                  enum: [enable, disable]
+                selection:
+                  $ref: '#/components/schemas/Selection'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      success_count: { type: integer }
+                      failure_count: { type: integer }
+                      failures:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id: { type: string }
+                            reason: { type: string }
+  /api/v1/videos/{bv}/metrics:
+    get:
+      tags: [Metrics]
+      summary: 获取视频指标时序
+      parameters:
+        - in: path
+          name: bv
+          required: true
+          schema: { type: string, pattern: '^BV[0-9A-Za-z]+' }
+        - in: query
+          name: from
+          schema: { type: string, format: date-time }
+        - in: query
+          name: to
+          schema: { type: string, format: date-time }
+        - in: query
+          name: fields
+          schema:
+            type: string
+            description: '逗号分隔: play,watching,danmaku,comment,coin,like'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseTimeSeries'
+  /api/v1/videos/{bv}/insights/daily:
+    get:
+      tags: [Metrics]
+      summary: 获取视频私密指标（日粒度）
+      parameters:
+        - in: path
+          name: bv
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseInsights'
+  /api/v1/authors/{uid}/metrics:
+    get:
+      tags: [Metrics]
+      summary: 获取博主粉丝时序
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema: { type: string }
+        - in: query
+          name: from
+          schema: { type: string, format: date-time }
+        - in: query
+          name: to
+          schema: { type: string, format: date-time }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseTimeSeries'
+  /api/v1/media/videos/{bv}/cover:
+    get:
+      tags: [Media]
+      summary: 获取视频封面（返回本地缓存URL）
+      parameters:
+        - in: path
+          name: bv
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      url: { type: string }
+  /api/v1/media/authors/{uid}/avatar:
+    get:
+      tags: [Media]
+      summary: 获取博主头像（返回本地缓存URL）
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      url: { type: string }
+  /api/v1/media/refresh:
+    post:
+      tags: [Media]
+      summary: 手动刷新封面/头像缓存
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target_type, target_id]
+              properties:
+                target_type:
+                  type: string
+                  enum: [video, author]
+                target_id:
+                  type: string
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/notifications/channels:
+    get:
+      tags: [Notifications]
+      summary: 获取通知渠道配置
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseChannels'
+    post:
+      tags: [Notifications]
+      summary: 保存通知渠道配置
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action, channels]
+              properties:
+                action: { type: string, enum: [save], default: save }
+                channels: { $ref: '#/components/schemas/Channels' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/notifications/rules:
+    get:
+      tags: [Notifications]
+      summary: 获取通知规则列表
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseNotificationRules'
+    post:
+      tags: [Notifications]
+      summary: 保存或删除通知规则
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/NotificationRuleSave'
+                - $ref: '#/components/schemas/NotificationRuleDelete'
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/notifications/test:
+    post:
+      tags: [Notifications]
+      summary: 测试通知渠道
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [channel, payload]
+              properties:
+                channel:
+                  type: string
+                  description: 通知渠道名称
+                payload:
+                  type: object
+                  additionalProperties: true
+                  description: 测试消息内容
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/alerts/authors/{uid}:
+    get:
+      tags: [Alerts]
+      summary: 获取博主粉丝告警规则
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAlertRule'
+    post:
+      tags: [Alerts]
+      summary: 保存/禁用粉丝告警规则
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/AlertRuleSave'
+                - $ref: '#/components/schemas/AlertRuleDisable'
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+  /api/v1/logs:
+    get:
+      tags: [Logs]
+      summary: 查询日志
+      parameters:
+        - in: query
+          name: date
+          schema: { type: string, example: '2025-11-28' }
+        - in: query
+          name: level
+          schema: { type: string, enum: [DEBUG, INFO, WARNING] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseLogs'
+  /api/v1/logs/download:
+    get:
+      tags: [Logs]
+      summary: 下载当日日志（返回下载URL）
+      parameters:
+        - in: query
+          name: date
+          schema: { type: string, example: '2025-11-28' }
+        - in: query
+          name: level
+          schema: { type: string, enum: [DEBUG, INFO, WARNING] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: { type: integer }
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      url: { type: string }
+  /api/v1/settings:
+    get:
+      tags: [Settings]
+      summary: 获取系统设置
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseSettings'
+    post:
+      tags: [Settings]
+      summary: 保存系统设置
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action, settings]
+              properties:
+                action: { type: string, enum: [save], default: save }
+                settings: { $ref: '#/components/schemas/Settings' }
+      responses:
+        '200': { $ref: '#/components/responses/Ok' }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    page_size:
+      name: page_size
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+  responses:
+    Ok:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        message: { type: string, example: 'ok' }
+        data: { }
+    ApiResponseAuth:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                token: { type: string }
+                user: { $ref: '#/components/schemas/User' }
+    ApiResponseUser:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/User'
+    ApiResponseAccount:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data: { $ref: '#/components/schemas/Account' }
+    ApiResponseAccountList:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items: { $ref: '#/components/schemas/Account' }
+                page: { type: integer }
+                page_size: { type: integer }
+                total: { type: integer }
+    ApiResponseTask:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data: { $ref: '#/components/schemas/Task' }
+    ApiResponseTaskList:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items: { $ref: '#/components/schemas/Task' }
+                page: { type: integer }
+                page_size: { type: integer }
+                total: { type: integer }
+    ApiResponseTimeSeries:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                series:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      ts: { type: string, format: date-time }
+                      play: { type: integer }
+                      watching: { type: integer }
+                      danmaku: { type: integer }
+                      comment: { type: integer }
+                      coin: { type: integer }
+                      like: { type: integer }
+    ApiResponseInsights:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  date: { type: string, format: date }
+                  completion_rate: { type: number, format: float }
+                  avg_watch_duration_sec: { type: number, format: float }
+    ApiResponseChannels:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data: { $ref: '#/components/schemas/Channels' }
+    ApiResponseNotificationRules:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items: { $ref: '#/components/schemas/NotificationRule' }
+                triggers:
+                  type: array
+                  items: { type: string }
+                  description: 可用的触发器列表
+                channels:
+                  type: array
+                  items: { type: string }
+                  description: 可用的通知渠道列表
+    ApiResponseAlertRule:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data: { $ref: '#/components/schemas/AlertRule' }
+    ApiResponseLogs:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  ts: { type: string }
+                  level: { type: string, enum: [DEBUG, INFO, WARNING] }
+                  source: { type: string }
+                  message: { type: string }
+    ApiResponseSettings:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data: { $ref: '#/components/schemas/Settings' }
+    Selection:
+      type: object
+      required: [type]
+      properties:
+        type: { type: string, enum: [ids, all] }
+        ids:
+          type: array
+          items: { type: string }
+        filters:
+          type: object
+          description: 与 GET /tasks 的查询参数同口径
+    TaskCreate:
+      type: object
+      required: [type, target_id]
+      properties:
+        type: { type: string, enum: [video, author] }
+        target_id: { type: string, description: '视频: BV号；博主: UID' }
+        account_id: { type: string, nullable: true }
+        strategy:
+          oneOf:
+            - $ref: '#/components/schemas/StrategyFixed'
+            - $ref: '#/components/schemas/StrategySmart'
+        deadline: { type: string, format: date-time, description: '默认+3个月' }
+        tags:
+          type: array
+          items: { type: string }
+    TaskUpdateAction:
+      type: object
+      required: [action]
+      properties:
+        action: { type: string, enum: [update] }
+        account_id: { type: string, nullable: true }
+        strategy:
+          oneOf:
+            - $ref: '#/components/schemas/StrategyFixed'
+            - $ref: '#/components/schemas/StrategySmart'
+        deadline: { type: string, format: date-time }
+        tags:
+          type: array
+          items: { type: string }
+    TaskDeleteAction:
+      type: object
+      required: [action]
+      properties:
+        action: { type: string, enum: [delete] }
+    StrategyFixed:
+      type: object
+      required: [mode, value, unit]
+      properties:
+        mode: { type: string, enum: [fixed], default: fixed }
+        value: { type: integer, minimum: 1, description: '最小1分钟' }
+        unit: { type: string, enum: [minute, hour, day] }
+    StrategySmart:
+      type: object
+      required: [mode]
+      properties:
+        mode: { type: string, enum: [smart], default: smart }
+    Task:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string, enum: [video, author] }
+        target_id: { type: string }
+        account_id: { type: string, nullable: true }
+        status: { type: string, enum: [running, stopped, completed, failed, paused] }
+        reason: { type: string, nullable: true, description: '暂停原因等' }
+        strategy:
+          oneOf:
+            - $ref: '#/components/schemas/StrategyFixed'
+            - $ref: '#/components/schemas/StrategySmart'
+        deadline: { type: string, format: date-time }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        tags:
+          type: array
+          items: { type: string }
+        latest_sample:
+          type: object
+          properties:
+            play: { type: integer }
+            fans: { type: integer }
+            last_collected_at: { type: string, format: date-time }
+        media:
+          type: object
+          properties:
+            cover_url: { type: string, nullable: true }
+            avatar_url: { type: string, nullable: true }
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        username: { type: string }
+        role: { type: string, enum: [admin, viewer] }
+    Account:
+      type: object
+      properties:
+        id: { type: string }
+        uid: { type: string }
+        nickname: { type: string }
+        bind_method: { type: string, enum: [cookie, qrcode] }
+        status: { type: string, enum: [valid, expired] }
+        last_failures: { type: integer }
+        bound_at: { type: string, format: date-time }
+    Channels:
+      type: object
+      properties:
+        email: { type: object, additionalProperties: true }
+        dingtalk: { type: object, additionalProperties: true }
+        wecom: { type: object, additionalProperties: true }
+        webhook: { type: object, additionalProperties: true }
+        bark: { type: object, additionalProperties: true }
+        pushdeer: { type: object, additionalProperties: true }
+        onebot: { type: object, additionalProperties: true }
+        telegram: { type: object, additionalProperties: true }
+    AlertRule:
+      type: object
+      properties:
+        enabled: { type: boolean, default: false }
+        mode: { type: string, enum: [absolute, percent] }
+        threshold: { type: number }
+        window_hours: { type: integer, default: 24 }
+    AlertRuleSave:
+      type: object
+      required: [action, rule]
+      properties:
+        action: { type: string, enum: [save], default: save }
+        rule: { $ref: '#/components/schemas/AlertRule' }
+    AlertRuleDisable:
+      type: object
+      required: [action]
+      properties:
+        action: { type: string, enum: [disable], default: disable }
+    NotificationRule:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 规则ID（新建时可选）
+        name:
+          type: string
+          description: 规则名称
+        enabled:
+          type: boolean
+          description: 是否启用
+        triggers:
+          type: array
+          items: { type: string }
+          description: 触发器列表，如 task_stopped, auth_failed
+        channels:
+          type: array
+          items: { type: string }
+          description: 通知渠道列表，如 email, webhook
+      required: [name, enabled, triggers, channels]
+    NotificationRuleSave:
+      type: object
+      required: [action, rule]
+      properties:
+        action: { type: string, enum: [save], default: save }
+        rule: { $ref: '#/components/schemas/NotificationRule' }
+    NotificationRuleDelete:
+      type: object
+      required: [action, id]
+      properties:
+        action: { type: string, enum: [delete], default: delete }
+        id:
+          type: string
+          description: 要删除的规则ID
+    Settings:
+      type: object
+      properties:
+        min_interval_min: { type: integer, default: 10, description: '全局最小采集间隔（分钟），可调至1分钟需提示风险' }
+        max_fixed_interval_day: { type: number, default: 1 }
+        max_retries: { type: integer, default: 3 }
+        page_size_default: { type: integer, default: 20 }
+        timezone: { type: string, default: 'Asia/Shanghai' }
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User' 
+
