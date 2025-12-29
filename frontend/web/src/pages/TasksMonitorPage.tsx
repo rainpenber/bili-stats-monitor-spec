@@ -41,11 +41,13 @@ export default function TasksMonitorPage() {
         if (ignore) return
         const mapped = (data.items || []).map((t: any) => {
           if (t.type === 'video') {
+            // 支持两种字段名：target_id (snake_case) 或 targetId (camelCase)
+            const targetId = t.target_id || t.targetId
             const v: VideoItem = {
               id: t.id,
               type: 'video',
-              bv: t.target_id,
-              title: t.title || `视频 ${t.target_id}`,
+              bv: targetId, // 修复：确保 bv 字段被设置
+              title: t.title || `视频 ${targetId}`,
               coverUrl: t.media?.cover_url || 'https://via.placeholder.com/320x180?text=Cover',
               playCount: t.latest_sample?.play ?? 0,
               status: (t.status || 'running') as any,
@@ -54,11 +56,13 @@ export default function TasksMonitorPage() {
             }
             return v
           } else {
+            // 支持两种字段名：target_id (snake_case) 或 targetId (camelCase)
+            const targetId = t.target_id || t.targetId
             const a: AuthorItem = {
               id: t.id,
               type: 'author',
-              uid: t.target_id,
-              nickname: t.nickname || `博主 ${t.target_id}`,
+              uid: targetId, // 修复：确保 uid 字段被设置
+              nickname: t.nickname || `博主 ${targetId}`,
               avatarUrl: t.media?.avatar_url || 'https://via.placeholder.com/120x120?text=Avatar',
               fansCount: t.latest_sample?.fans ?? 0,
               status: (t.status || 'running') as any,

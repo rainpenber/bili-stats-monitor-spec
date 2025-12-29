@@ -1,14 +1,67 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import ReactECharts from 'echarts-for-react'
-import { genVideoSeries } from '@/lib/fake'
 import dayjs from 'dayjs'
 import { useUISelection } from '@/store/uiSelection'
+import { fetchVideoMetrics, type MetricPoint } from '@/lib/api'
+import type { VideoItem } from '@/lib/fake'
 
-export default function VideoMetricsChart({ onReady }: { onReady?: (inst: any) => void }) {
-  const data = genVideoSeries(14)
-  const { scheme } = useUISelection()
+export interface VideoMetricsChartProps {
+  onReady?: (inst: any) => void
+  bv?: string // 可选的BV号，如果不提供则从useUISelection获取
+}
+
+export default function VideoMetricsChart({ onReady, bv: bvProp }: VideoMetricsChartProps) {
+  const { scheme, activeMeta } = useUISelection()
   const isDark = scheme === 'dark' || (scheme === 'system' && typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
   const chartRef = useRef<any>(null)
+  const [data, setData] = useState<MetricPoint[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // 优先使用传入的bv，否则从activeMeta获取
+  const video = activeMeta as VideoItem | undefined
+  // 回退逻辑：如果 bv 不存在，尝试从 title 中提取（如果 title 是 BV 号）
+  let bv = bvProp || video?.bv
+  if (!bv && video?.title && video.title.startsWith('BV')) {
+    bv = video.title
+  }
+
+  useEffect(() => {
+    if (!bv) {
+      setData([])
+      return
+    }
+
+    let isMounted = true
+
+    const loadData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const result = await fetchVideoMetrics(bv)
+        if (isMounted) {
+          setData(result.series || [])
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Failed to load video metrics:', err)
+          setError(err instanceof Error ? err.message : 'Failed to load data')
+          setData([])
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [bv])
+
   const option = {
     tooltip: { trigger: 'axis' },
     grid: { left: 48, right: 44, top: 28, bottom: 36, containLabel: true },
@@ -37,7 +90,7 @@ export default function VideoMetricsChart({ onReady }: { onReady?: (inst: any) =
         showSymbol: false,
         smooth: true,
         yAxisIndex: 0,
-        data: data.map((d) => [d.ts, d.play]),
+        data: data.map((d) => [new Date(d.ts).getTime(), d.play || 0]), // 转换为时间戳
       },
       {
         name: '在线观看',
@@ -45,10 +98,23 @@ export default function VideoMetricsChart({ onReady }: { onReady?: (inst: any) =
         showSymbol: false,
         smooth: true,
         yAxisIndex: 1,
-        data: data.map((d) => [d.ts, d.watching]),
+        data: data.map((d) => [new Date(d.ts).getTime(), d.watching || 0]), // 转换为时间戳
       },
     ],
   }
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-64 text-muted-foreground">加载中...</div>
+  }
+
+  if (error) {
+    return <div className="flex items-center justify-center h-64 text-destructive">{error}</div>
+  }
+
+  if (data.length === 0) {
+    return <div className="flex items-center justify-center h-64 text-muted-foreground">暂无数据</div>
+  }
+
   return (
     <ReactECharts
       ref={chartRef}

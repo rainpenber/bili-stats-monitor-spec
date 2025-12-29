@@ -15,6 +15,7 @@ import { createSettingsRoutes } from './routes/settings'
 import { createLogsRoutes } from './routes/logs'
 import { createSchedulerRoutes } from './routes/scheduler'
 import { createBilibiliBindingRoutes } from './routes/bilibili/binding'
+import { createVideosRoutes } from './routes/videos'
 import { initializeApp } from './init'
 
 const config = loadConfig()
@@ -56,6 +57,7 @@ app.route('/api/v1/auth', createAuthRoutes(container.db, config.jwt.secret))
 app.route('/api/v1/settings', createSettingsRoutes(container.db, config.jwt.secret))
 app.route('/api/v1/accounts', createAccountsRoutes(container.db))
 app.route('/api/v1/authors', createAuthorsRoutes(container.db))
+app.route('/api/v1/videos', createVideosRoutes(container.db))
 app.route('/api/v1/tasks', createTasksRoutes(container.db))
 app.route('/api/v1/tasks', createMetricsRoutes(container.db))
 app.route('/api/v1/notifications', createNotificationsRoutes(container.db))

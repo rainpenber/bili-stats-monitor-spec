@@ -120,6 +120,19 @@ export class TaskService {
   }
 
   /**
+   * 根据 targetId 和 type 查找任务
+   */
+  async findByTargetId(targetId: string, type: TaskType) {
+    const result = await this.db
+      .select()
+      .from(tasks)
+      .where(and(eq(tasks.targetId, targetId), eq(tasks.type, type)))
+      .limit(1)
+
+    return result.length > 0 ? result[0] : null
+  }
+
+  /**
    * 查询任务列表
    */
   async findMany(filters: TaskFilters = {}) {

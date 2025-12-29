@@ -4,8 +4,8 @@ import { useSelectedAuthor } from '@/hooks/useSelectedAuthor'
 import { useAuthorMetrics } from '@/hooks/useAuthorMetrics'
 import { fetchTasksByAuthorUid, fetchAuthorInfo, type AuthorInfo } from '@/lib/api'
 import { AccountDataDashboard } from '@/components/account/AccountDataDashboard'
-import { FollowerChart } from '@/components/account/FollowerChart'
 import { TaskCardList } from '@/components/account/TaskCardList'
+import AuthorFansChart from '@/components/detail/AuthorFansChart'
 import { AccountSwitchModal } from '@/components/account/AccountSwitchModal'
 import { AuthorSelectModal } from '@/components/account/AuthorSelectModal'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -50,6 +50,8 @@ export default function MyAccountPage() {
   const [activeTab, setActiveTab] = useState<'videos' | 'followers'>('videos') // 默认显示视频监控任务
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null) // 当前选中的任务ID
   const [videoChartTab, setVideoChartTab] = useState<'metrics' | 'engagement'>('metrics')
+  const [taskPage, setTaskPage] = useState(1) // 视频任务分页
+  const taskPageSize = 8 // 每页显示8个任务
   const metricsRef = useRef<any>(null)
   const engagementRef = useRef<any>(null)
   
@@ -112,6 +114,7 @@ export default function MyAccountPage() {
   useEffect(() => {
     if (!displayUid) {
       setTasks([])
+      setTaskPage(1) // 重置分页
       return
     }
 
@@ -127,6 +130,7 @@ export default function MyAccountPage() {
         if (!isMounted) return
 
         setTasks(response.items)
+        setTaskPage(1) // 重置分页到第一页
       } catch (err) {
         if (!isMounted) return
         console.error('Failed to load tasks:', err)
@@ -191,10 +195,17 @@ export default function MyAccountPage() {
   }
 
   // 计算数据
-  const totalVideos = tasks.filter(t => t.type === 'video').length
+  const videoTasks = tasks.filter(t => t.type === 'video')
+  const totalVideos = videoTasks.length
   const latestFollowerCount = metricsData?.metrics.length
     ? metricsData.metrics[metricsData.metrics.length - 1].follower
     : 0
+
+  // 分页计算
+  const totalPages = Math.max(1, Math.ceil(totalVideos / taskPageSize))
+  const startIndex = (taskPage - 1) * taskPageSize
+  const endIndex = startIndex + taskPageSize
+  const paginatedTasks = videoTasks.slice(startIndex, endIndex)
 
   // 确定要显示的博主信息（优先显示选择的博主，否则显示账号）
   const displayInfo = displayAuthorInfo || (account ? {
@@ -268,15 +279,14 @@ export default function MyAccountPage() {
       {/* 3. 粉丝数量图表（根据tab显示/隐藏） */}
       {activeTab === 'followers' && (
         <div className="border rounded-lg bg-card p-6">
-          <h3 className="text-lg font-semibold mb-4">粉丝数量变化</h3>
+          <h3 className="text-lg font-semibold mb-4">粉丝数量变化（默认缩放近3个月）</h3>
           {metricsError ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-destructive">{metricsError}</div>
             </div>
           ) : (
-            <FollowerChart
-              data={metricsData?.metrics || []}
-              loading={metricsLoading}
+            <AuthorFansChart
+              uid={displayUid || undefined}
             />
           )}
         </div>
@@ -292,22 +302,68 @@ export default function MyAccountPage() {
                 <div className="text-destructive">{tasksError}</div>
               </div>
             ) : (
-              <TaskCardList
-                tasks={tasks}
-                loading={tasksLoading}
-                activeTaskId={activeTaskId}
-                onTaskClick={(task) => {
-                  // 切换选中任务（如果已选中则取消选中）
-                  setActiveTaskId(activeTaskId === task.id ? null : task.id)
-                }}
-              />
+              <>
+                <TaskCardList
+                  tasks={paginatedTasks}
+                  loading={tasksLoading}
+                  activeTaskId={activeTaskId}
+                  onTaskClick={(task) => {
+                    // 切换选中任务（如果已选中则取消选中）
+                    setActiveTaskId(activeTaskId === task.id ? null : task.id)
+                  }}
+                />
+                {/* 分页控件 */}
+                {!tasksLoading && totalVideos > taskPageSize && (
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTaskPage(Math.max(1, taskPage - 1))}
+                      disabled={taskPage === 1}
+                    >
+                      上一页
+                    </Button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                      <Button
+                        key={p}
+                        size="sm"
+                        variant={p === taskPage ? 'default' : 'outline'}
+                        onClick={() => setTaskPage(p)}
+                      >
+                        {p}
+                      </Button>
+                    ))}
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => setTaskPage(Math.min(totalPages, taskPage + 1))}
+                      disabled={taskPage === totalPages}
+                    >
+                      下一页
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
           {/* 视频数据图表（展开显示） */}
           {activeTaskId && (() => {
-            const activeTask = tasks.find(t => t.id === activeTaskId)
+            const activeTask = videoTasks.find(t => t.id === activeTaskId)
             if (!activeTask || activeTask.type !== 'video') return null
+            
+            // 支持两种字段名：target_id (snake_case) 或 targetId (camelCase)
+            const bv = (activeTask as any).target_id || (activeTask as any).targetId
+            
+            if (!bv) {
+              return (
+                <div className="border rounded-lg bg-card p-6">
+                  <div className="flex items-center justify-center h-64 text-muted-foreground">
+                    无法获取视频BV号
+                  </div>
+                </div>
+              )
+            }
             
             return (
               <div className="border rounded-lg bg-card p-6 space-y-3">
@@ -316,7 +372,7 @@ export default function MyAccountPage() {
                   <div className="min-w-0 text-sm">
                     <div className="truncate" title={activeTask.title || ''}>
                       <span className="font-medium">{activeTask.title || '视频详情'}</span>
-                      <span className="text-muted-foreground"> · BV：{activeTask.target_id || '-'}</span>
+                      <span className="text-muted-foreground"> · BV：{bv}</span>
                     </div>
                   </div>
                 </div>
@@ -360,11 +416,17 @@ export default function MyAccountPage() {
                   <div className="pt-3">
                     {videoChartTab === 'metrics' ? (
                       <div className="w-full">
-                        <VideoMetricsChart onReady={(inst) => { metricsRef.current = inst }} />
+                        <VideoMetricsChart 
+                          bv={bv} 
+                          onReady={(inst) => { metricsRef.current = inst }} 
+                        />
                       </div>
                     ) : (
                       <div className="w-full">
-                        <VideoEngagementChart onReady={(inst) => { engagementRef.current = inst }} />
+                        <VideoEngagementChart 
+                          bv={bv} 
+                          onReady={(inst) => { engagementRef.current = inst }} 
+                        />
                       </div>
                     )}
                   </div>

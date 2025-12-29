@@ -1,4 +1,4 @@
-import { eq, sql, inArray, like, or, isNotNull, and } from 'drizzle-orm'
+import { eq, sql, inArray, like, or, isNotNull, and, asc } from 'drizzle-orm'
 import { authorMetrics, tasks, authors, accounts } from '../db/schema'
 import { biliClient } from './bili/client'
 import type { DrizzleInstance } from '../db'
@@ -58,21 +58,32 @@ export class AuthorService {
 
     // Step 3: 聚合查询author_metrics
     // 使用GROUP BY + MAX避免同一时间戳的重复记录
+    // 注意：collectedAt 已经是 INTEGER (Unix timestamp)，不需要使用 strftime
     const rawMetrics = await this.db
       .select({
-        collected_at: sql<number>`strftime('%s', ${authorMetrics.collectedAt})`.as('collected_at'),
+        collected_at: authorMetrics.collectedAt,
         follower: sql<number>`MAX(${authorMetrics.follower})`.as('follower')
       })
       .from(authorMetrics)
       .where(inArray(authorMetrics.taskId, taskIds))
-      .groupBy(sql`strftime('%s', ${authorMetrics.collectedAt})`)
-      .orderBy(sql`collected_at ASC`)
+      .groupBy(authorMetrics.collectedAt)
+      .orderBy(asc(authorMetrics.collectedAt))
 
     // Step 4: 转换为ISO 8601格式
-    const metrics: AuthorMetricDataPoint[] = rawMetrics.map(row => ({
-      collected_at: new Date(row.collected_at * 1000).toISOString(),
-      follower: row.follower
-    }))
+    // collected_at 在 Drizzle 中可能已经是 Date 对象（mode: 'timestamp'），也可能是数字（秒级时间戳）
+    const metrics: AuthorMetricDataPoint[] = rawMetrics.map(row => {
+      let collectedAt: Date
+      if (row.collected_at instanceof Date) {
+        collectedAt = row.collected_at
+      } else {
+        // 如果是数字，假设是秒级时间戳，转换为毫秒
+        collectedAt = new Date((row.collected_at as number) * 1000)
+      }
+      return {
+        collected_at: collectedAt.toISOString(),
+        follower: row.follower
+      }
+    })
 
     return {
       uid,

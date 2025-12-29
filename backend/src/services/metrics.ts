@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, desc } from 'drizzle-orm'
+import { eq, and, gte, lte, desc, asc } from 'drizzle-orm'
 import { videoMetrics, authorMetrics } from '../db/schema'
 import type { DrizzleInstance } from '../db'
 
@@ -34,7 +34,7 @@ export class MetricsService {
       .select()
       .from(videoMetrics)
       .where(and(...conditions)!)
-      .orderBy(desc(videoMetrics.collectedAt))
+      .orderBy(asc(videoMetrics.collectedAt)) // 改为升序，便于前端按时间顺序显示
 
     return metrics
   }
@@ -89,5 +89,6 @@ export class MetricsService {
 
     return metrics.length > 0 ? metrics[0] : null
   }
+
 }
 
