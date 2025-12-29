@@ -102,11 +102,21 @@ pnpm dev
 3. 点击"账号管理"子菜单
 4. 验证整合了原账号管理页面 + 默认账号设置
 
-### 3.4 测试刷新页面
+### 3.4 测试博主选择功能
 
-1. 在"我的账号"页面，切换到某个账号
+1. 在"我的账号"页面，点击"选择博主"按钮
+2. 在弹出的Modal中：
+   - 验证显示博主列表（从tasks表提取的author_uid）
+   - 测试搜索功能（按昵称或UID搜索）
+   - 选择一个博主，验证页面数据更新为该博主的数据
+   - 点击某个博主的"设为默认"按钮，验证设置成功
+3. 刷新浏览器(F5)，验证是否自动加载默认展示的博主
+
+### 3.5 测试刷新页面
+
+1. 在"我的账号"页面，切换到某个账号或选择某个博主
 2. 刷新浏览器(F5)
-3. 验证是否自动恢复到之前选择的账号（localStorage）
+3. 验证是否自动恢复到默认展示的博主（如果设置了）或之前选择的账号（localStorage）
 
 ---
 
@@ -141,6 +151,40 @@ curl -X POST \
 # 获取默认账号
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "http://localhost:38080/api/v1/accounts/default"
+```
+
+### 4.4 测试博主列表API
+
+```bash
+# 获取博主列表（所有有监控任务的博主）
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:38080/api/v1/authors"
+
+# 搜索博主（按昵称或UID）
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:38080/api/v1/authors?search=沐可"
+```
+
+### 4.5 测试默认展示博主设置
+
+```bash
+# 设置默认展示博主
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"uid":"1871297"}' \
+  "http://localhost:38080/api/v1/settings/default-display-author"
+
+# 获取默认展示博主
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:38080/api/v1/settings/default-display-author"
+
+# 清除默认展示博主
+curl -X POST \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"uid":null}' \
+  "http://localhost:38080/api/v1/settings/default-display-author"
 ```
 
 ---
@@ -194,7 +238,31 @@ bun run src/scripts/backfill-author-uid.ts
 2. 检查当前路由: 在Console输入`window.location.pathname`
 3. 确认Sidebar组件中的`isSettingsRoute`逻辑正确
 
-### Q5: 数据库迁移失败
+### Q5: 博主列表为空
+
+**症状**: "选择博主"Modal中显示"暂无博主"
+
+**排查**:
+1. 检查tasks表中是否有author_uid数据:
+   ```sql
+   SELECT DISTINCT author_uid FROM tasks WHERE author_uid IS NOT NULL;
+   ```
+2. 检查API响应: 打开浏览器DevTools → Network → 找到`/api/v1/authors`请求
+3. 确认有监控任务存在: 在"监视任务"页面查看任务列表
+
+### Q6: 默认展示博主设置无效
+
+**症状**: 刷新页面后没有自动加载默认展示的博主
+
+**排查**:
+1. 检查settings表中的default_display_author值:
+   ```sql
+   SELECT * FROM settings WHERE key = 'default_display_author';
+   ```
+2. 检查前端是否正确读取: 打开浏览器DevTools → Application → Local Storage
+3. 确认博主UID格式正确（纯数字字符串）
+
+### Q7: 数据库迁移失败
 
 **症状**: `bun run db:push`报错
 

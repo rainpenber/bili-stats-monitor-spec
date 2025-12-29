@@ -35,12 +35,56 @@ export function createAuthorsRoutes(db: DrizzleInstance) {
    *   }
    * }
    */
+  /**
+   * GET /api/v1/authors
+   * 
+   * 获取博主列表（用于博主选择Modal）
+   * 
+   * Query参数:
+   * - search: 搜索关键词（支持按昵称和UID搜索）
+   * 
+   * Response:
+   * {
+   *   "code": 0,
+   *   "message": "success",
+   *   "data": {
+   *     "authors": [
+   *       {
+   *         "uid": "1871297",
+   *         "nickname": "沐可Milco",
+   *         "avatar": "https://i0.hdslb.com/bfs/face/xxx.jpg",
+   *         "hasBoundAccount": true
+   *       }
+   *     ]
+   *   }
+   * }
+   */
+  app.get('/', async (c) => {
+    try {
+      const search = c.req.query('search')
+
+      const authors = await authorService.getAuthorList(search)
+
+      return success(c, { authors })
+    } catch (err) {
+      console.error('Failed to get author list:', err)
+      return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to get author list', undefined, 500)
+    }
+  })
+
+  /**
+   * GET /api/v1/authors/:uid/metrics
+   * 
+   * 获取指定作者的粉丝历史数据
+   * 
+   * 注意：这个路由必须放在 /:uid 之前，否则会被 /:uid 先匹配
+   */
   app.get('/:uid/metrics', async (c) => {
     try {
       const uid = c.req.param('uid')
 
       if (!uid) {
-        return error(c, ErrorCodes.VALIDATION_ERROR, 'UID is required')
+        return error(c, ErrorCodes.VALIDATION_ERROR, 'UID is required', undefined, 400)
       }
 
       const result = await authorService.getAuthorMetrics(uid)
@@ -49,6 +93,44 @@ export function createAuthorsRoutes(db: DrizzleInstance) {
     } catch (err) {
       console.error('Failed to get author metrics:', err)
       return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to get author metrics', undefined, 500)
+    }
+  })
+
+  /**
+   * GET /api/v1/authors/:uid
+   * 
+   * 获取单个博主信息
+   * 
+   * Response:
+   * {
+   *   "code": 0,
+   *   "message": "success",
+   *   "data": {
+   *     "uid": "1871297",
+   *     "nickname": "沐可Milco",
+   *     "avatar": "https://i0.hdslb.com/bfs/face/xxx.jpg",
+   *     "hasBoundAccount": true
+   *   }
+   * }
+   */
+  app.get('/:uid', async (c) => {
+    try {
+      const uid = c.req.param('uid')
+
+      if (!uid) {
+        return error(c, ErrorCodes.VALIDATION_ERROR, 'UID is required', undefined, 400)
+      }
+
+      const author = await authorService.getAuthorInfo(uid)
+
+      if (!author) {
+        return error(c, ErrorCodes.NOT_FOUND, 'Author not found', undefined, 404)
+      }
+
+      return success(c, author)
+    } catch (err) {
+      console.error('Failed to get author info:', err)
+      return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to get author info', undefined, 500)
     }
   })
 

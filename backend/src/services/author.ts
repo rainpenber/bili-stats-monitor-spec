@@ -1,5 +1,6 @@
-import { eq, sql, inArray } from 'drizzle-orm'
-import { authorMetrics, tasks } from '../db/schema'
+import { eq, sql, inArray, like, or, isNotNull, and } from 'drizzle-orm'
+import { authorMetrics, tasks, authors, accounts } from '../db/schema'
+import { biliClient } from './bili/client'
 import type { DrizzleInstance } from '../db'
 
 /**
@@ -94,6 +95,152 @@ export class AuthorService {
 
     // 返回最后一个数据点的粉丝数
     return result.metrics[result.metrics.length - 1].follower
+  }
+
+  /**
+   * 获取博主列表（从authors表查询，仅显示有监控任务的博主）
+   * 
+   * @param search 搜索关键词（支持按昵称和UID搜索）
+   * @returns 博主列表，包含uid、nickname、avatar、hasBoundAccount
+   */
+  async getAuthorList(search?: string): Promise<Array<{
+    uid: string
+    nickname: string | null
+    avatar: string | null
+    hasBoundAccount: boolean
+  }>> {
+    // 查询所有在tasks表中出现过的author_uid（仅显示有监控任务的博主）
+    const authorUids = await this.db
+      .selectDistinct({ authorUid: tasks.authorUid })
+      .from(tasks)
+      .where(isNotNull(tasks.authorUid))
+
+    const uids = authorUids.map(t => t.authorUid).filter((uid): uid is string => !!uid)
+
+    if (uids.length === 0) {
+      return []
+    }
+
+    // 构建查询条件
+    let query = this.db
+      .select({
+        uid: authors.uid,
+        nickname: authors.nickname,
+        avatar: authors.avatar,
+      })
+      .from(authors)
+      .where(inArray(authors.uid, uids))
+
+    // 如果提供了搜索关键词，添加搜索条件
+    if (search && search.trim()) {
+      const searchPattern = `%${search.trim()}%`
+      query = query.where(
+        or(
+          like(authors.nickname, searchPattern),
+          like(authors.uid, searchPattern)
+        )
+      ) as any
+    }
+
+    const authorList = await query
+
+    // 检查每个博主是否有对应的已绑定账号
+    const result = await Promise.all(
+      authorList.map(async (author) => {
+        // 查询accounts表中是否有对应UID的有效账号
+        const boundAccount = await this.db
+          .select({ id: accounts.id })
+          .from(accounts)
+          .where(and(eq(accounts.uid, author.uid), eq(accounts.status, 'valid')))
+          .limit(1)
+
+        return {
+          uid: author.uid,
+          nickname: author.nickname || null,
+          avatar: author.avatar || null,
+          hasBoundAccount: boundAccount.length > 0,
+        }
+      })
+    )
+
+    return result
+  }
+
+  /**
+   * 获取单个博主信息（从authors表查询）
+   * 
+   * @param uid 博主UID
+   * @returns 博主信息，如果不存在则返回null
+   */
+  async getAuthorInfo(uid: string): Promise<{
+    uid: string
+    nickname: string | null
+    avatar: string | null
+    hasBoundAccount: boolean
+  } | null> {
+    const author = await this.db
+      .select({
+        uid: authors.uid,
+        nickname: authors.nickname,
+        avatar: authors.avatar,
+      })
+      .from(authors)
+      .where(eq(authors.uid, uid))
+      .limit(1)
+
+    if (author.length === 0) {
+      return null
+    }
+
+    // 检查是否有对应的已绑定账号
+    const boundAccount = await this.db
+      .select({ id: accounts.id })
+      .from(accounts)
+      .where(and(eq(accounts.uid, uid), eq(accounts.status, 'valid')))
+      .limit(1)
+
+    return {
+      uid: author[0].uid,
+      nickname: author[0].nickname || null,
+      avatar: author[0].avatar || null,
+      hasBoundAccount: boundAccount.length > 0,
+    }
+  }
+
+  /**
+   * 同步博主信息（调用B站API获取博主信息并更新authors表）
+   * 
+   * @param uid 博主UID
+   * @returns 更新后的博主信息
+   */
+  async syncAuthorInfo(uid: string): Promise<{ nickname: string; avatar: string }> {
+    // 调用B站API获取用户信息
+    const userInfo = await biliClient.getUserInfo(parseInt(uid, 10))
+
+    // 更新或插入authors表
+    const now = new Date()
+    await this.db
+      .insert(authors)
+      .values({
+        uid,
+        nickname: userInfo.nickname || null,
+        avatar: userInfo.avatar || null,
+        updatedAt: now,
+        createdAt: now,
+      })
+      .onConflictDoUpdate({
+        target: authors.uid,
+        set: {
+          nickname: userInfo.nickname || null,
+          avatar: userInfo.avatar || null,
+          updatedAt: now,
+        },
+      })
+
+    return {
+      nickname: userInfo.nickname,
+      avatar: userInfo.avatar,
+    }
   }
 }
 

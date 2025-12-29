@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm'
 import { success, error, ErrorCodes } from '../utils/response'
 import { users, settings } from '../db/schema'
 import { AuthService } from '../services/auth'
+import { SettingsService } from '../services/settings'
 import type { DrizzleInstance } from '../db'
 
 /**
@@ -30,6 +31,7 @@ const changeUserPasswordSchema = z.object({
 export function createSettingsRoutes(db: DrizzleInstance, jwtSecret: string) {
   const app = new Hono()
   const authService = new AuthService(db, jwtSecret)
+  const settingsService = new SettingsService(db)
 
   /**
    * 中间件：验证管理员权限
@@ -179,6 +181,73 @@ export function createSettingsRoutes(db: DrizzleInstance, jwtSecret: string) {
         return error(c, ErrorCodes.VALIDATION_ERROR, 'Invalid request', err.errors, 400)
       }
       return error(c, ErrorCodes.INTERNAL_ERROR, err.message || 'Failed to update password', undefined, 500)
+    }
+  })
+
+  /**
+   * GET /api/v1/settings/default-display-author
+   * 
+   * 获取默认展示博主UID
+   * 
+   * Response:
+   * {
+   *   "code": 0,
+   *   "message": "success",
+   *   "data": {
+   *     "uid": "1871297" // 如果未设置则为null
+   *   }
+   * }
+   */
+  app.get('/default-display-author', async (c) => {
+    try {
+      const uid = await settingsService.getDefaultDisplayAuthor()
+
+      return success(c, { uid })
+    } catch (err: any) {
+      console.error('Failed to get default display author:', err)
+      return error(c, ErrorCodes.INTERNAL_ERROR, err.message || 'Failed to get default display author', undefined, 500)
+    }
+  })
+
+  /**
+   * POST /api/v1/settings/default-display-author
+   * 
+   * 设置默认展示博主UID
+   * 
+   * Request Body:
+   * {
+   *   "uid": "1871297" // 如果为null则清除默认展示设置
+   * }
+   * 
+   * Response:
+   * {
+   *   "code": 0,
+   *   "message": "success",
+   *   "data": {
+   *     "updated": true
+   *   }
+   * }
+   */
+  app.post('/default-display-author', async (c) => {
+    try {
+      const body = await c.req.json()
+      const { uid } = body
+
+      // 验证uid格式（如果提供）
+      if (uid !== null && uid !== undefined && (typeof uid !== 'string' || uid.trim() === '')) {
+        return error(c, ErrorCodes.VALIDATION_ERROR, 'Invalid UID format', undefined, 400)
+      }
+
+      const updated = await settingsService.saveDefaultDisplayAuthor(uid || null)
+
+      if (!updated) {
+        return error(c, ErrorCodes.INTERNAL_ERROR, 'Failed to save default display author', undefined, 500)
+      }
+
+      return success(c, { updated: true })
+    } catch (err: any) {
+      console.error('Failed to save default display author:', err)
+      return error(c, ErrorCodes.INTERNAL_ERROR, err.message || 'Failed to save default display author', undefined, 500)
     }
   })
 

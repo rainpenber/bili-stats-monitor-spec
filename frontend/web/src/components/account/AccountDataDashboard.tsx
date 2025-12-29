@@ -17,9 +17,17 @@ export interface AccountDataDashboardProps {
   totalVideos: number
   followerCount: number
   loading?: boolean
+  activeTab?: 'videos' | 'followers'
+  onTabChange?: (tab: 'videos' | 'followers') => void
 }
 
-export function AccountDataDashboard({ totalVideos, followerCount, loading }: AccountDataDashboardProps) {
+export function AccountDataDashboard({ 
+  totalVideos, 
+  followerCount, 
+  loading,
+  activeTab = 'videos',
+  onTabChange
+}: AccountDataDashboardProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-4">
@@ -31,14 +39,24 @@ export function AccountDataDashboard({ totalVideos, followerCount, loading }: Ac
 
   return (
     <div className="flex gap-4">
-      {/* 总监视视频数 */}
-      <div className="w-[200px] h-[120px] p-4 border rounded-lg bg-card flex flex-col justify-between">
+      {/* 总监视视频数（可点击切换tab） */}
+      <div 
+        className={`w-[200px] h-[120px] p-4 border rounded-lg bg-card flex flex-col justify-between transition-colors ${
+          activeTab === 'videos' ? 'border-primary bg-primary/5' : 'hover:border-primary/50 cursor-pointer'
+        }`}
+        onClick={() => onTabChange?.('videos')}
+      >
         <div className="text-sm text-muted-foreground">总监视视频数</div>
         <div className="text-4xl font-bold">{totalVideos}</div>
       </div>
 
-      {/* 粉丝量 */}
-      <div className="w-[200px] h-[120px] p-4 border rounded-lg bg-card flex flex-col justify-between">
+      {/* 粉丝量（可点击切换tab） */}
+      <div 
+        className={`w-[200px] h-[120px] p-4 border rounded-lg bg-card flex flex-col justify-between transition-colors ${
+          activeTab === 'followers' ? 'border-primary bg-primary/5' : 'hover:border-primary/50 cursor-pointer'
+        }`}
+        onClick={() => onTabChange?.('followers')}
+      >
         <div className="text-sm text-muted-foreground">粉丝量</div>
         <div className="text-4xl font-bold">{followerCount.toLocaleString()}</div>
       </div>

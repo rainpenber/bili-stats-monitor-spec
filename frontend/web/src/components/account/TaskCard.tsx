@@ -1,20 +1,17 @@
 import { Badge } from '@/components/ui/Badge'
 import type { Task } from '@/lib/api'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/zh-cn'
-
-dayjs.extend(relativeTime)
-dayjs.locale('zh-cn')
+import { toWan } from '@/lib/format'
+import { cn } from '@/lib/cn'
 
 /**
- * TaskCard - 任务卡片组件
+ * TaskCard - 任务卡片组件（与VideoCard样式一致）
  * 
  * 显示单个监控任务的信息：
- * - 任务标题/封面
- * - 任务状态
- * - 最新数据
- * - 点击可查看详情
+ * - 视频封面（aspect-video）
+ * - 任务标题
+ * - 播放量
+ * - 状态标签
+ * - 点击可展开详情图表
  * 
  * 参考: specs/006-navigation-restructure/spec.md FR-013
  */
@@ -22,9 +19,10 @@ dayjs.locale('zh-cn')
 export interface TaskCardProps {
   task: Task
   onClick?: () => void
+  isActive?: boolean
 }
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
+export function TaskCard({ task, onClick, isActive }: TaskCardProps) {
   const statusColors: Record<string, string> = {
     running: 'bg-green-500',
     stopped: 'bg-gray-500',
@@ -41,65 +39,42 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
     paused: '已暂停',
   }
 
+  const playCount = task.latest_sample?.play ?? 0
+  const coverUrl = task.media?.cover_url || 'https://via.placeholder.com/320x180?text=Cover'
+
   return (
-    <div
-      className="p-4 border rounded-lg hover:border-primary/50 transition-colors cursor-pointer"
+    <div 
+      className={cn(
+        'card card-hover overflow-hidden cursor-pointer relative',
+        isActive && 'outline-primary'
+      )} 
       onClick={onClick}
     >
-      <div className="flex items-start gap-4">
-        {/* 封面（如果是视频任务） */}
-        {task.type === 'video' && task.media?.cover_url && (
-          <div className="w-32 h-18 flex-shrink-0 rounded overflow-hidden bg-muted">
-            <img
-              src={task.media.cover_url}
-              alt={task.title || task.target_id}
-              className="w-full h-full object-cover"
-            />
+      <div className="aspect-video bg-muted relative">
+        <img src={coverUrl} alt={task.title || task.target_id} className="w-full h-full object-cover" />
+        {/* 状态标签（右上角） */}
+        <Badge 
+          className={cn(
+            'absolute top-2 right-2 text-white text-xs',
+            statusColors[task.status] || 'bg-gray-500'
+          )}
+        >
+          {statusLabels[task.status] || task.status}
+        </Badge>
+      </div>
+      <div className="p-3 space-y-2">
+        <div className="text-sm font-medium line-clamp-2" title={task.title || task.target_id}>
+          {task.title || task.target_id}
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {playCount > 0 ? toWan(playCount) : '暂无数据'}
+        </div>
+        {task.reason && (
+          <div className="text-xs text-muted-foreground line-clamp-1" title={task.reason}>
+            {task.reason}
           </div>
         )}
-
-        {/* 任务信息 */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <h4 className="font-medium truncate flex-1">
-              {task.title || task.target_id}
-            </h4>
-            <Badge className={`${statusColors[task.status]} text-white text-xs`}>
-              {statusLabels[task.status] || task.status}
-            </Badge>
-          </div>
-
-          <div className="mt-2 text-sm text-muted-foreground space-y-1">
-            <div>
-              目标ID: <span className="font-mono">{task.target_id}</span>
-            </div>
-            
-            {task.latest_sample && (
-              <div className="flex gap-4">
-                {task.latest_sample.play !== undefined && (
-                  <div>播放: {task.latest_sample.play.toLocaleString()}</div>
-                )}
-                {task.latest_sample.fans !== undefined && (
-                  <div>粉丝: {task.latest_sample.fans.toLocaleString()}</div>
-                )}
-              </div>
-            )}
-
-            {task.latest_sample?.last_collected_at && (
-              <div className="text-xs">
-                最后采集: {dayjs(task.latest_sample.last_collected_at).fromNow()}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
-
-      {/* 原因说明（如果有） */}
-      {task.reason && (
-        <div className="mt-3 pt-3 border-t text-sm text-muted-foreground">
-          {task.reason}
-        </div>
-      )}
     </div>
   )
 }

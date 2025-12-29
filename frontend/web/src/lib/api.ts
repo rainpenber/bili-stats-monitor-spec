@@ -593,3 +593,61 @@ export async function fetchTasksByAuthorUid(
   )
 }
 
+/**
+ * 博主信息
+ */
+export interface AuthorInfo {
+  uid: string
+  nickname: string | null
+  avatar: string | null
+  hasBoundAccount: boolean
+}
+
+/**
+ * 获取博主列表
+ * 
+ * @param search - 搜索关键词（支持按昵称和UID搜索）
+ * @returns 博主列表
+ */
+export async function fetchAuthorList(search?: string): Promise<AuthorInfo[]> {
+  const params = new URLSearchParams()
+  if (search && search.trim()) {
+    params.append('search', search.trim())
+  }
+
+  const url = `/api/v1/authors${params.toString() ? `?${params.toString()}` : ''}`
+  const response = await http.get<{ authors: AuthorInfo[] }>(url)
+  return response.authors || []
+}
+
+/**
+ * 获取单个博主信息
+ * 
+ * @param uid - 博主UID
+ * @returns 博主信息
+ */
+export async function fetchAuthorInfo(uid: string): Promise<AuthorInfo> {
+  return http.get<AuthorInfo>(`/api/v1/authors/${uid}`)
+}
+
+/**
+ * 获取默认展示博主UID
+ * 
+ * @returns 默认展示博主UID，如果未设置则返回null
+ */
+export async function fetchDefaultDisplayAuthor(): Promise<string | null> {
+  const response = await http.get<{ uid: string | null }>('/api/v1/settings/default-display-author')
+  return response.uid || null
+}
+
+/**
+ * 保存默认展示博主UID
+ * 
+ * @param uid - 博主UID，如果为null则清除默认展示设置
+ * @returns 是否保存成功
+ */
+export async function saveDefaultDisplayAuthor(uid: string | null): Promise<boolean> {
+  const response = await http.post<{ updated: boolean }>('/api/v1/settings/default-display-author', { uid })
+  return response.updated || false
+}
+

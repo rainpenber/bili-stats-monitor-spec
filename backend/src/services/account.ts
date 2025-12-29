@@ -296,6 +296,21 @@ export class AccountService {
   }
 
   /**
+   * 根据 UID 查找已绑定账号
+   * @param uid 用户UID
+   * @returns 账号信息，如果不存在则返回null
+   */
+  async getAccountByUid(uid: string) {
+    const accountList = await this.db
+      .select()
+      .from(accounts)
+      .where(and(eq(accounts.uid, uid), eq(accounts.status, 'valid')))
+      .limit(1)
+
+    return accountList.length > 0 ? accountList[0] : null
+  }
+
+  /**
    * 处理账号失效
    */
   async handleExpired(accountId: string): Promise<void> {

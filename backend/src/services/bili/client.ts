@@ -253,6 +253,57 @@ export class BiliClient {
   }
 
   /**
+   * 获取用户基本信息（昵称、头像等）
+   * @param mid 用户 UID
+   * @param cookie 登录 Cookie（可选）
+   * @returns { nickname, avatar }
+   */
+  async getUserInfo(mid: number, cookie?: string): Promise<{ nickname: string; avatar: string }> {
+    const params: Record<string, string | number> = {
+      mid,
+      photo: 1, // 获取头像
+    }
+
+    // 获取 WBI keys（如果还没有）
+    const keys = wbiService.getKeys()
+    if (!keys) {
+      // 尝试从 nav 接口获取
+      await this.getNav(cookie)
+    }
+
+    // 签名参数
+    const signedParams = wbiService.signParams(params)
+
+    // 构建查询字符串
+    const queryString = Object.entries(signedParams)
+      .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+      .join('&')
+
+    const headers: Record<string, string> = {}
+    if (cookie) {
+      headers['Cookie'] = cookie
+    }
+
+    const response = await this.request<{
+      card: {
+        name: string
+        face: string
+      }
+    }>(this.baseUrl + `/x/web-interface/card?${queryString}`, {
+      headers,
+    })
+
+    if (response.code !== 0) {
+      throw new Error(`Failed to get user info: ${response.message}`)
+    }
+
+    return {
+      nickname: response.data.card.name || '',
+      avatar: response.data.card.face || '',
+    }
+  }
+
+  /**
    * 获取用户统计信息（粉丝数等）
    * @param mid 用户 UID
    * @param cookie 登录 Cookie（可选，但建议提供以获取更准确的数据）

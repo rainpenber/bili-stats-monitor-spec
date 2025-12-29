@@ -125,6 +125,17 @@ export const mediaAssets = sqliteTable('media_assets', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
 
+// Authors table - for storing author (博主) basic information
+export const authors = sqliteTable('authors', {
+  uid: text('uid').primaryKey(), // B站用户UID
+  nickname: text('nickname'), // 博主昵称
+  avatar: text('avatar'), // 博主头像URL
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+}, (table) => ({
+  uidIdx: index('idx_authors_uid').on(table.uid),
+}))
+
 // QRCodeSessions table - for Bilibili account binding via QR code
 export const qrcodeSessions = sqliteTable('qrcode_sessions', {
   id: text('id').primaryKey(),

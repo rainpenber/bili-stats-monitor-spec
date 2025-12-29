@@ -1,10 +1,49 @@
 openapi: 3.0.0
 info:
-  title: Authors API (New for Navigation Restructure)
-  version: 1.0.0
-  description: 新增Authors API，提供作者粉丝历史数据
+  title: Authors API (Extended for Navigation Restructure)
+  version: 1.1.0
+  description: Authors API，提供作者粉丝历史数据和博主列表（扩展博主选择功能）
 
 paths:
+  /api/v1/authors:
+    get:
+      summary: 获取博主列表
+      description: 从tasks表中提取所有不同的author_uid，返回博主基本信息（用于博主选择Modal）
+      parameters:
+        - name: search
+          in: query
+          description: 搜索关键词（支持按昵称和UID搜索）
+          required: false
+          schema:
+            type: string
+            example: "沐可"
+      responses:
+        '200':
+          description: 成功返回博主列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      authors:
+                        type: array
+                        description: 博主列表
+                        items:
+                          $ref: '#/components/schemas/AuthorInfo'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   /api/v1/authors/{uid}/metrics:
     get:
       summary: 获取作者粉丝历史数据
@@ -80,6 +119,32 @@ paths:
           $ref: '#/components/responses/NotFound'
 
 components:
+  schemas:
+    AuthorInfo:
+      type: object
+      description: 博主基本信息
+      properties:
+        uid:
+          type: string
+          description: 博主UID
+          example: "1871297"
+        nickname:
+          type: string
+          description: 博主昵称
+          example: "沐可Milco"
+        avatar:
+          type: string
+          format: uri
+          description: 博主头像URL
+          example: "https://i0.hdslb.com/bfs/face/xxx.jpg"
+        hasBoundAccount:
+          type: boolean
+          description: 是否有对应的已绑定账号
+          example: true
+      required:
+        - uid
+        - nickname
+
   responses:
     BadRequest:
       description: 请求参数错误

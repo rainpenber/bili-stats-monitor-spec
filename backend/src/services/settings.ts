@@ -121,5 +121,64 @@ export class SettingsService {
       return false
     }
   }
+
+  /**
+   * 获取默认展示博主UID
+   * 
+   * @returns 默认展示博主UID，如果未设置或为空字符串则返回null
+   */
+  async getDefaultDisplayAuthor(): Promise<string | null> {
+    const result = await this.db
+      .select({ value: settings.value })
+      .from(settings)
+      .where(eq(settings.key, 'default_display_author'))
+      .limit(1)
+
+    if (!result || result.length === 0) {
+      return null
+    }
+
+    const value = result[0].value
+    
+    // 如果值为空字符串（初始化时的默认值），视为未设置
+    if (value === '' || value === 'null') {
+      return null
+    }
+
+    return value
+  }
+
+  /**
+   * 保存默认展示博主UID
+   * 
+   * @param uid - 博主UID，如果为null则清除默认展示设置
+   * @returns 保存结果（true=成功）
+   */
+  async saveDefaultDisplayAuthor(uid: string | null): Promise<boolean> {
+    try {
+      const value = uid || ''
+      const now = new Date()
+
+      await this.db
+        .insert(settings)
+        .values({
+          key: 'default_display_author',
+          value,
+          updatedAt: now
+        })
+        .onConflictDoUpdate({
+          target: settings.key,
+          set: {
+            value,
+            updatedAt: now
+          }
+        })
+
+      return true
+    } catch (error) {
+      console.error('Failed to save default display author:', error)
+      return false
+    }
+  }
 }
 

@@ -3,10 +3,10 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import type { Task } from '@/lib/api'
 
 /**
- * TaskCardList - 任务卡片列表组件
+ * TaskCardList - 任务卡片列表组件（使用网格布局，与CardGrid一致）
  * 
  * 显示多个任务卡片的列表
- * - 垂直堆叠
+ * - 网格布局（响应式：1列/2列/4列）
  * - 支持点击查看详情
  * - 空状态处理
  * 
@@ -16,15 +16,16 @@ import type { Task } from '@/lib/api'
 export interface TaskCardListProps {
   tasks: Task[]
   loading?: boolean
+  activeTaskId?: string | null
   onTaskClick?: (task: Task) => void
 }
 
-export function TaskCardList({ tasks, loading, onTaskClick }: TaskCardListProps) {
+export function TaskCardList({ tasks, loading, activeTaskId, onTaskClick }: TaskCardListProps) {
   if (loading) {
     return (
-      <div className="space-y-3">
-        {[1, 2, 3].map(i => (
-          <div key={i} className="h-32 border rounded-lg animate-pulse bg-muted" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="aspect-video border rounded-lg animate-pulse bg-muted" />
         ))}
       </div>
     )
@@ -40,11 +41,12 @@ export function TaskCardList({ tasks, loading, onTaskClick }: TaskCardListProps)
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {tasks.map(task => (
         <TaskCard
           key={task.id}
           task={task}
+          isActive={activeTaskId === task.id}
           onClick={() => onTaskClick?.(task)}
         />
       ))}

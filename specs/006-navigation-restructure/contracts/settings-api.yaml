@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: Settings API (Extended for Navigation Restructure)
+  version: 1.1.0
+  description: 扩展Settings API，添加默认展示博主设置功能
+
+paths:
+  /api/v1/settings/default-display-author:
+    get:
+      summary: 获取默认展示博主UID
+      description: 从settings表读取default_display_author设置值
+      responses:
+        '200':
+          description: 成功返回默认展示博主UID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      uid:
+                        type: string
+                        nullable: true
+                        description: 默认展示博主UID，如果未设置则为null
+                        example: "1871297"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: 设置默认展示博主UID
+      description: 将博主UID持久化存储到settings表中(key: 'default_display_author')
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  nullable: true
+                  description: 博主UID，如果为null则清除默认展示设置
+                  example: "1871297"
+              required:
+                - uid
+      responses:
+        '200':
+          description: 成功设置默认展示博主
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      updated:
+                        type: boolean
+                        example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Invalid UID format"
+    Unauthorized:
+      description: 未授权
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: "Unauthorized"
+    InternalError:
+      description: 服务器内部错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: "Failed to save default display author"
+
+
