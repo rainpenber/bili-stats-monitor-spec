@@ -9,6 +9,7 @@ node_modules
 
 # Backend
 backend/data/
+backend/node_modules/
 backend/media/
 backend/.env
 backend/.env.development
@@ -20,6 +21,7 @@ backend/*.log
 backend/.drizzle/
 # Frontend
 frontend/web/dist/
+frontend/web/node_modules/
 frontend/web/tsconfig.tsbuildinfo
 frontend/web/.env
 frontend/web/.env.development
